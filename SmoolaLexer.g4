@@ -1,5 +1,11 @@
 lexer grammar Smoola;
 
+@members{
+   void print(Object obj){
+        System.out.println(obj);
+   }
+}
+
 // Keywords
 
 ABSTRACT:           'abstract';
@@ -53,12 +59,90 @@ VOID:               'void';
 VOLATILE:           'volatile';
 WHILE:              'while';
 
-@members{
-   void print(Object obj){
-        System.out.println(obj);
-   }
-}
+// Operators
+
+ASSIGN:             '=';
+GT:                 '>';
+LT:                 '<';
+BANG:               '!';
+TILDE:              '~';
+QUESTION:           '?';
+COLON:              ':';
+EQUAL:              '==';
+LE:                 '<=';
+GE:                 '>=';
+NOTEQUAL:           '!=';
+AND:                '&&';
+OR:                 '||';
+INC:                '++';
+DEC:                '--';
+ADD:                '+';
+SUB:                '-';
+MUL:                '*';
+DIV:                '/';
+BITAND:             '&';
+BITOR:              '|';
+CARET:              '^';
+MOD:                '%';
+
+ADD_ASSIGN:         '+=';
+SUB_ASSIGN:         '-=';
+MUL_ASSIGN:         '*=';
+DIV_ASSIGN:         '/=';
+AND_ASSIGN:         '&=';
+OR_ASSIGN:          '|=';
+XOR_ASSIGN:         '^=';
+MOD_ASSIGN:         '%=';
+LSHIFT_ASSIGN:      '<<=';
+RSHIFT_ASSIGN:      '>>=';
+URSHIFT_ASSIGN:     '>>>=';
+
+// Separators
+
+LPAREN:             '(';
+RPAREN:             ')';
+LBRACE:             '{';
+RBRACE:             '}';
+LBRACK:             '[';
+RBRACK:             ']';
+SEMI:               ';';
+COMMA:              ',';
+DOT:                '.';
+
+
+// Literals
+
+
+BOOL_LITERAL:       'true'
+            |       'false'
+            ;
+            
+
+// Identifiers
+
+IDENTIFIER:         Letter LetterOrDigit*;
+
+
+// Whitespace and comments
+
+WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+
+// Fragment rules
+
 
 fragment Digits
-    : [0-9] ([0-9_]* [0-9])?
+    : [0-9]+
+    ;
+
+
+fragment LetterOrDigit
+    : Letter
+    | [0-9]
+    ;
+
+
+fragment Letter
+    : [a-zA-Z_] // these are the "java letters" below 0x7F
     ;
