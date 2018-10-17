@@ -1,8 +1,8 @@
-lexer grammar Smoola;
+lexer grammar SmoolaLexer;
 
 // Keywords
 
-‫‪DEF:                'def';
+DEF:                'def';
 VAR:                'var';
 ELSE:               'else';
 NEW:                'new';
@@ -12,10 +12,8 @@ WHILE:              'while';
 RETURN:             'return';
 INT:                'int';
 WRITELN:            'writeln';
-TRUE:               'true';
 STRING:             'string';
 IF:                 'if';
-FALSE:              'false';
 BOOLEAN:            'boolean';
 THEN:               'then';
 THIS:               'this';
@@ -50,10 +48,11 @@ COMMA:              ',';
 DOT:                '.';
 
 // Literals
-
+INTEGER_LITERAL:    Digits;
 BOOL_LITERAL:       'true'
             |       'false'
             ;
+STRING_LITERAL:     '"' (LetterOrDigit | [!@#$%^&*+()\-_?\\/,.<>~`{}\[\]])* '"';
 
 // Identifiers
 

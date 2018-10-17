@@ -11,5 +11,8 @@ options { tokenVocab=SmoolaLexer; }
 // }
 
 program
-    : IDENTIFIER+ EOF
+    : STRING_LITERAL+ EOF
     ;
+
+// expression
+// 	: 
