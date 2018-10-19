@@ -11,6 +11,7 @@ EXTENDS:            'extends';
 WHILE:              'while';
 RETURN:             'return';
 INT:                'int';
+INT_ARRAY:          'int[]';
 WRITELN:            'writeln';
 STRING:             'string';
 IF:                 'if';
@@ -46,13 +47,14 @@ RBRACK:             ']';
 SEMI:               ';';
 COMMA:              ',';
 DOT:                '.';
+COLON:              ':';
 
 // Literals
 INTEGER_LITERAL:    Digits;
 BOOL_LITERAL:       'true'
             |       'false'
             ;
-STRING_LITERAL:     '"' (LetterOrDigit | [!@#$%^&*+()\-_?\\/,.<>~`{}\[\]])* '"';
+STRING_LITERAL:     '"' (LetterOrDigit | [!@#$%^&*+()\-_?\\/,.<>~`{}])* '"';
 
 // Identifiers
 
