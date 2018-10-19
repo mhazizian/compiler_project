@@ -10,9 +10,24 @@ options { tokenVocab=SmoolaLexer; }
 }
 
 program
-    : (variableDeclarator | LINE_COMMENT )+ EOF 
+    : (funcGenerator | LINE_COMMENT )+ EOF 
     ;
 
+funcGenerator
+	: DEF methodName=IDENTIFIER
+		LPAREN ((IDENTIFIER COLON type COMMA)* (IDENTIFIER COLON type))? RPAREN
+		COLON type
+		LBRACE blockBody RBRACE
+	;
+
+blockBody
+	: (variableDeclarator | LINE_COMMENT )*
+		statement* (LBRACE blockBody RBRACE statement*)?
+	;
+
+statement
+	: LINE_COMMENT
+	; 
 
 variableDeclarator
     : VAR varName=IDENTIFIER COLON varType=type SEMI
