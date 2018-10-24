@@ -18,6 +18,7 @@ IF:                 'if';
 BOOLEAN:            'boolean';
 THEN:               'then';
 THIS:               'this';
+MAIN:               'main';
 
 // Operators
 
@@ -50,10 +51,12 @@ DOT:                '.';
 COLON:              ':';
 
 // Literals
+
 INTEGER_LITERAL:    Digits;
 BOOL_LITERAL:       'true'
             |       'false'
             ;
+
 STRING_LITERAL:     '"' (LetterOrDigit | [!@#$%^&*+()\-_?\\/,.<>~`{}])* '"';
 
 // Identifiers
@@ -63,7 +66,7 @@ IDENTIFIER:         Letter LetterOrDigit*;
 // Whitespace and comments
 
 WS:                 [ \t\r\n]+ -> skip;
-LINE_COMMENT:       '#' ~[\r\n]* -> skip;
+COMMENT:       '#' ~[\r\n]* -> skip;
 
 // Fragment rules
 

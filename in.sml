@@ -1,19 +1,27 @@
-def main(tes1: int, test2: string, test3: int[]): int[] {
-	#var iasfas : int;
-	var iasfas : int;
-	{
-		#var iasfas : int;
-		var iasfas : string;
-	}	
+class test
+{
+    def main(): int
+    {
+    }
 }
-#var iasfas : int;
-#var iasfas : string;
-#var iasfas : int[];
-#var iasfas : Matkhkhjh ;
-# var iadfsf1312 : int[];
-# var isadfsf : string[];
-# "asdflashdfkjsalam123"
 
-# "!@#$%^&8*+()_-?\/.,~`<>"
-# Main
-#Math
+class another_class
+{
+      var class_variable : string;
+      var array : int[];
+      var another : test;
+
+    def another_one(tes1: int, test2: string, test3: int[]): int[]
+    {
+          var class_variable : string;
+          var array : int[];
+          var another : something;
+    }
+
+    def second_class(tes1: int, test2: string, test3: int[]): int[]
+    {
+          var class_variable : string;
+          var array : int[];
+          var another : something;
+    }
+}

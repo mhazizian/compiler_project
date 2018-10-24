@@ -45,7 +45,7 @@ importDeclaration
 
 typeDeclaration
     : classOrInterfaceModifier*
-      (classDeclaration | enumDeclaration | interfaceDeclaration | annotationTypeDeclaration)
+      (methodDeclaration | enumDeclaration | interfaceDeclaration | annotationTypeDeclaration)
     | ';'
     ;
 
@@ -73,7 +73,7 @@ variableModifier
     | annotation
     ;
 
-classDeclaration
+methodDeclaration
     : CLASS IDENTIFIER typeParameters?
       (EXTENDS typeType)?
       (IMPLEMENTS typeList)?
@@ -134,7 +134,7 @@ memberDeclaration
     | genericConstructorDeclaration
     | interfaceDeclaration
     | annotationTypeDeclaration
-    | classDeclaration
+    | methodDeclaration
     | enumDeclaration
     ;
 
@@ -172,7 +172,7 @@ constructorDeclaration
     ;
 
 fieldDeclaration
-    : typeType variableDeclarators ';'
+    : typeType variableDeclarations ';'
     ;
 
 interfaceBodyDeclaration
@@ -186,7 +186,7 @@ interfaceMemberDeclaration
     | genericInterfaceMethodDeclaration
     | interfaceDeclaration
     | annotationTypeDeclaration
-    | classDeclaration
+    | methodDeclaration
     | enumDeclaration
     ;
 
@@ -219,15 +219,15 @@ genericInterfaceMethodDeclaration
     : typeParameters interfaceMethodDeclaration
     ;
 
-variableDeclarators
-    : variableDeclarator (',' variableDeclarator)*
+variableDeclarations
+    : variableDeclaration (',' variableDeclaration)*
     ;
 
-variableDeclarator
-    : variableDeclaratorId ('=' variableInitializer)?
+variableDeclaration
+    : variableDeclarationId ('=' variableInitializer)?
     ;
 
-variableDeclaratorId
+variableDeclarationId
     : IDENTIFIER ('[' ']')*
     ;
 
@@ -263,11 +263,11 @@ formalParameterList
     ;
 
 formalParameter
-    : variableModifier* typeType variableDeclaratorId
+    : variableModifier* typeType variableDeclarationId
     ;
 
 lastFormalParameter
-    : variableModifier* typeType '...' variableDeclaratorId
+    : variableModifier* typeType '...' variableDeclarationId
     ;
 
 qualifiedName
@@ -334,7 +334,7 @@ annotationTypeElementDeclaration
 
 annotationTypeElementRest
     : typeType annotationMethodOrConstantRest ';'
-    | classDeclaration ';'?
+    | methodDeclaration ';'?
     | interfaceDeclaration ';'?
     | enumDeclaration ';'?
     | annotationTypeDeclaration ';'?
@@ -350,7 +350,7 @@ annotationMethodRest
     ;
 
 annotationConstantRest
-    : variableDeclarators
+    : variableDeclarations
     ;
 
 defaultValue
@@ -370,12 +370,12 @@ blockStatement
     ;
 
 localVariableDeclaration
-    : variableModifier* typeType variableDeclarators
+    : variableModifier* typeType variableDeclarations
     ;
 
 localTypeDeclaration
     : classOrInterfaceModifier*
-      (classDeclaration | interfaceDeclaration)
+      (methodDeclaration | interfaceDeclaration)
     | ';'
     ;
 
@@ -420,7 +420,7 @@ resources
     ;
 
 resource
-    : variableModifier* classOrInterfaceType variableDeclaratorId '=' expression
+    : variableModifier* classOrInterfaceType variableDeclarationId '=' expression
     ;
 
 /** Matches cases then statements, both of which are mandatory.
@@ -446,7 +446,7 @@ forInit
     ;
 
 enhancedForControl
-    : variableModifier* typeType variableDeclaratorId ':' expression
+    : variableModifier* typeType variableDeclarationId ':' expression
     ;
 
 // EXPRESSIONS
