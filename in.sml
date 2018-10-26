@@ -5,6 +5,8 @@ class MainClass
 # COMMENT
     def main(): int{
     # COMMENT
+    a.length;
+    new b().c().length.len(1, a, "32" + a, true);
       return value;
       # COMMENT
     }
@@ -17,11 +19,11 @@ class TestClass extends ExtendedClass
 {
 # COMMENT
       var class_variable : string;
-      # COMMENT
+      # # COMMENT
       var array : int[];
       # COMMENT
-      var another : test;
       # COMMENT
+      var another : test;
 
     def another_one(tes1: int, test2: string, test3: int[]): int[]
     # COMMENT
@@ -35,6 +37,13 @@ class TestClass extends ExtendedClass
           array = "salam";
           array = new int[3];
           # COMMENT
+
+          writeln(array.len());
+          writeln(new something().len());
+          writeln(array.len(s).leng());
+          writeln(new something().len(a, "salam", 2, true).temp());
+          writeln(new something().len(a, "salam", 2, true).length.temp().length);
+
           ss=  2;
           dsklad = true;
           woi = new lsd();
@@ -42,6 +51,8 @@ class TestClass extends ExtendedClass
           A = B + C;
           D = 3 + A;
           K = 4 + 4;
+
+          C = (3 * 4 + 5);
 
           j = (1 + (2 + a || 2));
 
@@ -60,20 +71,22 @@ class TestClass extends ExtendedClass
           {
            # COMMENT
            while( a> 2){
-            k = k * 2;
+            k = !!k * 2;
+            k = -k;
             }
           # COMMENT
           writeln("[!@#$%^&*+()\-_?\\/,.<>~`{}]1234567890-=qwertyuipagjkdflh;zxcbm,./");
           }# COMMENT
           else {
             writeln("else token");
+            writeln(somethingelse);
           }
           return something;
           # COMMENT
     }
     # COMMENT
 
-    def second_class(tes1: int, test2: string, test3: int[]): int[]
+    def second_class(one_argument: int): int[]
     # COMMENT
     {
     # COMMENT
@@ -86,5 +99,21 @@ class TestClass extends ExtendedClass
           # COMMENT
     }
     # COMMENT
+    def third_class(): int[]
+    # COMMENT
+    {
+    # COMMENT
+          var class_variable : string;
+          # COMMENT
+          var array : int[];
+          var another : something;
+          # COMMENT
+
+          while((A * 2 + "salam") > a && 2)
+            writeln(a = 2);
+
+          return array;
+          # COMMENT
+    }
 }
 # COMMENT

@@ -1,9 +1,5 @@
 parser grammar SmoolaParser;
 
-// Class return value can be Class
-// main method is variable less
-// other logic operators in nested arithmetic structures
-
 options { tokenVocab=SmoolaLexer; }
 
 @members{
@@ -11,23 +7,32 @@ options { tokenVocab=SmoolaLexer; }
         System.out.print(obj);
    }
 
-   void println(Object obj2){
-        System.out.println(obj2);
+   void printEmptyLine(){
+        System.out.println("");
+   }
+
+   void printLine(Object obj){
+        System.out.println(obj);
    }
 }
 
-program
+smoolaParser
   : mainClassDeclaration
     (classDeclaration
-    | COMMENT
-    )*
+    | COMMENT)*
     EOF;
 
 classDeclaration
-  : CLASS methodName = IDENTIFIER
-        { print("MethodDes: " + $methodName.text + " ,");}
+  : CLASS className = IDENTIFIER
+        { print("ClassDec:" + $className.text); }
         extendsDeclaration?
+    {printEmptyLine();}
     classBlock
+  ;
+
+extendsDeclaration
+  : EXTENDS extendedClass = IDENTIFIER
+  { print("," + $extendedClass.text); }
   ;
 
 classBlock
@@ -38,19 +43,26 @@ classBlock
   ;
 
 mainClassDeclaration
-  : CLASS methodName = IDENTIFIER
-        { print("MethodDes: " + $methodName.text + " ,");}
+  : CLASS className = IDENTIFIER
+        { printLine("ClassDec:" + $className.text); }
     mainClassBlock
   ;
 
 mainClassBlock
-	: (COMMENT)* LBRACE
+	: (COMMENT)* LBRACE (COMMENT)*
       (mainMethodDeclaration COMMENT*)
     RBRACE
 	;
 
+methodDeclaration
+  : DEF methodName = IDENTIFIER { print("MethodDec:" + $methodName.text); }
+  arguments COLON type
+  {printEmptyLine();}
+  bodyBlock
+  ;
+
 mainMethodDeclaration
-  : DEF MAIN { print("MethodDes: main ,");}
+  : DEF MAIN { printLine("MethodDec:main"); }
         LPAREN RPAREN COLON INT
     mainBodyBlock
   ;
@@ -58,61 +70,32 @@ mainMethodDeclaration
 mainBodyBlock
 	: (COMMENT)* LBRACE
       (variableDeclaration | COMMENT)*
-      (mainBodyBlock expression*)*
+      (expression
+      | statement
+      | arithmeticBlock SEMI)*
       returnBlock
     RBRACE
 	;
 
-methodDeclaration
-  : DEF methodName = IDENTIFIER arguments COLON  type
-    bodyBlock
-  ;
-
 arguments
   : LPAREN
-      ((arg=IDENTIFIER COLON type COMMA {print($arg.text + ", ");} )*
-      (IDENTIFIER COLON type) {print($arg.text);} )?
-    RPAREN { println("");}
-  ;
-
-extendsDeclaration
-  : (EXTENDS IDENTIFIER)
+      ((arg = IDENTIFIER { print("," + $arg.text); } COLON type COMMA)*
+      (arg = IDENTIFIER { print("," + $arg.text); } COLON type))?
+    RPAREN
   ;
 
 bodyBlock
 	: (COMMENT)* LBRACE
       (variableDeclaration
-      | COMMENT
-      )*
-      (bodyBlock
-      | expression
-      | statement
-      )*
+      | COMMENT)*
+      ( expression
+      | statement)*
       returnBlock
     RBRACE
 	;
 
 returnBlock
-  : RETURN IDENTIFIER SEMI
-  ;
-
-logicalOperators
-  : (BOOL_LITERAL | IDENTIFIER)
-    ( AND
-    | OR
-    )
-    (BOOL_LITERAL | IDENTIFIER)
-    | BANG (BOOL_LITERAL | IDENTIFIER)
-  ;
-
-comparativeOperators
-  : (INTEGER_LITERAL | IDENTIFIER)
-    ( NOTEQUAL
-    | GT
-    | LT
-    | EQUAL
-    )
-    (INTEGER_LITERAL | IDENTIFIER)
+  : RETURN arithmeticBlock SEMI
   ;
 
 expression
@@ -126,42 +109,89 @@ expression
 
 arrayAssign
   : IDENTIFIER LBRACK arithmeticBlock RBRACK
-    ASSIGN arithmeticBlock SEMI
+    operator = ASSIGN
+        { printLine("Operator:" + $operator.text); }
+    arithmeticBlock SEMI
   ;
 
 arrayInitializer
-  : IDENTIFIER ASSIGN NEW INT LBRACK
+  : IDENTIFIER operator = ASSIGN
+        { printLine("Operator:" + $operator.text); }
+    NEW INT LBRACK
     arithmeticBlock
     RBRACK SEMI
   ;
 
 arithmeticAssign
-  : IDENTIFIER ASSIGN
+  : IDENTIFIER operator = ASSIGN
+        { printLine("Operator:" + $operator.text); }
     (arithmeticBlock)+
     SEMI
   ;
 
 arithmeticBlock
-  : LPAREN
-    (IDENTIFIER | INTEGER_LITERAL | BOOL_LITERAL)
-    (ADD | SUB | MUL | DIV | AND | OR)
-    arithmeticBlock
-    RPAREN
-  | (IDENTIFIER | INTEGER_LITERAL | BOOL_LITERAL)
-    (ADD | SUB | MUL | DIV | AND | OR)
-    arithmeticBlock
-  | (IDENTIFIER | INTEGER_LITERAL | BOOL_LITERAL)
+  : additiveExpression (
+      (operator = equalityOperator
+          { printLine("Operator:" + $operator.text); }
+      | comparisonOperator)
+        additiveExpression)*
+  ;
+
+equalityOperator
+  : EQUAL | NOTEQUAL| ASSIGN
+  ;
+
+comparisonOperator
+  : GT | LT
+  ;
+
+additiveExpression
+  : multiplicativeExpression (
+      operator = additiveOperator
+          { printLine("Operator:" + $operator.text); }
+      multiplicativeExpression)*
+  ;
+
+additiveOperator
+  : ADD | SUB | OR
+  ;
+
+multiplicativeExpression
+  : primary (operator = multiplicativeOperator
+        { printLine("Operator:" + $operator.text); }
+      primary)*
+  ;
+
+multiplicativeOperator
+  : MUL | DIV | AND
+  ;
+
+primary
+  : LPAREN arithmeticBlock RPAREN
+    | literal
+    | operator = BANG
+          { printLine("Operator:" + $operator.text); }
+      primary
+    | operator = SUB
+          { printLine("Operator:" + $operator.text); }
+      primary
+  ;
+
+literal:
+  IDENTIFIER | INTEGER_LITERAL | BOOL_LITERAL | STRING_LITERAL | methodCall
   ;
 
 primitiveAssign
-  : IDENTIFIER ASSIGN
+  : IDENTIFIER operator = ASSIGN
+        { printLine("Operator:" + $operator.text); }
     (arithmeticBlock | STRING_LITERAL)
     SEMI
   ;
 
 newAssign
-  : IDENTIFIER ASSIGN NEW IDENTIFIER
-        LPAREN RPAREN SEMI
+  : IDENTIFIER operator = ASSIGN
+        { printLine("Operator:" + $operator.text); }
+        NEW IDENTIFIER LPAREN RPAREN SEMI
   ;
 
 statement
@@ -172,38 +202,55 @@ statement
   ;
 
 whileStatement
-  : WHILE LPAREN comparativeOperators RPAREN
-    conditionBlock
+  : WHILE { printLine("Loop:While‬‬"); }
+    LPAREN arithmeticBlock RPAREN
+    conditionalBlock
   ;
 
 elseStatement
-  : ELSE
-    conditionBlock
+  : ELSE { printLine("Conditional:else"); }
+    conditionalBlock
   ;
 
 ifStatement
-  : IF LPAREN comparativeOperators RPAREN THEN
-    conditionBlock
+  : IF { printLine("Conditional:if‬‬"); }
+    LPAREN arithmeticBlock RPAREN THEN
+    conditionalBlock
   ;
 
-conditionBlock
+conditionalBlock
 	: LBRACE
     (expression
     | statement
     )* RBRACE
-    | (COMMENT)*
-      (expression
-      | statement
-      )
+  | (COMMENT)*
+    (expression
+    | statement
+    )
 	;
 
 writeln
-  : WRITELN LPAREN STRING_LITERAL RPAREN SEMI
+  : WRITELN LPAREN arithmeticBlock RPAREN SEMI
+  ;
+
+methodCall
+  : NEW IDENTIFIER
+    LPAREN RPAREN (DOT method)+
+  | IDENTIFIER (DOT method)+
+  ;
+
+method
+  : IDENTIFIER LPAREN (methodCallArguments) RPAREN
+  | LENGTH
+  ;
+
+methodCallArguments
+  : (arithmeticBlock) (COMMA methodCallArguments)? |
   ;
 
 variableDeclaration
-  : VAR varName=IDENTIFIER COLON varType=type SEMI
-      	{ println("varDec: " + $varName.text + ", " + $varType.text); }
+  : VAR varName = IDENTIFIER COLON varType = type SEMI
+      	{ printLine("VarDec:" + $varName.text + "," + $varType.text); }
   ;
 
 type

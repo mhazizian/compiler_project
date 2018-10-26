@@ -1,5 +1,5 @@
 # example to run script:
-# ./run_antler.sh Smoola program
+# ./run_antler.sh smoolaParser program
 
 export CLASSPATH=".:/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH"
 
