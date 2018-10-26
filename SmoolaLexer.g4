@@ -19,6 +19,7 @@ BOOLEAN:            'boolean';
 THEN:               'then';
 THIS:               'this';
 MAIN:               'main';
+LENGTH:             'length';
 
 // Operators
 
@@ -32,8 +33,6 @@ GT:                 '>';
 LT:                 '<';
 BANG:               '!';
 EQUAL:              '==';
-LE:                 '<=';
-GE:                 '>=';
 AND:                '&&';
 OR:                 '||';
 
@@ -57,7 +56,7 @@ BOOL_LITERAL:       'true'
             |       'false'
             ;
 
-STRING_LITERAL:     '"' (LetterOrDigit | [!@#$%^&*+()\-_?\\/,.<>~`{}])* '"';
+STRING_LITERAL:     '"' (~["\r\n])* '"';
 
 // Identifiers
 
