@@ -135,47 +135,100 @@ grammar Smoola;
         |   expressionOr
     ;
 
-    expressionOr:
-        expressionAnd expressionOrTemp
+    // DONE
+    expressionOr returns [Expression synFinalResult]::
+        expressionAnd
+        expressionOrTemp[expressionAnd.synFinalResult]
+        { $synFinalResult = $expressionAndTemp.synFinalResult; }
     ;
 
-    expressionOrTemp:
-        '||' expressionAnd expressionOrTemp
-        |
+    // DONE
+    expressionOrTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
+        '||'
+        expressionAnd
+        {
+          BinaryExpression currentRes = new BinaryExpression(
+              $inhCurrentResult, $expressionAnd.synFinalResult, BinaryOperator.or
+          );
+          $inhCurrentResult = $currentRes;
+        }
+        expressionOrTemp[inhCurrentResult]
+        | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    expressionAnd:
-        expressionEq expressionAndTemp
+    // DONE
+    expressionAnd returns [Expression synFinalResult]::
+        expressionEq
+        expressionAndTemp[expressionEq.synFinalResult]
+        { $synFinalResult = $expressionAndTemp.synFinalResult; }
     ;
 
-    expressionAndTemp:
-        '&&' expressionEq expressionAndTemp
-        |
+    // DONE
+    expressionAndTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
+        '&&'
+        expressionEq
+        {
+          BinaryExpression currentRes = new BinaryExpression(
+              $inhCurrentResult, $expressionEq.synFinalResult, BinaryOperator.and
+          );
+          $inhCurrentResult = $currentRes;
+        }
+        expressionAndTemp[inhCurrentResult]
+        | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    expressionEq:
-        expressionCmp expressionEqTemp
+    // DONE
+    expressionEq returns [Expression synFinalResult]::
+        expressionCmp
+        expressionEqTemp[expressionCmp.synFinalResult]
+        { $synFinalResult = $expressionEqTemp.synFinalResult; }
     ;
 
-    expressionEqTemp:
-        ('==' | '<>') expressionCmp expressionEqTemp
-        |
+    // DONE
+    expressionEqTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
+        operator=('==' | '<>')
+        expressionCmp
+        {
+          BinaryExpression currentRes = new BinaryExpression(
+              $inhCurrentResult, $expressionCmp.synFinalResult,
+              ($operator.text.equals('==')) ? BinaryOperator.eq : BinaryOperator.neq
+          );
+          $inhCurrentResult = currentRes;
+        }
+        expressionEqTemp[inhCurrentResult] // TODO a > b < c ??
+        | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    expressionCmp:
-        expressionAdd expressionCmpTemp
+    // DONE
+    expressionCmp returns [Expression synFinalResult]::
+        expressionAdd
+        expressionCmpTemp[expressionAdd.synFinalResult]
+        { $synFinalResult = $expressionCmpTemp.synFinalResult; }
     ;
 
-    expressionCmpTemp:
-        ('<' | '>') expressionAdd expressionCmpTemp
-        |
+    // DONE
+    expressionCmpTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
+        operator=('<' | '>')
+        expressionAdd
+        {
+          BinaryExpression currentRes = new BinaryExpression(
+              $inhCurrentResult, $expressionAdd.synFinalResult,
+              ($operator.text.equals('>')) ? BinaryOperator.gt : BinaryOperator.lt
+          );
+          $inhCurrentResult = $currentRes;
+        }
+        expressionCmpTemp[inhCurrentResult] // TODO a > b < c ??
+        | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    expressionAdd:
-        expressionMult expressionAddTemp
+    // DONE
+    expressionAdd reutrns [Expression synFinalResult]:
+        expressionMult
+        expressionAddTemp[expressionMult.synFinalResult]
+        { $synFinalResult = $expressionAddTemp.synFinalResult; }
     ;
 
-    // @todo: BinaryExpression or Expression
+    // DONE
     expressionAddTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         operator=('+' | '-')
         expressionMult
@@ -189,18 +242,20 @@ grammar Smoola;
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    expressionMult [Expression inhCurrentResult] returns [Expression synFinalResult]:
-        expressionUnary[inhCurrentResult]
-        expressionMultTemp[expressionUnary.synResult]
+    // DONE
+    expressionMult returns [Expression synFinalResult]:
+        expressionUnary
+        expressionMultTemp[expressionUnary.synFinalResult]
         { $synFinalResult = $expressionMultTemp.synFinalResult; }
     ;
 
+    // DONE
     expressionMultTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         operator=('*' | '/')
         expressionUnary
         {
             BinaryExpression currentRes = new BinaryExpression(
-                $inhCurrentResult, $expressionUnary.synResult,
+                $inhCurrentResult, $expressionUnary.synFinalResult,
                 ($operator.text.equals('*')) ? BinaryOperator.mult : BinaryOperator.div
             );
             // TODO : check this later:
@@ -210,7 +265,8 @@ grammar Smoola;
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    expressionUnary [Expression inhCurrentResult] returns [Expression synFinalResult]:
+    // DONE
+    expressionUnary returns [Expression synFinalResult]:
         operator=('!' | '-')
         expressionUnary
         {
@@ -222,10 +278,14 @@ grammar Smoola;
         | expressionMem { $synFinalResult = $expressionMem.synFinalResult; }
     ;
 
+    // DONE
     expressionMem returns [Expression synFinalResult]:
-        expressionMethods expressionMemTemp
+        expressionMethods
+        expressionMemTemp[expressionMethods.synFinalResult]
+        { $synFinalResult = $expressionMemTemp.synFinalResult; }
     ;
 
+    // DONE
     expressionMemTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '[' expression ']'
             {
@@ -233,17 +293,20 @@ grammar Smoola;
             }
         |   { $synFinalResult = $inhCurrentResult; }
     ;
+
+    // DONE
     expressionMethods returns [Expression synFinalResult]:
         expressionOther
         expressionMethodsTemp[expressionOther.synFinalResult]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
     ;
 
+    // DONE
     expressionMethodsTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
-        '.' 
+        '.'
         (
-            id=ID '(' ')' 
-                {   
+            id=ID '(' ')'
+                {
                     Expression instance = $inhCurrentResult;
                     Identifier id = new Identifier($id.text);
                     $inhCurrentResult = new MethodCall(instance, id);
@@ -255,8 +318,8 @@ grammar Smoola;
                         $inhCurrentResult = new MethodCall(instance, id);
                     }
                 '(' (expression { $inhCurrentResult.addArg($expression.synFinalResult); }
-                    (',' expression { $inhCurrentResult.addArg($expression.synFinalResult); } )*) ')' 
-            |   'length' 
+                    (',' expression { $inhCurrentResult.addArg($expression.synFinalResult); } )*) ')'
+            |   'length'
                     {
                         Expression instance = $inhCurrentResult;
                         $inhCurrentResult = new Lenghth(instance);
@@ -265,10 +328,12 @@ grammar Smoola;
         expressionMethodsTemp[]
         | { $synFinalResult = $inhCurrentResult; }
     ;
+
+    // DONE
     expressionOther return [Expression synFinalResult]:
         num=CONST_NUM { $synFinalResult = new IntValue(Integer.parseInt(num.text), new IntType()); }
-        |   str=CONST_STR 
-            { 
+        |   str=CONST_STR
+            {
                 $synFinalResult = new StringValue($str.text, new StringType());
             }
         |   'new ' 'int' '[' num=CONST_NUM ']'
@@ -277,7 +342,7 @@ grammar Smoola;
                     new IntValue(Integer.parseInt(num.text), new IntType())
                 );
             }
-        |   'new ' newClassId=ID '(' ')' 
+        |   'new ' newClassId=ID '(' ')'
             {
                 Identifier id = new Identifier($newClassId.text);
                 $synFinalResult = new NewClass(id);
@@ -289,19 +354,20 @@ grammar Smoola;
         |   id=ID '[' expression ']'
             {
                 Identifier instance = new Identifier($id.text);
-                Expression exp = $expression.synFinalResult; 
+                Expression exp = $expression.synFinalResult;
                 $synFinalResult = new ArrayCall(instance, exp);
             }
         |   '(' expression ')' { $synFinalResult = $expression.synFinalResult; }
     ;
 
+    // DONE
     type returns [Type synVarType]:
         'int' { $synVarType = new IntType(); } |
         'boolean' { $synVarType = new BooleanType(); } |
         'string' { $synVarType = new StringType(); } |
         'int' '[' ']'  { $synVarType = new ArrayType(); } |
-        id=ID 
-            { 
+        id=ID
+            {
                 $synVarType = new UserDefinedType();
                 $synVarType.setName(new Identifier($id.text));
             } // TODO : generate compatible statment
