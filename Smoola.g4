@@ -1,4 +1,17 @@
 grammar Smoola;
+    @header {
+        import javafx.util.Pair; 
+        import java.util.ArrayList; 
+
+        import ast.node.Program;
+        import ast.node.declaration.*;
+        import ast.node.expression.Identifier;
+        // import symbolTable.*;
+        import ast.Type.PrimitiveType.*;
+        import ast.Type.ArrayType.*;
+        import ast.Type.UserDefinedType.*;
+        import ast.Type.*;
+    }
     program:
         mainClass (classDeclaration)* EOF
     ;
@@ -9,8 +22,12 @@ grammar Smoola;
     classDeclaration:
         'class' ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
     ;
-    varDeclaration:
-        'var' ID ':' type ';'
+    varDeclaration returns [VarDeclaration synVarDec]:
+        'var' name=ID ':' type ';'
+        {
+            Identifier id = new Identifier($name.text);
+            VarDeclaration varDec = new VarDeclaration(id, $type.synVarType);
+        }
     ;
     methodDeclaration:
         'def' ID ('(' ')' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
@@ -136,12 +153,12 @@ grammar Smoola;
         |   ID '[' expression ']'
         |   '(' expression ')'
     ;
-    type:
-        'int' |
-        'boolean' |
-        'string' |
-        'int' '[' ']' |
-        ID
+    type returns [Type synVarType]:
+        'int' { $synVarType = new IntType(); } |
+        'boolean' { $synVarType = new BooleanType(); } |
+        'string' { $synVarType = new StringType(); } |
+        'int' '[' ']'  { $synVarType = new ArrayType(); } |
+        ID { $synVarType = new UserDefinedType(); } // TODO : generate compatible statment
     ;
     CONST_NUM:
         [0-9]+
