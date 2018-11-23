@@ -226,15 +226,19 @@ grammar Smoola;
         expressionMethods expressionMemTemp
     ;
 
-    expressionMemTemp:
+    expressionMemTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '[' expression ']'
-        |
+            {
+                $synFinalResult = new ArrayCall($inhCurrentResult, $expression.synFinalResult);
+            }
+        |   { $synFinalResult = $inhCurrentResult; }
     ;
     expressionMethods returns [Expression synFinalResult]:
         expressionOther
         expressionMethodsTemp[expressionOther.synFinalResult]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
     ;
+
     expressionMethodsTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '.' 
         (
