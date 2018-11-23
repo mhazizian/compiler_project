@@ -16,6 +16,8 @@ grammar Smoola;
                 SymbolTable.push(new SymbolTable());
             else
                 SymbolTable.push(new SymbolTable(SymbolTable.top.getPreSymbolTable()));
+
+            print("scope created.");
         }
         void print(Object s) {
             System.out.println(s);
@@ -38,7 +40,7 @@ grammar Smoola;
     mainClass:
         { createNewSymbolTable(); }
         // name should be checked later
-        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
+        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  varDeclaration* statements 'return' expression ';' '}' '}'
         { SymbolTable.pop(); }
     ;
     classDeclaration returns [ClassDeclaration synClassDeclaration]:
