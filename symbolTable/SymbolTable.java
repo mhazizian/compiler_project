@@ -10,6 +10,7 @@ public class SymbolTable {
 	// Static members region
 
 	public static SymbolTable top;
+	public static int itemIndex = 0;
 	
 	private static Stack<SymbolTable> stack = new Stack<SymbolTable>();
 

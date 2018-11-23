@@ -1,20 +1,28 @@
 grammar Smoola;
 
     @header {
-      import ast.node.Program;
-      import ast.node.declaration.*;
-      import ast.node.expression.Identifier;
-      import symbolTable.*;
+        import ast.node.Program;
+        import ast.node.declaration.*;
+        import ast.node.expression.Identifier;
+        import symbolTable.*;
+        import ast.Type.PrimitiveType.*;
+        import ast.Type.ArrayType.*;
+        import ast.Type.UserDefinedType.*;
+        import ast.Type.*;
     }
 
     program:
+        // {
+        //     // create SymbolTable
+        // }
         mainClass
           (
             classDeclaration
             {
-              System.out.println($classDeclaration.synClassDeclaration.toString());
+              System.out.println($classDeclaration.synClassDeclaration.getName());
             }
           )* EOF
+
     ;
 
     mainClass:
@@ -22,13 +30,19 @@ grammar Smoola;
         'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
     ;
     classDeclaration returns [ClassDeclaration synClassDeclaration]:
-        'class' ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
+        'class' name=ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
         {
-          $synClassDeclaration = new ClassDeclaration(null, null);
+            Identifier id = new Identifier($name.text);
+            $synClassDeclaration = new ClassDeclaration(id, null);
         }
     ;
     varDeclaration:
-        'var' ID ':' type ';'
+        'var' name=ID ':' type ';'
+        {
+            SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase($name.text, $type.synVarType, SymbolTable.itemIndex);
+            SymbolTable.itemIndex += 1;
+            System.out.println(SymbolTable.itemIndex);
+        }
     ;
     methodDeclaration:
         'def' ID ('(' ')' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
@@ -154,12 +168,12 @@ grammar Smoola;
         |   ID '[' expression ']'
         |	'(' expression ')'
 	;
-	type:
-	    'int' |
-	    'boolean' |
-	    'string' |
-	    'int' '[' ']' |
-	    ID
+	type returns [Type synVarType]:
+	    'int' { $synVarType = new IntType(); } |
+	    'boolean' { $synVarType = new BooleanType(); } |
+	    'string' { $synVarType = new StringType(); } |
+	    'int' '[' ']'  { $synVarType = new ArrayType(); } |
+	    ID { $synVarType = new UserDefinedType(); } // TODO : generate compatible statment
 	;
     CONST_NUM:
 		[0-9]+
