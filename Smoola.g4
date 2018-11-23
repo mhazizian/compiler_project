@@ -126,17 +126,30 @@ grammar Smoola;
         expression ';'
     ;
 
-    expression:
+    // DONE
+    expression return [Expression synFinalResult]:
         expressionAssignment
-    ;
-
-    expressionAssignment:
-        expressionOr '=' expressionAssignment
-        |   expressionOr
+        { $synFinalResult = $expressionAssignment.synFinalResult; }
     ;
 
     // DONE
-    expressionOr returns [Expression synFinalResult]::
+    expressionAssignment returns [Expression synFinalResult]:
+        expressionOr 
+        '=' 
+        expressionAssignment// a = b = c;
+            { 
+                $synFinalResult = new BinaryExpression(
+                    $expressionOr.synFinalResult,
+                    $expressionAssignment.synFinalResult,
+                    BinaryOperator.assign
+                );
+            }
+
+        |   expressionOr { $synFinalResult = $expressionOr.synFinalResult; }
+    ;
+
+    // DONE
+    expressionOr returns [Expression synFinalResult]:
         expressionAnd
         expressionOrTemp[expressionAnd.synFinalResult]
         { $synFinalResult = $expressionAndTemp.synFinalResult; }
@@ -157,7 +170,7 @@ grammar Smoola;
     ;
 
     // DONE
-    expressionAnd returns [Expression synFinalResult]::
+    expressionAnd returns [Expression synFinalResult]:
         expressionEq
         expressionAndTemp[expressionEq.synFinalResult]
         { $synFinalResult = $expressionAndTemp.synFinalResult; }
@@ -178,7 +191,7 @@ grammar Smoola;
     ;
 
     // DONE
-    expressionEq returns [Expression synFinalResult]::
+    expressionEq returns [Expression synFinalResult]:
         expressionCmp
         expressionEqTemp[expressionCmp.synFinalResult]
         { $synFinalResult = $expressionEqTemp.synFinalResult; }
@@ -200,7 +213,7 @@ grammar Smoola;
     ;
 
     // DONE
-    expressionCmp returns [Expression synFinalResult]::
+    expressionCmp returns [Expression synFinalResult]:
         expressionAdd
         expressionCmpTemp[expressionAdd.synFinalResult]
         { $synFinalResult = $expressionCmpTemp.synFinalResult; }
