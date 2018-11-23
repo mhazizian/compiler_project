@@ -36,10 +36,17 @@ grammar Smoola;
         }
         (
           '(' ')'
-          | ('(' firstArgId=ID ':' type { $synMethodDec.add(new Pair <String, Type> ($firstArgId.text, $type.synVarType)); }
+          | ('(' firstArgId=ID ':' type
+          {
+            Identifier identifier = new Identifier($firstArgId.text);
+            newArg = VarDeclaration(identifier, $type.synVarType);
+            $synMethodDec.addArg(newArg);
+          }
               (',' argId=ID ':' type
                   {
-                      $synMethodDec.add(new Pair <String, Type> ($argId.text, $type.synVarType));
+                    Identifier identifier = new Identifier($argId.text);
+                    newArg = VarDeclaration(identifier, $type.synVarType);
+                    $synMethodDec.addArg(newArg);
                   }
               )*')'
             )
