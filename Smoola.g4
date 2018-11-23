@@ -1,7 +1,7 @@
 grammar Smoola;
     @header {
-        import javafx.util.Pair; 
-        import java.util.ArrayList; 
+        import javafx.util.Pair;
+        import java.util.ArrayList;
 
         import ast.node.Program;
         import ast.node.declaration.*;
@@ -49,8 +49,27 @@ grammar Smoola;
             $synVarDec = varDec;
         }
     ;
-    methodDeclaration:
-        'def' ID ('(' ')' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
+    methodDeclaration [MethodDeclaration synMethodDec]:
+        'def' methodName=ID
+        {
+          $synMethodDec = new MethodDeclaration($methodName);
+        }
+        (
+          '(' ')'
+          | ('(' firstArgId=ID ':' type { $synMethodDec.add(new Pair <String, Type> ($firstArgId.text, $type.synVarType)); }
+              (',' argId=ID ':' type
+                  {
+                      $synMethodDec.add(new Pair <String, Type> ($argId.text, $type.synVarType));
+                  }
+              )*')'
+            )
+        )
+        ':' type
+        {
+          $synMethodDec.setReturnType($type.synVarType);
+        }
+
+        '{'  varDeclaration* statements 'return' expression ';' '}'
     ;
     statements:
         (statement)*
