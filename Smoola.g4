@@ -1,13 +1,31 @@
 grammar Smoola;
+
+    @header {
+      import ast.node.Program;
+      import ast.node.declaration.*;
+      import ast.node.expression.Identifier;
+      import symbolTable.*;
+    }
+
     program:
-        mainClass (classDeclaration)* EOF
+        mainClass
+          (
+            classDeclaration
+            {
+              System.out.println($classDeclaration.synClassDeclaration.toString());
+            }
+          )* EOF
     ;
+
     mainClass:
         // name should be checked later
         'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
     ;
-    classDeclaration:
+    classDeclaration returns [ClassDeclaration synClassDeclaration]:
         'class' ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
+        {
+          $synClassDeclaration = new ClassDeclaration(null, null);
+        }
     ;
     varDeclaration:
         'var' ID ':' type ';'
