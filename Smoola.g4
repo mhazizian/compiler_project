@@ -25,7 +25,7 @@ grammar Smoola;
         void print(Object s) {
             System.out.println(s);
         }
-        void addVariableDecleration(String name, Type type) {
+        SymbolTableItem addVariableDecleration(String name, Type type) {
             SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase(name, type, SymbolTable.itemIndex);
 
             // print("# logging: ");
@@ -41,9 +41,10 @@ grammar Smoola;
             } catch (ItemAlreadyExistsException error) {
                 print("## put failed: ItemAlreadyExistsException");
             }
+            return ((SymbolTableItem) varDec);
         }
 
-        void addMethodDecleration(String name, ArrayList<Type> args) {
+        SymbolTableItem addMethodDecleration(String name, ArrayList<Type> args) {
             SymbolTableMethodItem methodDec = new SymbolTableMethodItem(name, args);
             try {
                 String s = new String();
@@ -56,9 +57,10 @@ grammar Smoola;
             } catch (ItemAlreadyExistsException error) {
                 print("## put failed: ItemAlreadyExistsException");
             }
+            return ((SymbolTableItem) methodDec);
         }
 
-        void addClassDecleration(String name) {
+        SymbolTableItem addClassDecleration(String name) {
             SymbolTableClassItem classDec = new SymbolTableClassItem(name);
 
             try {
@@ -67,6 +69,7 @@ grammar Smoola;
             } catch (ItemAlreadyExistsException error) {
                 print("Item Already Exists Exception!");
             }
+            return ((SymbolTableItem) classDec);
         }
     }
 
@@ -117,11 +120,11 @@ grammar Smoola;
 
         { SymbolTable.pop(); }
     ;
-    varDeclaration:
+    varDeclaration returns [SymbolTableItem synVarDec]:
         'var' name=ID ':' type ';'
-        { addVariableDecleration($name.text, $type.synVarType); }
+        { $synVarDec = addVariableDecleration($name.text, $type.synVarType); }
     ;
-    methodDeclaration:
+    methodDeclaration returns [SymbolTableItem synMethodDec]:
         'def' methodName=ID
         {
             ArrayList<Pair<String, Type> > inArgs = new ArrayList<Pair<String, Type> >();
@@ -143,7 +146,7 @@ grammar Smoola;
             for(int i = 0; i < inArgs.size(); i++)
                 inArgsType.add(inArgs.get(i).getValue());
 
-            addMethodDecleration($methodName.text, inArgsType);
+            $synMethodDec = addMethodDecleration($methodName.text, inArgsType);
             createNewSymbolTable();
 
             // create VarDecleration for each input arg
