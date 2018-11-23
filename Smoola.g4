@@ -14,20 +14,23 @@ grammar Smoola;
     }
     program:
         { Program program = new Program(); }
-        mainClass {}
+        mainClass { program.setMainClass($mainClass.synClassDec); }
         (classDec=classDeclaration { program.addClass($classDec.synClassDec); } )*
         EOF
     ;
-    mainClass :// returns [ClassDeclaration synClassDec]:
+    mainClass returns [ClassDeclaration synClassDec]:
         // name should be checked later
 
         'class' self=ID '{' 'def' methodName=ID '(' ')' ':' 'int'
-            Identifier self = new Identifier($self.text);
-            Identifier methodName = new Identifier($methodName.text);
             {
+                Identifier self = new Identifier($self.text);
+                Identifier methodName = new Identifier($methodName.text);
+
                 ClassDeclaration mainClass = new ClassDeclaration(self, new Identifier(""));
                 MethodDeclaration mainMethod = new MethodDeclaration(methodName);
 
+                mainMethod.setReturnType(new IntType());
+                $synClassDec = mainClass;
             }
             '{'
                 varDeclaration*
@@ -37,17 +40,16 @@ grammar Smoola;
         '}'
     ;
     classDeclaration returns [ClassDeclaration synClassDec]:
-        {
-            Identifier self = new Identifier($name.text);
-            Identifier parent = new Identifier("");
-            if ($parent.text != "")
-                parent.setName($parent.text);
-
-            ClassDeclaration classDec = new ClassDeclaration(self, parent);
-            $synClassDec = classDec;
-        }
-
         'class' name=ID ('extends' parent=ID)?
+            {
+                Identifier self = new Identifier($name.text);
+                Identifier parent = new Identifier("");
+                if (!$parent.text.equals(""))
+                    parent.setName($parent.text);
+
+                ClassDeclaration classDec = new ClassDeclaration(self, parent);
+                $synClassDec = classDec;
+            }
             '{'
                 (varDec=varDeclaration { classDec.addVarDeclaration($varDec.synVarDec); } )*
                 (methodDec=methodDeclaration { classDec.addMethodDeclaration($methodDec.synMethodDec); } )*
@@ -64,20 +66,22 @@ grammar Smoola;
     methodDeclaration returns [MethodDeclaration synMethodDec]:
         'def' methodName=ID
         {
-          $synMethodDec = new MethodDeclaration($methodName);
+            Identifier methodName = new Identifier($methodName.text);
+            $synMethodDec = new MethodDeclaration(methodName);
         }
         (
           '(' ')'
-          | ('(' firstArgId=ID ':' type
+          | ('(' firstArgId=ID ':' firstArgType=type
           {
-            Identifier identifier = new Identifier($firstArgId.text);
-            newArg = VarDeclaration(identifier, $type.synVarType);
-            $synMethodDec.addArg(newArg);
+            Identifier firstArgIdentifier = new Identifier($firstArgId.text);
+            VarDeclaration firstArg = new VarDeclaration(firstArgIdentifier, $firstArgType.synVarType);
+
+            $synMethodDec.addArg(firstArg);
           }
-              (',' argId=ID ':' type
+              (',' argId=ID ':' argType=type
                   {
-                    Identifier identifier = new Identifier($argId.text);
-                    newArg = VarDeclaration(identifier, $type.synVarType);
+                    Identifier argIdentifier = new Identifier($argId.text);
+                    VarDeclaration newArg = new VarDeclaration(argIdentifier, $argType.synVarType);
                     $synMethodDec.addArg(newArg);
                   }
               )*')'
