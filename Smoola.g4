@@ -10,6 +10,17 @@ grammar Smoola;
         import ast.Type.UserDefinedType.*;
         import ast.Type.*;
     }
+    @members {
+        void createNewSymbolTable() {
+            if (SymbolTable.top == null)
+                SymbolTable.push(new SymbolTable());
+            else
+                SymbolTable.push(new SymbolTable(SymbolTable.top.getPreSymbolTable()));
+        }
+        void print(Object s) {
+            System.out.println(s);
+        }
+    }
 
     program:
         // {
@@ -19,33 +30,47 @@ grammar Smoola;
           (
             classDeclaration
             {
-              System.out.println($classDeclaration.synClassDeclaration.getName());
             }
           )* EOF
 
     ;
 
     mainClass:
+        { createNewSymbolTable(); }
         // name should be checked later
         'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
+        { SymbolTable.pop(); }
     ;
     classDeclaration returns [ClassDeclaration synClassDeclaration]:
+        { createNewSymbolTable(); }
+
         'class' name=ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
         {
             Identifier id = new Identifier($name.text);
             $synClassDeclaration = new ClassDeclaration(id, null);
         }
+        { SymbolTable.pop(); }
     ;
     varDeclaration:
         'var' name=ID ':' type ';'
         {
             SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase($name.text, $type.synVarType, SymbolTable.itemIndex);
+
+            print("# logging: ");
+
+            for (String name: SymbolTable.top.items.keySet()) {
+                print("# Log: " + name + ", " + ((SymbolTableVariableItemBase)SymbolTable.top.items.get(name)).getIndex());
+            }
+
+            print("Putting: " + varDec.getName() +", "+ varDec.getIndex());
+            SymbolTable.top.put(varDec);
             SymbolTable.itemIndex += 1;
-            System.out.println(SymbolTable.itemIndex);
         }
     ;
     methodDeclaration:
+        { createNewSymbolTable(); }
         'def' ID ('(' ')' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
+        { SymbolTable.pop(); }
     ;
     statements:
         (statement)*
@@ -58,7 +83,9 @@ grammar Smoola;
         statementAssignment
     ;
     statementBlock:
+        { createNewSymbolTable(); }
         '{'  statements '}'
+        { SymbolTable.pop(); }
     ;
     statementCondition:
         'if' '('expression')' 'then' statement ('else' statement)?
