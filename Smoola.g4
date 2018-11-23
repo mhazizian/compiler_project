@@ -57,43 +57,69 @@ grammar Smoola;
                 print("## put failed: ItemAlreadyExistsException");
             }
         }
+
+        void addClassDecleration(String name) {
+            SymbolTableClassItem classDec = new SymbolTableClassItem(name);
+
+            try {
+                print("## Putting: Class: " + classDec.getKey());
+                SymbolTable.top.put(classDec);
+            } catch (ItemAlreadyExistsException error) {
+                print("Item Already Exists Exception!");
+            }
+        }
     }
 
     program:
-        // {
-        //     // create SymbolTable
-        // }
+      { createNewSymbolTable(); }
         mainClass
-          (
-            classDeclaration
-            {
-            }
-          )* EOF
-
+        (
+          classDeclaration
+          {
+          }
+        )* 
+        { SymbolTable.pop(); }
+        EOF
     ;
 
     mainClass:
-        { createNewSymbolTable(); }
-        // name should be checked later
-        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  varDeclaration* statements 'return' expression ';' '}' '}'
-        { SymbolTable.pop(); }
+    // name should be checked later
+    'class' name=ID
+    {
+      try
+      {
+        SymbolTableClassItem classDec = new SymbolTableClassItem($name.text);
+        print("## Putting: Main Class: " + classDec.getKey());
+        SymbolTable.top.put(classDec);
+        createNewSymbolTable();
+      }
+      catch (ItemAlreadyExistsException error)
+      {
+        print("ItemAlreadyExistsException!");
+      }
+    }
+
+    '{' 'def' ID '(' ')' ':' 'int' '{'  varDeclaration* statements 'return' expression ';' '}' '}'
+    { SymbolTable.pop(); }
     ;
     classDeclaration returns [ClassDeclaration synClassDeclaration]:
-        { createNewSymbolTable(); }
-
-        'class' name=ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
+        'class' name=ID
         {
-            Identifier id = new Identifier($name.text);
-            $synClassDeclaration = new ClassDeclaration(id, null);
+            addClassDecleration($name.text);
+            createNewSymbolTable();
+        }
+
+        ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
+        {
+          Identifier id = new Identifier($name.text);
+          $synClassDeclaration = new ClassDeclaration(id, null);
         }
 
         { SymbolTable.pop(); }
     ;
     varDeclaration:
         'var' name=ID ':' type ';'
-        {
-            addVariableDecleration($name.text, $type.synVarType);
-        }
+        { addVariableDecleration($name.text, $type.synVarType); }
     ;
     methodDeclaration:
         'def' methodName=ID
