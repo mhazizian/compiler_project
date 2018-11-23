@@ -175,32 +175,45 @@ grammar Smoola;
         expressionMult expressionAddTemp
     ;
 
-    expressionAddTemp [Expression inhLeft]:
-        operator=('+' | '-') 
+    // @todo: BinaryExpression or Expression
+    expressionAddTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
+        operator=('+' | '-')
         expressionMult
         {
-            BinaryExpression currectRes = new BinaryExpression(
-                $inhLeft,
-                $expressionMult.synResult,
+            BinaryExpression currentRes = new BinaryExpression(
+                $inhCurrentResult, $expressionMult.synFinalResult,
                 ($operator.text.equals('+')) ? BinaryOperator.add : BinaryOperator.sub
             );
         }
-        expressionAddTemp
-        |
+        expressionAddTemp[currentRes]
+        | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    expressionMult:
+    expressionMult [Expression synFinalResult]:
         expressionUnary expressionMultTemp
     ;
 
-    expressionMultTemp:
-        ('*' | '/') expressionUnary expressionMultTemp
-        |
+    expressionMultTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
+        operator=('*' | '/')
+        expressionUnary
+        {
+          BinaryExpression currentRes = new BinaryExpression(
+              $inhCurrentResult, $expressionUnary.synResult,
+              ($operator.text.equals('*')) ? BinaryOperator.mult : BinaryOperator.div
+          );
+        }
+        expressionMultTemp[currentRes]
+        | { $synFinalResult = $inhCurrentResult; }
     ;
 
     expressionUnary:
-        ('!' | '-') expressionUnary
-        |   expressionMem
+        operator=('!' | '-')
+        expressionUnary
+        {
+          finalResult = new UnaryExpression(($operator.text.equals('!')) ? UnaryOperator.not : UnaryOperator.minus,
+          $expressionUnary.synResult)
+        }
+        | expressionMem // @todo
     ;
 
     expressionMem:
