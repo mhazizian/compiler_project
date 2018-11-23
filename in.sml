@@ -5,7 +5,9 @@ class MainClass
 
     def main(): int {
         var main_func : int;
-        a.length;
+        var a : int;
+        a = 2 + 3 + a - main_func;
+        # a.length;
         new b().c().length.len(1, a, "32" + a, true);
         return value;
     }

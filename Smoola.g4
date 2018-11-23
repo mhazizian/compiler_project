@@ -12,6 +12,12 @@ grammar Smoola;
         import ast.Type.UserDefinedType.*;
         import ast.Type.*;
     }
+    @members {
+        void print(Object s) {
+            System.out.println(s);
+        }
+    }
+
     program:
         { Program program = new Program(); }
         mainClass { program.setMainClass($mainClass.synClassDec); }
@@ -169,12 +175,21 @@ grammar Smoola;
         expressionMult expressionAddTemp
     ;
 
-    expressionAddTemp:
-        ('+' | '-') expressionMult expressionAddTemp
+    expressionAddTemp [Expression inhLeft]:
+        operator=('+' | '-') 
+        expressionMult
+        {
+            BinaryExpression currectRes = new BinaryExpression(
+                $inhLeft,
+                $expressionMult.synResult,
+                ($operator.text.equals('+')) ? BinaryOperator.add : BinaryOperator.sub
+            );
+        }
+        expressionAddTemp
         |
     ;
 
-        expressionMult:
+    expressionMult:
         expressionUnary expressionMultTemp
     ;
 
