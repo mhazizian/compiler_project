@@ -1,6 +1,9 @@
 grammar Smoola;
 
     @header {
+        import javafx.util.Pair; 
+        import java.util.ArrayList; 
+
         import ast.node.Program;
         import ast.node.declaration.*;
         import ast.node.expression.Identifier;
@@ -21,6 +24,38 @@ grammar Smoola;
         }
         void print(Object s) {
             System.out.println(s);
+        }
+        void addVariableDecleration(String name, Type type) {
+            SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase(name, type, SymbolTable.itemIndex);
+
+            // print("# logging: ");
+
+            // for (String name: SymbolTable.top.items.keySet()) {
+            //     print("# Log: " + name + ", " + ((SymbolTableVariableItemBase)SymbolTable.top.items.get(name)).getIndex());
+            // }
+
+            try {
+                print("## Putting Var: " + varDec.getName() +", "+ varDec.getIndex());
+                SymbolTable.top.put(varDec);
+                SymbolTable.itemIndex += 1;
+            } catch (ItemAlreadyExistsException error) {
+                print("## put failed: ItemAlreadyExistsException");
+            }
+        }
+
+        void addMethodDecleration(String name, ArrayList<Type> args) {
+            SymbolTableMethodItem methodDec = new SymbolTableMethodItem(name, args);
+            try {
+                String s = new String();
+                for (int i = 0; i < args.size(); i++)
+                    s = s + " " + args.get(i);
+                print("## Putting Method: " + name + " ,Args:" + s);
+
+                SymbolTable.top.put(methodDec);
+                
+            } catch (ItemAlreadyExistsException error) {
+                print("## put failed: ItemAlreadyExistsException");
+            }
         }
     }
 
@@ -51,28 +86,50 @@ grammar Smoola;
             Identifier id = new Identifier($name.text);
             $synClassDeclaration = new ClassDeclaration(id, null);
         }
-        
+
         { SymbolTable.pop(); }
     ;
     varDeclaration:
         'var' name=ID ':' type ';'
         {
-            SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase($name.text, $type.synVarType, SymbolTable.itemIndex);
-
-            // print("# logging: ");
-
-            // for (String name: SymbolTable.top.items.keySet()) {
-            //     print("# Log: " + name + ", " + ((SymbolTableVariableItemBase)SymbolTable.top.items.get(name)).getIndex());
-            // }
-
-            print("## Putting: Var" + varDec.getName() +", "+ varDec.getIndex());
-            SymbolTable.top.put(varDec);
-            SymbolTable.itemIndex += 1;
+            addVariableDecleration($name.text, $type.synVarType);
         }
     ;
     methodDeclaration:
-        { createNewSymbolTable(); }
-        'def' ID ('(' ')' | ('(' ID ':' type (',' ID ':' type)* ')')) ':' type '{'  varDeclaration* statements 'return' expression ';' '}'
+        'def' methodName=ID
+        {
+            ArrayList<Pair<String, Type> > inArgs = new ArrayList<Pair<String, Type> >();
+        }
+        (
+            '(' ')'
+            |   ('(' arg0=ID ':' arg0Type=type { inArgs.add(new Pair <String, Type> ($arg0.text, $arg0Type.synVarType)); }
+                    (',' arg=ID ':' argType=type 
+                        {
+                            inArgs.add(new Pair <String, Type> ($arg.text, $argType.synVarType));
+                        }
+                    )* 
+                ')')
+        )
+        ':' retValue=type
+        {
+            // create funcDec object in SymbolTable
+            ArrayList<Type> inArgsType = new ArrayList<Type>();
+            for(int i = 0; i < inArgs.size(); i++)
+                inArgsType.add(inArgs.get(i).getValue());
+
+            addMethodDecleration($methodName.text, inArgsType);
+            createNewSymbolTable();
+
+            // create VarDecleration for each input arg
+            for(int i = 0; i < inArgs.size(); i++) 
+                addVariableDecleration(inArgs.get(i).getKey(), inArgs.get(i).getValue());
+            
+        }
+        '{'
+            varDeclaration* statements
+            'return' expression ';'
+        '}'
+
         { SymbolTable.pop(); }
     ;
     statements:

@@ -37,7 +37,7 @@ public class SymbolTable {
 		this.items = new HashMap<String, SymbolTableItem>();
 	}
 
-	public void put(SymbolTableItem item) { //throws ItemAlreadyExistsException {
+	public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
 		if(items.containsKey(item.getKey()))
 			throw new ItemAlreadyExistsException();
 		items.put(item.getKey(), item);
