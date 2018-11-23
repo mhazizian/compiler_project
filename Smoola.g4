@@ -17,7 +17,7 @@ grammar Smoola;
             else
                 SymbolTable.push(new SymbolTable(SymbolTable.top.getPreSymbolTable()));
 
-            print("scope created.");
+            print("___ scope created ___");
         }
         void print(Object s) {
             System.out.println(s);
@@ -51,6 +51,7 @@ grammar Smoola;
             Identifier id = new Identifier($name.text);
             $synClassDeclaration = new ClassDeclaration(id, null);
         }
+        
         { SymbolTable.pop(); }
     ;
     varDeclaration:
@@ -58,13 +59,13 @@ grammar Smoola;
         {
             SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase($name.text, $type.synVarType, SymbolTable.itemIndex);
 
-            print("# logging: ");
+            // print("# logging: ");
 
-            for (String name: SymbolTable.top.items.keySet()) {
-                print("# Log: " + name + ", " + ((SymbolTableVariableItemBase)SymbolTable.top.items.get(name)).getIndex());
-            }
+            // for (String name: SymbolTable.top.items.keySet()) {
+            //     print("# Log: " + name + ", " + ((SymbolTableVariableItemBase)SymbolTable.top.items.get(name)).getIndex());
+            // }
 
-            print("Putting: " + varDec.getName() +", "+ varDec.getIndex());
+            print("## Putting: Var" + varDec.getName() +", "+ varDec.getIndex());
             SymbolTable.top.put(varDec);
             SymbolTable.itemIndex += 1;
         }
