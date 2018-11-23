@@ -13,16 +13,28 @@ grammar Smoola;
         import ast.Type.*;
     }
     program:
-        {
-            Program program = new Program();
-        }
+        { Program program = new Program(); }
         mainClass {}
         (classDec=classDeclaration { program.addClass($classDec.synClassDec); } )*
         EOF
     ;
     mainClass :// returns [ClassDeclaration synClassDec]:
         // name should be checked later
-        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  varDeclaration* statements 'return' expression ';' '}' '}'
+
+        'class' self=ID '{' 'def' methodName=ID '(' ')' ':' 'int'
+            Identifier self = new Identifier($self.text);
+            Identifier methodName = new Identifier($methodName.text);
+            {
+                ClassDeclaration mainClass = new ClassDeclaration(self, new Identifier(""));
+                MethodDeclaration mainMethod = new MethodDeclaration(methodName);
+
+            }
+            '{'
+                varDeclaration*
+                statements
+                'return' expression ';'
+            '}'
+        '}'
     ;
     classDeclaration returns [ClassDeclaration synClassDec]:
         {
@@ -38,7 +50,7 @@ grammar Smoola;
         'class' name=ID ('extends' parent=ID)?
             '{'
                 (varDec=varDeclaration { classDec.addVarDeclaration($varDec.synVarDec); } )*
-                (methodDec=methodDeclaration {  } )*
+                (methodDec=methodDeclaration { classDec.addMethodDeclaration($methodDec.synMethodDec); } )*
             '}'
     ;
     varDeclaration returns [VarDeclaration synVarDec]:
@@ -49,7 +61,7 @@ grammar Smoola;
             $synVarDec = varDec;
         }
     ;
-    methodDeclaration [MethodDeclaration synMethodDec]:
+    methodDeclaration returns [MethodDeclaration synMethodDec]:
         'def' methodName=ID
         {
           $synMethodDec = new MethodDeclaration($methodName);
