@@ -11,7 +11,7 @@ public class SymbolTable {
 
 	public static SymbolTable top;
 	public static int itemIndex = 0;
-	
+
 	private static Stack<SymbolTable> stack = new Stack<SymbolTable>();
 
 	// Use it in pass 1 scope start
@@ -37,7 +37,7 @@ public class SymbolTable {
 		this.items = new HashMap<String, SymbolTableItem>();
 	}
 
-	public void put(SymbolTableItem item) { //throws ItemAlreadyExistsException {
+	public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
 		if(items.containsKey(item.getKey()))
 			throw new ItemAlreadyExistsException();
 		items.put(item.getKey(), item);

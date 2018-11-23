@@ -9,7 +9,7 @@ public class SymbolTableClassItem extends SymbolTableItem {
     // ArrayList<Type> argTypes = new ArrayList<>();
     // SymbolTableClassItem parent = new SymbolTableClassItem()
 
-    public SymbolTableMethodItem(String name) {
+    public SymbolTableClassItem(String name) {
         this.name = name;
         // this.argTypes = argTypes;
     }
@@ -17,6 +17,6 @@ public class SymbolTableClassItem extends SymbolTableItem {
     @Override
     public String getKey() {
         //todo
-        return null;
+        return this.name;
     }
 }
