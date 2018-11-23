@@ -13,20 +13,40 @@ grammar Smoola;
         import ast.Type.*;
     }
     program:
-        mainClass (classDeclaration)* EOF
+        {
+            Program program = new Program();
+        }
+        mainClass {}
+        (classDec=classDeclaration { program.addClass($classDec.synClassDec); } )*
+        EOF
     ;
-    mainClass:
+    mainClass :// returns [ClassDeclaration synClassDec]:
         // name should be checked later
-        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  statements 'return' expression ';' '}' '}'
+        'class' ID '{' 'def' ID '(' ')' ':' 'int' '{'  varDeclaration* statements 'return' expression ';' '}' '}'
     ;
-    classDeclaration:
-        'class' ID ('extends' ID)? '{' (varDeclaration)* (methodDeclaration)* '}'
+    classDeclaration returns [ClassDeclaration synClassDec]:
+        {
+            Identifier self = new Identifier($name.text);
+            Identifier parent = new Identifier("");
+            if ($parent.text != "")
+                parent.setName($parent.text);
+
+            ClassDeclaration classDec = new ClassDeclaration(self, parent);
+            $synClassDec = classDec;
+        }
+
+        'class' name=ID ('extends' parent=ID)?
+            '{'
+                (varDec=varDeclaration { classDec.addVarDeclaration($varDec.synVarDec); } )*
+                (methodDec=methodDeclaration {  } )*
+            '}'
     ;
     varDeclaration returns [VarDeclaration synVarDec]:
         'var' name=ID ':' type ';'
         {
             Identifier id = new Identifier($name.text);
             VarDeclaration varDec = new VarDeclaration(id, $type.synVarType);
+            $synVarDec = varDec;
         }
     ;
     methodDeclaration:
