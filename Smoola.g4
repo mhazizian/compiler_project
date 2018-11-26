@@ -13,6 +13,8 @@ grammar Smoola;
         import ast.Type.ArrayType.*;
         import ast.Type.UserDefinedType.*;
         import ast.Type.*;
+
+        import ast.VisitorImpl;
     }
     @members {
         void print(Object s) {
@@ -25,6 +27,9 @@ grammar Smoola;
         mainClass { program.setMainClass($mainClass.synClassDec); }
         (classDec=classDeclaration { program.addClass($classDec.synClassDec); } )*
         EOF
+        {
+            program.accept(new VisitorImpl());
+        }
     ;
     mainClass returns [ClassDeclaration synClassDec]:
         // name should be checked later

@@ -1,5 +1,7 @@
 package ast;
 
+import java.util.ArrayList;
+
 import ast.node.Program;
 import ast.node.declaration.ClassDeclaration;
 import ast.node.declaration.MethodDeclaration;
@@ -14,11 +16,19 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Program program) {
+        System.out.println("Program.");
         //TODO: implement appropriate visit functionality
-    }
+        ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)program.getClasses());
+
+        for (int i = 0; i < classes.size(); i++) {
+            classes.get(i).accept(new VisitorImpl());
+        }
+
+    }       
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
+        System.out.println("Class Decleration.");
         //TODO: implement appropriate visit functionality
     }
 
