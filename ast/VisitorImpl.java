@@ -131,6 +131,15 @@ public class VisitorImpl implements Visitor {
 
         // visit method members
 
+        {
+            ArrayList<VarDeclaration> localVars = 
+                ((ArrayList<VarDeclaration>)methodDeclaration.getLocalVars());
+                
+            for (int i = 0; i < localVars.size(); i++)
+                localVars.get(i).accept(new VisitorImpl());
+
+        }
+
         SymbolTable.pop();
     }
 

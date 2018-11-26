@@ -105,7 +105,12 @@ grammar Smoola;
           $synMethodDec.setReturnType($type.synVarType);
         }
 
-        '{'  varDeclaration* statements 'return' expression ';' '}'
+        '{'  (varDeclaration
+            {
+                ((MethodDeclaration)$synMethodDec).addLocalVar($varDeclaration.synVarDec);
+            })*
+            statements 'return' expression ';'
+        '}'
     ;
     statements:
         (statement)*
