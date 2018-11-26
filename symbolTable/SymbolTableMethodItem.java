@@ -18,4 +18,12 @@ public class SymbolTableMethodItem extends SymbolTableItem {
         //todo
         return null;
     }
+
+    public ArrayList<Type> getArgs() {
+        return this.argTypes;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }
