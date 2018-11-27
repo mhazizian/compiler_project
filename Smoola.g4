@@ -6,6 +6,7 @@ grammar Smoola;
         import ast.node.*;
         import ast.node.declaration.*;
         import ast.node.expression.*;
+        import ast.node.statement.*;
         import ast.node.expression.Value.*;
         import ast.node.expression.Identifier;
         // import symbolTable.*;
@@ -16,6 +17,7 @@ grammar Smoola;
 
         import ast.VisitorImpl;
     }
+
     @members {
         void print(Object s) {
             System.out.println(s);
@@ -25,12 +27,15 @@ grammar Smoola;
     program:
         { Program program = new Program(); }
         mainClass { program.setMainClass($mainClass.synClassDec); }
-        (classDec=classDeclaration { program.addClass($classDec.synClassDec); } )*
+        ( classDec=classDeclaration
+            { program.addClass($classDec.synClassDec); }
+        )*
         EOF
         {
             program.accept(new VisitorImpl());
         }
     ;
+
     mainClass returns [ClassDeclaration synClassDec]:
         // name should be checked later
 
@@ -39,8 +44,10 @@ grammar Smoola;
                 Identifier self = new Identifier($self.text);
                 Identifier methodName = new Identifier($methodName.text);
 
-                ClassDeclaration mainClass = new ClassDeclaration(self, new Identifier(""));
-                MethodDeclaration mainMethod = new MethodDeclaration(methodName);
+                ClassDeclaration mainClass = new ClassDeclaration(self,
+                    new Identifier(""));
+                MethodDeclaration mainMethod = new MethodDeclaration(
+                    methodName);
 
                 mainMethod.setReturnType(new IntType());
                 $synClassDec = mainClass;
@@ -52,6 +59,7 @@ grammar Smoola;
             '}'
         '}'
     ;
+
     classDeclaration returns [ClassDeclaration synClassDec]:
         'class' name=ID ('extends' parent=ID)?
             {
@@ -63,11 +71,14 @@ grammar Smoola;
                 ClassDeclaration classDec = new ClassDeclaration(self, parent);
                 $synClassDec = classDec;
             }
-            '{'
-                (varDec=varDeclaration { classDec.addVarDeclaration($varDec.synVarDec); } )*
-                (methodDec=methodDeclaration { classDec.addMethodDeclaration($methodDec.synMethodDec); } )*
-            '}'
+            '{' (
+                  varDec=varDeclaration
+                  { classDec.addVarDeclaration($varDec.synVarDec); } )*
+                  ( methodDec=methodDeclaration
+                  { classDec.addMethodDeclaration($methodDec.synMethodDec); }
+            )* '}'
     ;
+
     varDeclaration returns [VarDeclaration synVarDec]:
         'var' name=ID ':' type ';'
         {
@@ -76,6 +87,7 @@ grammar Smoola;
             $synVarDec = varDec;
         }
     ;
+
     methodDeclaration returns [MethodDeclaration synMethodDec]:
         'def' methodName=ID
         {
@@ -87,14 +99,16 @@ grammar Smoola;
           | ('(' firstArgId=ID ':' firstArgType=type
           {
             Identifier firstArgIdentifier = new Identifier($firstArgId.text);
-            VarDeclaration firstArg = new VarDeclaration(firstArgIdentifier, $firstArgType.synVarType);
+            VarDeclaration firstArg = new VarDeclaration(firstArgIdentifier,
+                $firstArgType.synVarType);
 
             ((MethodDeclaration)$synMethodDec).addArg(firstArg);
           }
               (',' argId=ID ':' argType=type
                   {
                     Identifier argIdentifier = new Identifier($argId.text);
-                    VarDeclaration newArg = new VarDeclaration(argIdentifier, $argType.synVarType);
+                    VarDeclaration newArg = new VarDeclaration(argIdentifier,
+                        $argType.synVarType);
                     ((MethodDeclaration)$synMethodDec).addArg(newArg);
                   }
               )*')'
@@ -105,69 +119,87 @@ grammar Smoola;
           $synMethodDec.setReturnType($type.synVarType);
         }
 
-        '{'  (varDeclaration
+        '{' (varDeclaration
             {
-                ((MethodDeclaration)$synMethodDec).addLocalVar($varDeclaration.synVarDec);
-            })*
+                ((MethodDeclaration)$synMethodDec).addLocalVar(
+                    $varDeclaration.synVarDec);
+            } )*
             statements 'return' expression ';'
         '}'
     ;
-    statements:
-        (statement)*
-    ;
-    statement:
-        statementBlock |
-        statementCondition |
-        statementLoop |
-        statementWrite |
-        statementAssignment
-    ;
-    statementBlock:
-        '{'  statements '}'
-    ;
-    statementCondition:
-        'if' '('expression')' 'then' statement ('else' statement)?
-    ;
-    statementLoop:
-        'while' '(' expression ')' statement
-    ;
-    statementWrite:
-        'writeln(' expression ')' ';'
-    ;
-    statementAssignment:
-        expression ';'
+
+    statements returns [Statement synStatement]:
+        { Block blockStatements = new Block(); }
+        ( statement { blockStatements.addStatement($statement.synStatement); } )*
+        { $synStatement = blockStatements; }
     ;
 
-    // DONE
+    statement returns [Statement synStatement]:
+        statementBlock { $synStatement = $statementBlock.synStatement; } |
+        statementCondition { $synStatement = $statementCondition.synStatement; } |
+        statementLoop { $synStatement = $statementLoop.synStatement; } |
+        statementWrite { $synStatement = $statementWrite.synStatement; } |
+        statementAssignment { $synStatement = new Statement(); }//$statementAssignment.synStatement; }
+    ;
+
+    statementBlock returns [Statement synStatement]:
+        '{'  statements { $synStatement = $statements.synStatement; } '}'
+    ;
+
+    statementCondition returns [Statement synStatement]:
+        'if' '('expression')' 'then' statement
+        {
+          Conditional conditionalStatement = new Conditional($expression.synFinalResult,
+              $statement.synStatement);
+        }
+        ( 'else' statement
+            { conditionalStatement.setAlternativeBody($statement.synStatement); }
+        )?
+        { $synStatement = conditionalStatement; }
+    ;
+
+    statementLoop returns [Statement synStatement]:
+        'while' '(' expression ')' statement
+        { $synStatement = new While($expression.synFinalResult,
+              $statement.synStatement); }
+    ;
+
+    statementWrite returns [Statement synStatement]:
+        'writeln(' expression ')' ';'
+        { $synStatement = new Write($expression.synFinalResult); }
+    ;
+
+    statementAssignment returns [Statement synStatement]:
+        expression ';'
+        // { $synStatement = new Assign(((BinaryExpression)($expression.synFinalResult)).getLeft(),
+        //       ((BinaryExpression)($expression.synFinalResult)).getRight()); }
+    ;
+
     expression returns [Expression synFinalResult]:
         expressionAssignment
         { $synFinalResult = $expressionAssignment.synFinalResult; }
     ;
 
-    // DONE
     expressionAssignment returns [Expression synFinalResult]:
-        expressionOr 
-        '=' 
-        expressionAssignment// a = b = c;
-            { 
-                $synFinalResult = new BinaryExpression(
-                    $expressionOr.synFinalResult,
-                    $expressionAssignment.synFinalResult,
-                    BinaryOperator.assign
-                );
-            }
-
-        |   expressionOr { $synFinalResult = $expressionOr.synFinalResult; }
+        expressionOr
+        '='
+        expressionAssignment // a = b = c;
+        {
+            $synFinalResult = new BinaryExpression(
+                $expressionOr.synFinalResult,
+                $expressionAssignment.synFinalResult,
+                BinaryOperator.assign
+            );
+        }
+        | expressionOr { $synFinalResult = $expressionOr.synFinalResult; }
     ;
 
-    // DONE
     expressionOr returns [Expression synFinalResult]:
         expressionAnd
         expressionOrTemp[$expressionAnd.synFinalResult]
         { $synFinalResult = $expressionOrTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionOrTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '||'
         expressionAnd
@@ -181,14 +213,12 @@ grammar Smoola;
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionAnd returns [Expression synFinalResult]:
         expressionEq
         expressionAndTemp[$expressionEq.synFinalResult]
         { $synFinalResult = $expressionAndTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionAndTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '&&'
         expressionEq
@@ -202,14 +232,12 @@ grammar Smoola;
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionEq returns [Expression synFinalResult]:
         expressionCmp
         expressionEqTemp[$expressionCmp.synFinalResult]
         { $synFinalResult = $expressionEqTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionEqTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         operator=('==' | '<>')
         expressionCmp
@@ -224,14 +252,12 @@ grammar Smoola;
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionCmp returns [Expression synFinalResult]:
         expressionAdd
         expressionCmpTemp[$expressionAdd.synFinalResult]
         { $synFinalResult = $expressionCmpTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionCmpTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         operator=('<' | '>')
         expressionAdd
@@ -246,14 +272,12 @@ grammar Smoola;
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionAdd returns [Expression synFinalResult]:
         expressionMult
         expressionAddTemp[$expressionMult.synFinalResult]
         { $synFinalResult = $expressionAddTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionAddTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         operator=('+' | '-')
         expressionMult
@@ -267,14 +291,12 @@ grammar Smoola;
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionMult returns [Expression synFinalResult]:
         expressionUnary
         expressionMultTemp[$expressionUnary.synFinalResult]
         { $synFinalResult = $expressionMultTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionMultTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         operator=('*' | '/')
         expressionUnary
@@ -283,14 +305,13 @@ grammar Smoola;
                 $inhCurrentResult, $expressionUnary.synFinalResult,
                 ($operator.text.equals('*')) ? BinaryOperator.mult : BinaryOperator.div
             );
-            // TODO : check this later:
+            // TODO : check it later:
             $inhCurrentResult = currentRes;
         }
         expressionMultTemp[inhCurrentResult]
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionUnary returns [Expression synFinalResult]:
         operator=('!' | '-')
         expressionUnary
@@ -303,58 +324,57 @@ grammar Smoola;
         | expressionMem { $synFinalResult = $expressionMem.synFinalResult; }
     ;
 
-    // DONE
     expressionMem returns [Expression synFinalResult]:
         expressionMethods
         expressionMemTemp[$expressionMethods.synFinalResult]
         { $synFinalResult = $expressionMemTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionMemTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '[' expression ']'
             {
-                $synFinalResult = new ArrayCall($inhCurrentResult, $expression.synFinalResult);
+                $synFinalResult = new ArrayCall($inhCurrentResult,
+                    $expression.synFinalResult);
             }
         |   { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionMethods returns [Expression synFinalResult]:
         expressionOther
         expressionMethodsTemp[$expressionOther.synFinalResult]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
     ;
 
-    // DONE
     expressionMethodsTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '.'
         (
             id=ID '(' ')'
-                {
-                    Expression instance = $inhCurrentResult;
-                    Identifier id = new Identifier($id.text);
-                    $inhCurrentResult = new MethodCall(instance, id);
-                }
-            |   id=ID
-                    {
-                        Expression instance = $inhCurrentResult;
-                        Identifier id = new Identifier($id.text);
-                        $inhCurrentResult = new MethodCall(instance, id);
-                    }
-                '(' (expression { ((MethodCall)$inhCurrentResult).addArg($expression.synFinalResult); }
-                    (',' expression { ((MethodCall)$inhCurrentResult).addArg($expression.synFinalResult); } )*) ')'
-            |   'length'
-                    {
-                        Expression instance = $inhCurrentResult;
-                        $inhCurrentResult = new Length(instance);
-                    }
+              {
+                  Expression instance = $inhCurrentResult;
+                  Identifier id = new Identifier($id.text);
+                  $inhCurrentResult = new MethodCall(instance, id);
+              }
+            | id=ID
+              {
+                  Expression instance = $inhCurrentResult;
+                  Identifier id = new Identifier($id.text);
+                  $inhCurrentResult = new MethodCall(instance, id);
+              }
+              '(' (expression
+                  { ((MethodCall)$inhCurrentResult).addArg($expression.synFinalResult); }
+                  (',' expression
+                  { ((MethodCall)$inhCurrentResult).addArg($expression.synFinalResult); }
+              )*) ')'
+            | 'length'
+              {
+                  Expression instance = $inhCurrentResult;
+                  $inhCurrentResult = new Length(instance);
+              }
         )
         expressionMethodsTemp[inhCurrentResult]
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
-    // DONE
     expressionOther returns [Expression synFinalResult]:
         num1=CONST_NUM { $synFinalResult = new IntValue(Integer.parseInt($num1.text), new IntType()); }
         |   str=CONST_STR
@@ -386,7 +406,6 @@ grammar Smoola;
         |   '(' expression ')' { $synFinalResult = $expression.synFinalResult; }
     ;
 
-    // DONE
     type returns [Type synVarType]:
         'int' { $synVarType = new IntType(); } |
         'boolean' { $synVarType = new BooleanType(); } |
