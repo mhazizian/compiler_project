@@ -1,32 +1,26 @@
 class MainClass
-
 {
-    # var main_class : int;
-
     def main(): int {
-        var main_func : int;
+        var mainFucnVar : int;
         var a : int;
-        a = 2 + 3 + a - main_func;
-        # a.length;
-        new b().c().length.len(1, a, "32" + a, true);
-        return value;
+        a = 2;
+        a = 2 + 3 + a;
+        mainFucnVar = a.length;
+        return 0;
     }
 
 }
 
-
-class TestClass extends ExtendedClass
+class TestClass extends MainClass
 {
-    var test_class : int;
-    var class_variable : string;
+    var stringClassVar : string;
     var array : int[];
-    var another : test;
 
-    def another_one(tes1: int, test2: string, test3: int[]): int
-
+    def testMethod(firstArg : int[]): int[]
     {
-        var another_one_funx : int;
-        return 2;
+        var testMethodVar : int;
+        array = firstArg;
+        return array;
     }
 }
 

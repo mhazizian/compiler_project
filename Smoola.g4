@@ -139,7 +139,7 @@ grammar Smoola;
         statementCondition { $synStatement = $statementCondition.synStatement; } |
         statementLoop { $synStatement = $statementLoop.synStatement; } |
         statementWrite { $synStatement = $statementWrite.synStatement; } |
-        statementAssignment { $synStatement = new Statement(); }//$statementAssignment.synStatement; }
+        statementAssignment { $synStatement = $statementAssignment.synStatement; }
     ;
 
     statementBlock returns [Statement synStatement]:
@@ -171,8 +171,8 @@ grammar Smoola;
 
     statementAssignment returns [Statement synStatement]:
         expression ';'
-        // { $synStatement = new Assign(((BinaryExpression)($expression.synFinalResult)).getLeft(),
-        //       ((BinaryExpression)($expression.synFinalResult)).getRight()); }
+        { $synStatement = new Assign(((BinaryExpression)($expression.synFinalResult)).getLeft(),
+              ((BinaryExpression)($expression.synFinalResult)).getRight()); }
     ;
 
     expression returns [Expression synFinalResult]:
@@ -326,16 +326,15 @@ grammar Smoola;
 
     expressionMem returns [Expression synFinalResult]:
         expressionMethods
+        // CHECKED
         expressionMemTemp[$expressionMethods.synFinalResult]
         { $synFinalResult = $expressionMemTemp.synFinalResult; }
     ;
 
     expressionMemTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
         '[' expression ']'
-            {
-                $synFinalResult = new ArrayCall($inhCurrentResult,
-                    $expression.synFinalResult);
-            }
+            { $synFinalResult = new ArrayCall($inhCurrentResult,
+                    $expression.synFinalResult); }
         |   { $synFinalResult = $inhCurrentResult; }
     ;
 
@@ -376,14 +375,10 @@ grammar Smoola;
     ;
 
     expressionOther returns [Expression synFinalResult]:
-        num1=CONST_NUM { $synFinalResult = new IntValue(Integer.parseInt($num1.text), new IntType()); }
-        |   str=CONST_STR
-            {
-                $synFinalResult = new StringValue($str.text, new StringType());
-            }
+            num1=CONST_NUM { $synFinalResult = new IntValue(Integer.parseInt($num1.text), new IntType()); }
+        |   str=CONST_STR { $synFinalResult = new StringValue($str.text, new StringType()); }
         |   'new ' 'int' '[' num2=CONST_NUM ']'
             {
-                // $synFinalResult
                 NewArray temp = new NewArray();
                 temp.setExpression(new IntValue(Integer.parseInt($num2.text), new IntType()));
                 $synFinalResult = temp;
@@ -413,7 +408,6 @@ grammar Smoola;
         'int' '[' ']'  { $synVarType = new ArrayType(); } |
         id=ID
             {
-                // $synVarType
                 UserDefinedType temp = new UserDefinedType();
                 temp.setName(new Identifier($id.text));
                 $synVarType = temp;
