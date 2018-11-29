@@ -73,11 +73,14 @@ grammar Smoola;
                 $synClassDec = classDec;
             }
             '{' (
-                  varDec=varDeclaration
-                  { classDec.addVarDeclaration($varDec.synVarDec); } )*
-                  ( methodDec=methodDeclaration
-                  { classDec.addMethodDeclaration($methodDec.synMethodDec); }
-            )* '}'
+                    varDec=varDeclaration
+                    { classDec.addVarDeclaration($varDec.synVarDec); }
+                )*
+                (
+                    methodDec=methodDeclaration
+                    { classDec.addMethodDeclaration($methodDec.synMethodDec); }
+                )*
+            '}'
     ;
 
     varDeclaration returns [VarDeclaration synVarDec]:
