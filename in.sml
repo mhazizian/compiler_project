@@ -2,6 +2,7 @@ class MainClass
 {
     def main(): int {
         var mainFucnVar : int;
+        var mainFucnVar : int[];
         var a : int;
         a = 2;
         a = 2 + 3 + a;
@@ -14,11 +15,13 @@ class MainClass
 class TestClass extends MainClass
 {
     var stringClassVar : string;
+    var stringClassVar : int;
     var array : int[];
 
     def testMethod(firstArg : int[]): int[]
     {
         var testMethodVar : int;
+        var testMethodVar : int[];
         array = firstArg;
         return array;
     }

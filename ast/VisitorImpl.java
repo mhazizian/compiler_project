@@ -133,7 +133,7 @@ public class VisitorImpl implements Visitor {
         for (int i = 0; i < classes.size(); i++) {
             try {
                 SymbolTable.top.put(this.createClassDecSymbolTableItem(classes.get(i)));
-                System.out.println("____ added class: " + classes.get(i).getName());
+                System.out.println("____ added class: " + classes.get(i).getName().getName());
             } catch (ItemAlreadyExistsException error) {
                 System.out.println("ErrorItemMessage: Redefinition of class " + classes.get(i).getName().getName());
             }
@@ -143,7 +143,6 @@ public class VisitorImpl implements Visitor {
         // add parentClass for each ClassDecSymbolTableItem
         for (int i = 0; i < classes.size(); i++) {
             String parentClassName = classes.get(i).getParentName().getName();
-            System.out.println("parent class is:" + parentClassName);
             if (parentClassName.equals(""))
                 continue;
 
@@ -169,12 +168,10 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         createNewSymbolTable();
-        System.out.println("Class Decleration.");
+        System.out.println("Class Decleration: " + classDeclaration.getName().getName());
 
         try {
             SymbolTableClassItem currentClass = ((SymbolTableClassItem) SymbolTable.top.get(classDeclaration.getName().getName()));
-            System.out.println("currentClass found.");
-
 
             ArrayList<VarDeclaration> vars =
                 ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
@@ -184,10 +181,12 @@ public class VisitorImpl implements Visitor {
             // add subItems to SymbolTableItem and ClassSymbolTable:
             for (int i = 0; i < vars.size(); i++) {
                 SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
-                putToSymbolTable(item);
-                putToClass(currentClass, item);
-                // currentClass.put(item);
-                // SymbolTable.top.put(item);
+                try {
+                    SymbolTable.top.put(item);
+                    currentClass.put(item);
+                } catch (ItemAlreadyExistsException error) {
+                   System.out.println("ErrorItemMessage: Redefinition of variable " + vars.get(i).getIdentifier().getName()); 
+                }
 
             }
 
@@ -216,14 +215,18 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
         createNewSymbolTable();
-        System.out.println("Method Decleration.");
+        System.out.println("Method Decleration: " + methodDeclaration.getName().getName());
         
         ArrayList<VarDeclaration> localVars = 
             ((ArrayList<VarDeclaration>)methodDeclaration.getLocalVars());
             
-        for (int i = 0; i < localVars.size(); i++)
-            // SymbolTable.top.put(this.createVarDecSymbolItem(localVars.get(i)));
-            putToSymbolTable(this.createVarDecSymbolItem(localVars.get(i)));
+        for (int i = 0; i < localVars.size(); i++) {
+            try {
+                SymbolTable.top.put(this.createVarDecSymbolItem(localVars.get(i)));
+            } catch (ItemAlreadyExistsException error) {
+               System.out.println("ErrorItemMessage: Redefinition of variable " + localVars.get(i).getIdentifier().getName()); 
+            }
+        }
 
         // visit method members
         for (int i = 0; i < localVars.size(); i++)
@@ -234,7 +237,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        System.out.println("Var Decleration.");
+        System.out.println("Var Decleration:" + varDeclaration.getIdentifier().getName());
     }
 
     @Override
