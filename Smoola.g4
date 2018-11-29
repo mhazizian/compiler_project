@@ -33,7 +33,7 @@ grammar Smoola;
         EOF
         {
             program.accept(new VisitorImpl());
-            program.accept(new VisitorImplIter());
+            // program.accept(new VisitorImplIter());
         }
     ;
 
@@ -49,12 +49,18 @@ grammar Smoola;
                     new Identifier(""));
                 MethodDeclaration mainMethod = new MethodDeclaration(
                     methodName);
+                mainClass.addMethodDeclaration(mainMethod);
 
                 mainMethod.setReturnType(new IntType());
                 $synClassDec = mainClass;
             }
             '{'
-                varDeclaration*
+                (
+                    varDeclaration
+                    {
+                        mainMethod.addLocalVar($varDeclaration.synVarDec);
+                    }
+                )*
                 statements
                 'return' expression ';'
             '}'
