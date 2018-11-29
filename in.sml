@@ -24,6 +24,7 @@ class TestClass extends MainClass
     }
 }
 
+
 #          var str : string;
 #          var array : int[];
 #          # COMMENT

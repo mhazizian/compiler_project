@@ -20,33 +20,30 @@ public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
 
     public static void createNewSymbolTable() {
-            if (SymbolTable.top == null)
-                SymbolTable.push(new SymbolTable());
-            else
-                SymbolTable.push(new SymbolTable(SymbolTable.top.getPreSymbolTable()));
-
-            System.out.println("___ scope created ___");
+        SymbolTable.push(new SymbolTable(SymbolTable.top));
+        System.out.println("___ scope created ___");
     }
 
-    public SymbolTableItem addVarToSymbolTable(VarDeclaration varDecleration) {
+    public SymbolTableItem createVarDecSymbolItem(VarDeclaration varDecleration) {
         SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase(
             varDecleration.getIdentifier().getName(),
             varDecleration.getType(),
             this.ItemDecIndex
         );
+        this.ItemDecIndex += 1;
 
-        try {
-            System.out.println("## Putting Var: " + varDec.getName() +", "+ varDec.getIndex());
-            SymbolTable.top.put(varDec);
-            this.ItemDecIndex += 1;
-        } catch (ItemAlreadyExistsException error) {
-            System.out.println("## put failed: ItemAlreadyExistsException");
-        }
+        // try {
+            // System.out.println("## Putting Var: " + varDec.getName() +", "+ varDec.getIndex());
+        //     SymbolTable.top.put(varDec);
+        //     this.ItemDecIndex += 1;
+        // } catch (ItemAlreadyExistsException error) {
+        //     System.out.println("## put failed: ItemAlreadyExistsException");
+        // }
 
         return ((SymbolTableItem) varDec);
     }
 
-    public SymbolTableItem addMethodToSymbolTable(MethodDeclaration methodDecleration) {
+    public SymbolTableItem createMethodDecSymbolTableItem(MethodDeclaration methodDecleration) {
         ArrayList<VarDeclaration> varsDec = methodDecleration.getArgs();
         ArrayList<Type> varsType = new ArrayList<Type> ();
         for (int i = 0; i < varsDec.size(); i++)
@@ -57,34 +54,64 @@ public class VisitorImpl implements Visitor {
             varsType
         );
 
-        try {
-            String s = new String();
-            for (int i = 0; i < methodDec.getArgs().size(); i++)
-                s = s + " " + methodDec.getArgs().get(i);
+        // try {
+            // String s = new String();
+            // for (int i = 0; i < methodDec.getArgs().size(); i++)
+            //     s = s + " " + methodDec.getArgs().get(i);
 
-            System.out.println("## Putting Method: " + methodDec.getName() + " ,Args:" + s);
+            // System.out.println("## Putting Method: " + methodDec.getName() + " ,Args:" + s);
 
-            SymbolTable.top.put(methodDec);
+        //     SymbolTable.top.put(methodDec);
             
-        } catch (ItemAlreadyExistsException error) {
-            System.out.println("## put failed: ItemAlreadyExistsException");
-        }
+        // } catch (ItemAlreadyExistsException error) {
+        //     System.out.println("## put failed: ItemAlreadyExistsException");
+        // }
 
         return ((SymbolTableItem) methodDec);
     }
 
-    public SymbolTableItem addClassToSymbolTable(ClassDeclaration classDeclaration) {
+    public SymbolTableItem createClassDecSymbolTableItem(ClassDeclaration classDeclaration) {
         SymbolTableClassItem classDec = new SymbolTableClassItem(classDeclaration.getName().getName());
 
-        try {
-            System.out.println("## Putting: Class: " + classDec.getKey());
-            SymbolTable.top.put(classDec);
-        } catch (ItemAlreadyExistsException error) {
-            System.out.println("ItemAlreadyExistsException.");
-        }
+        // try {
+            // System.out.println("## Putting: Class: " + classDec.getKey());
+        //     SymbolTable.top.put(classDec);
+        // } catch (ItemAlreadyExistsException error) {
+        //     System.out.println("ItemAlreadyExistsException.");
+        // }
         
         return ((SymbolTableItem) classDec);
     }
+
+    void putToSymbolTable(SymbolTableItem item) {
+        try {
+            // System.out.println("## Putting: Class: " + classDec.getKey());
+            SymbolTable.top.put(item);
+        } catch (ItemAlreadyExistsException error) {
+            System.out.println("____ ItemAlreadyExistsException.");
+        }
+    }
+
+    void putToClass(SymbolTableClassItem c, SymbolTableItem item) {
+        try {
+            // System.out.println("## Putting: Class: " + classDec.getKey());
+            c.put(item);
+            // SymbolTable.top.put(item);
+        } catch (ItemAlreadyExistsException error) {
+            System.out.println("____ ItemAlreadyExistsException.");
+        }
+    }
+
+
+
+// ##############################################################################
+// ##############################################################################
+// #############################                     ############################
+// #############################  VISITOR FUNCTIONS  ############################
+// #############################                     ############################
+// ##############################################################################
+// ##############################################################################
+
 
     @Override
     public void visit(Program program) {
@@ -92,53 +119,115 @@ public class VisitorImpl implements Visitor {
         createNewSymbolTable();
 
         ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)program.getClasses());
+        ClassDeclaration mainClass = program.getMainClass();
+
+        if (classes.size() == 0 && mainClass == null) {
+            System.out.println("ErrorItemMessage: No class exists in the program");
+            return;
+        }
+
+        // create SymbolTableItem for each classDec
+        putToSymbolTable(this.createClassDecSymbolTableItem(mainClass));
+        System.out.println("____ added class: " + mainClass.getName().getName());
 
         for (int i = 0; i < classes.size(); i++) {
-            classes.get(i).accept(new VisitorImpl());
+            try {
+                SymbolTable.top.put(this.createClassDecSymbolTableItem(classes.get(i)));
+                System.out.println("____ added class: " + classes.get(i).getName());
+            } catch (ItemAlreadyExistsException error) {
+                System.out.println("ErrorItemMessage: Redefinition of class " + classes.get(i).getName().getName());
+            }
         }
+
+
+        // add parentClass for each ClassDecSymbolTableItem
+        for (int i = 0; i < classes.size(); i++) {
+            String parentClassName = classes.get(i).getParentName().getName();
+            System.out.println("parent class is:" + parentClassName);
+            if (parentClassName.equals(""))
+                continue;
+
+            try {
+                SymbolTableClassItem parentClass = ((SymbolTableClassItem) SymbolTable.top.get(parentClassName));
+                SymbolTableClassItem curretClass = ((SymbolTableClassItem) SymbolTable.top.get(classes.get(i).getName().getName()));
+                curretClass.setParent(parentClass);
+            } catch (ItemNotFoundException error) {
+                System.out.println("ErrorItemMessage: inherited class not found: " + parentClassName);
+            }
+        }
+
+        // visit classes
+        for (int i = 0; i < classes.size(); i++) 
+            classes.get(i).accept(new VisitorImpl());
+
+        // SymbolTable.top.put(this.createClassDecSymbolTableItem(mainClass));
+        mainClass.accept(new VisitorImpl());
+
         SymbolTable.pop();
     }       
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
-        System.out.println("Class Decleration.");
-        this.addClassToSymbolTable(classDeclaration);
         createNewSymbolTable();
+        System.out.println("Class Decleration.");
 
-        // visit class members
-        {
+        try {
+            SymbolTableClassItem currentClass = ((SymbolTableClassItem) SymbolTable.top.get(classDeclaration.getName().getName()));
+            System.out.println("currentClass found.");
+
+
             ArrayList<VarDeclaration> vars =
                 ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
             ArrayList<MethodDeclaration> methods = 
                 ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
+            // add subItems to SymbolTableItem and ClassSymbolTable:
+            for (int i = 0; i < vars.size(); i++) {
+                SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
+                putToSymbolTable(item);
+                putToClass(currentClass, item);
+                // currentClass.put(item);
+                // SymbolTable.top.put(item);
+
+            }
+
+            for (int i = 0; i < methods.size(); i++) {
+                SymbolTableItem item = this.createMethodDecSymbolTableItem(methods.get(i));
+                putToSymbolTable(item);
+                putToClass(currentClass, item);
+                // currentClass.put(item);
+                // SymbolTable.top.put(item);
+            }
+
+
+            // visit subItems:
             for (int i = 0; i < vars.size(); i++)
                 vars.get(i).accept(new VisitorImpl());
 
             for (int i = 0; i < methods.size(); i++)
-                methods.get(i).accept(new VisitorImpl());         
+                methods.get(i).accept(new VisitorImpl());
+
+        } catch (ItemNotFoundException error) {
+            System.out.println("____ ItemNotFoundException.");
         }
-
-
         SymbolTable.pop();
     }
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
-        System.out.println("Method Decleration.");
-        this.addMethodToSymbolTable(methodDeclaration);
         createNewSymbolTable();
+        System.out.println("Method Decleration.");
+        
+        ArrayList<VarDeclaration> localVars = 
+            ((ArrayList<VarDeclaration>)methodDeclaration.getLocalVars());
+            
+        for (int i = 0; i < localVars.size(); i++)
+            // SymbolTable.top.put(this.createVarDecSymbolItem(localVars.get(i)));
+            putToSymbolTable(this.createVarDecSymbolItem(localVars.get(i)));
 
         // visit method members
-
-        {
-            ArrayList<VarDeclaration> localVars = 
-                ((ArrayList<VarDeclaration>)methodDeclaration.getLocalVars());
-                
-            for (int i = 0; i < localVars.size(); i++)
-                localVars.get(i).accept(new VisitorImpl());
-
-        }
+        for (int i = 0; i < localVars.size(); i++)
+            localVars.get(i).accept(new VisitorImpl());
 
         SymbolTable.pop();
     }
@@ -146,7 +235,6 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(VarDeclaration varDeclaration) {
         System.out.println("Var Decleration.");
-        this.addVarToSymbolTable(varDeclaration);
     }
 
     @Override
