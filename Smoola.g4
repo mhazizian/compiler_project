@@ -14,8 +14,8 @@ grammar Smoola;
         import ast.Type.ArrayType.*;
         import ast.Type.UserDefinedType.*;
         import ast.Type.*;
-
         import ast.VisitorImpl;
+        import ast.VisitorImplIter;
     }
 
     @members {
@@ -33,6 +33,7 @@ grammar Smoola;
         EOF
         {
             program.accept(new VisitorImpl());
+            program.accept(new VisitorImplIter());
         }
     ;
 
