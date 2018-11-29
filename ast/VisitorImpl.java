@@ -192,8 +192,12 @@ public class VisitorImpl implements Visitor {
 
             for (int i = 0; i < methods.size(); i++) {
                 SymbolTableItem item = this.createMethodDecSymbolTableItem(methods.get(i));
-                putToSymbolTable(item);
-                putToClass(currentClass, item);
+                try {
+                    SymbolTable.top.put(item);
+                    currentClass.put(item);
+                } catch (ItemAlreadyExistsException error) {
+                   System.out.println("ErrorItemMessage: Redefinition of method " + methods.get(i).getName().getName()); 
+                }
                 // currentClass.put(item);
                 // SymbolTable.top.put(item);
             }
@@ -237,7 +241,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        System.out.println("Var Decleration:" + varDeclaration.getIdentifier().getName());
+        System.out.println("Var Decleration: " + varDeclaration.getIdentifier().getName());
     }
 
     @Override

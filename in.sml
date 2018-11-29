@@ -25,6 +25,10 @@ class TestClass extends MainClass
         array = firstArg;
         return array;
     }
+
+    def testMethod(a : int): int[]
+    {
+    }
 }
 
 
