@@ -116,6 +116,14 @@ public class VisitorImpl implements Visitor {
             if (parentClassName.equals(""))
                 continue;
 
+            if (parentClassName.equals(classes.get(i).getName().getName())) {
+                System.out.println("Line:" + classes.get(i).getLineNumber() +
+                    ":ErrorItemMessage: self-inheritance is not valid, class name: " +
+                    parentClassName);
+                SymbolTable.isValidAst = false;
+                continue;
+            }
+
             try {
                 SymbolTableClassItem parentClass =
                     ((SymbolTableClassItem) SymbolTable.top.get(parentClassName));
