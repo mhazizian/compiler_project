@@ -4,11 +4,20 @@ import ast.Visitor;
 
 public class NewArray extends Expression {
     private Expression expression;
+    private int lineNum;
 
     public Expression getExpression() {
         return expression;
     }
 
+    public int getLineNumber() {
+        return lineNum;
+    }
+
+    public void setLineNumber(int lineNum) {
+        this.lineNum = lineNum;
+    }
+    
     public void setExpression(Expression expression) {
         this.expression = expression;
     }

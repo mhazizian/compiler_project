@@ -298,6 +298,10 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(NewArray newArray) {
         Expression expression = newArray.getExpression();
+        // Here.
+        IntValue arraySize = ((IntValue) newArray.getExpression());
+        if (arraySize.getConstant() <= 0)
+            System.out.println("Line:" + newArray.getLineNumber() + ":ErrorItemMessage: Array length should not be zero or negative");
         expression.accept(new VisitorImpl());
     }
 

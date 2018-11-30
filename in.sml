@@ -30,7 +30,7 @@ class TestClass extends MainClass
         var testMethodVar2 : int;
         var testMethodVar : int[];
 
-        testMethodVar = new int[10];
+        testMethodVar = new int[+10];
 
         if (testMethodVar2) then
         {

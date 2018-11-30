@@ -376,6 +376,7 @@ grammar Smoola;
         |   'new ' 'int' '[' num2=CONST_NUM ']'
             {
                 NewArray temp = new NewArray();
+                temp.setLineNumber($num2.line);
                 temp.setExpression(new IntValue(Integer.parseInt($num2.text),
                     new IntType()));
                 $synFinalResult = temp;
@@ -412,7 +413,7 @@ grammar Smoola;
     ;
 
     CONST_NUM:
-        [0-9]+
+        ('+' | '-')? [0-9]+
     ;
 
     CONST_STR:
