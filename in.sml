@@ -1,42 +1,55 @@
 class MainClass
 {
     def main(): int {
-        # var mainFucnVar : int;
+        var mainFucnVar : int;
         # var mainFucnVar : int[];
-        var a : int;
+        # var a : boolean;
         # a = 2;
         # mainFucnVar[1] = a;
-        a = 2 + 3;
+        # a = 2 && 3 || -(!a);
+        # a = False;
+        # a = a && True; #|| False;
         # a = 2;
         # mainFucnVar = a.length;
+
+        # if (False == True)
+        #     mainFucnVar = 2;
+
         return 0;
     }
 }
-#
-# class TestClass extends MainClass
-# {
-#     var stringClassVar : string;
-#     var stringClassVar : int;
-#     var array : int[];
-#
-#     def testMethod(firstArg : int[]): int[]
-#     {
-#         var testMethodVar2 : int;
-#         var testMethodVar : int[];
-#
-#         testMethodVar = new int[10];
-#
-#         if (testMethodVar2)
-#         {
-#             testMethodVar2 = !firstArg[0];
-#         }
-#             # firstArg = testMethodVar;
-#         # else
-#             # firstArg = testMethodVar;
-#
-#         return 1;
-#     }
-# }
+
+class TestClass extends MainClass
+{
+    var stringClassVar : string;
+    var stringClassVar : int;
+    var array : int[];
+
+    def testMethod(firstArg : int[]): int[]
+    {
+        var testMethodVar2 : int;
+        var testMethodVar : int[];
+
+        testMethodVar = new int[10];
+
+        if (testMethodVar2) then
+        {
+            testMethodVar2 = !firstArg[0];
+        }
+            # firstArg = testMethodVar;
+        # else
+            # firstArg = testMethodVar;
+        while (testMethodVar2 > (3 * 3))
+        {
+            if ((!firstArg[0] || -firstArg[1]) == True) then
+                testMethodVar2 = 10;
+            else
+                testMethodVar2 = 2;
+        }
+
+        return 1;
+    }
+}
 
 #          var str : string;
 #          var array : int[];

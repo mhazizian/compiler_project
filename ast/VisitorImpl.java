@@ -15,13 +15,13 @@ import ast.node.statement.*;
 import ast.Type.*;
 
 import symbolTable.*;
-
+// TODO Same method and field names
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
 
     public static void createNewSymbolTable() {
         SymbolTable.push(new SymbolTable(SymbolTable.top));
-        System.out.println("___ scope created ___");
+        // System.out.println("___ scope created ___");
     }
 
     public SymbolTableItem createVarDecSymbolItem(VarDeclaration varDecleration) {
@@ -115,7 +115,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Program program) {
-        System.out.println("Program.");
+        // System.out.println("Program.");
         createNewSymbolTable();
 
         ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)program.getClasses());
@@ -128,12 +128,12 @@ public class VisitorImpl implements Visitor {
 
         // create SymbolTableItem for each classDec
         putToSymbolTable(this.createClassDecSymbolTableItem(mainClass));
-        System.out.println("____ added class: " + mainClass.getName().getName());
+        // System.out.println("____ added class: " + mainClass.getName().getName());
 
         for (int i = 0; i < classes.size(); i++) {
             try {
                 SymbolTable.top.put(this.createClassDecSymbolTableItem(classes.get(i)));
-                System.out.println("____ added class: " + classes.get(i).getName().getName());
+                // System.out.println("____ added class: " + classes.get(i).getName().getName());
             } catch (ItemAlreadyExistsException error) {
                 System.out.println("ErrorItemMessage: Redefinition of class " + classes.get(i).getName().getName());
             }
@@ -168,7 +168,7 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         createNewSymbolTable();
-        System.out.println("Class Decleration: " + classDeclaration.getName().getName());
+        // System.out.println("Class Decleration: " + classDeclaration.getName().getName());
 
         try {
             SymbolTableClassItem currentClass = ((SymbolTableClassItem) SymbolTable.top.get(classDeclaration.getName().getName()));
@@ -219,7 +219,7 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
         createNewSymbolTable();
-        System.out.println("Method Decleration: " + methodDeclaration.getName().getName());
+        // System.out.println("Method Decleration: " + methodDeclaration.getName().getName());
 
         ArrayList<VarDeclaration> localVars =
             ((ArrayList<VarDeclaration>)methodDeclaration.getLocalVars());
@@ -241,7 +241,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        System.out.println("Var Decleration: " + varDeclaration.getIdentifier().getName());
+        // System.out.println("Var Decleration: " + varDeclaration.getIdentifier().getName());
     }
 
     @Override
