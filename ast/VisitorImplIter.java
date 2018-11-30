@@ -47,7 +47,7 @@ public class VisitorImplIter implements Visitor {
             parentName.accept(new VisitorImplIter()); // DONE
 
         for (int i = 0; i < variables.size(); i++)
-            variables.get(i).accept(new VisitorImplIter());
+            variables.get(i).accept(new VisitorImplIter()); // DONE
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorImplIter());
@@ -66,10 +66,10 @@ public class VisitorImplIter implements Visitor {
         name.accept(new VisitorImplIter()); // DONE
 
         for (int i = 0; i < args.size(); i++)
-            args.get(i).accept(new VisitorImplIter());
+            args.get(i).accept(new VisitorImplIter()); // DONE
 
         for (int i = 0; i < localVars.size(); i++)
-            localVars.get(i).accept(new VisitorImplIter());
+            localVars.get(i).accept(new VisitorImplIter()); // DONE
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorImplIter());
@@ -78,18 +78,33 @@ public class VisitorImplIter implements Visitor {
     }
 
     @Override
-    public void visit(VarDeclaration varDeclaration) {
+    public void visit(VarDeclaration varDeclaration) { // DONE
         System.out.println(varDeclaration.toString());
+
+        Identifier identifier = varDeclaration.getIdentifier();
+        identifier.accept(new VisitorImplIter()); // DONE
     }
 
     @Override
-    public void visit(ArrayCall arrayCall) {
+    public void visit(ArrayCall arrayCall) { // DONE
         System.out.println(arrayCall.toString());
+
+        Expression instance = arrayCall.getInstance();
+        Expression index = arrayCall.getIndex();
+
+        instance.accept(new VisitorImplIter());
+        index.accept(new VisitorImplIter());
     }
 
     @Override
-    public void visit(BinaryExpression binaryExpression) {
+    public void visit(BinaryExpression binaryExpression) { // DONE
         System.out.println(binaryExpression.toString());
+
+        Expression left = binaryExpression.getLeft();
+        Expression right = binaryExpression.getRight();
+
+        left.accept(new VisitorImplIter());
+        right.accept(new VisitorImplIter());
     }
 
     @Override
@@ -98,63 +113,101 @@ public class VisitorImplIter implements Visitor {
     }
 
     @Override
-    public void visit(Length length) {
+    public void visit(Length length) { // DONE
         System.out.println(length.toString());
+
+        Expression expression = length.getExpression();
+        expression.accept(new VisitorImplIter());
     }
 
     @Override
-    public void visit(MethodCall methodCall) {
+    public void visit(MethodCall methodCall) { // DONE
         System.out.println(methodCall.toString());
+
+        Expression instance = methodCall.getInstance();
+        Identifier methodName = methodCall.getMethodName();
+
+        instance.accept(new VisitorImplIter());
+        methodName.accept(new VisitorImplIter()); // DONE
     }
 
     @Override
-    public void visit(NewArray newArray) {
+    public void visit(NewArray newArray) { // DONE
         System.out.println(newArray.toString());
+
+        Expression expression = newArray.getExpression();
+        expression.accept(new VisitorImplIter());
     }
 
     @Override
-    public void visit(NewClass newClass) {
+    public void visit(NewClass newClass) { // DONE
         System.out.println(newClass.toString());
+
+        Identifier className = newClass.getClassName();
+        className.accept(new VisitorImplIter());
     }
 
     @Override
-    public void visit(This instance) {
+    public void visit(This instance) { // DONE
         System.out.println(instance.toString());
     }
 
     @Override
-    public void visit(UnaryExpression unaryExpression) {
+    public void visit(UnaryExpression unaryExpression) { // DONE
         System.out.println(unaryExpression.toString());
+
+        Expression value = unaryExpression.getValue();
+        value.accept(new VisitorImplIter());
     }
 
     @Override
-    public void visit(BooleanValue value) {
+    public void visit(BooleanValue value) { // DONE
         System.out.println(value.toString());
     }
 
     @Override
-    public void visit(IntValue value) {
+    public void visit(IntValue value) { // DONE
         System.out.println(value.toString());
     }
 
     @Override
-    public void visit(StringValue value) {
+    public void visit(StringValue value) { // DONE
         System.out.println(value.toString());
     }
 
     @Override
-    public void visit(Assign assign) {
+    public void visit(Assign assign) { // DONE
         System.out.println(assign.toString());
+
+        Expression lValue = assign.getlValue();
+        Expression rValue = assign.getrValue();
+        lValue.accept(new VisitorImplIter()); // DONE
+        // rValue.accept(new VisitorImplIter());
     }
 
     @Override
-    public void visit(Block block) {
+    public void visit(Block block) { // DONE
         System.out.println(block.toString());
+
+        ArrayList<Statement> body = block.getBody();
+
+        for (int i = 0; i < body.size(); ++i)
+            body.get(i).accept(new VisitorImplIter());
     }
 
     @Override
     public void visit(Conditional conditional) {
         System.out.println(conditional.toString());
+
+        Expression expression = conditional.getExpression();
+        Statement consequenceBody = conditional.getConsequenceBody();
+        Statement alternativeBody = conditional.getAlternativeBody();
+
+        expression.accept(new VisitorImplIter());
+        consequenceBody.accept(new VisitorImplIter());
+
+        if (alternativeBody != null)
+            alternativeBody.accept(new VisitorImplIter());
     }
 
     @Override

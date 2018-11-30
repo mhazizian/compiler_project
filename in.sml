@@ -1,32 +1,42 @@
 class MainClass
 {
     def main(): int {
-        var mainFucnVar : int;
-        var mainFucnVar : int[];
+        # var mainFucnVar : int;
+        # var mainFucnVar : int[];
         var a : int;
-        a = 2;
-        a = 2 + 3 + a;
-        mainFucnVar = a.length;
+        # a = 2;
+        # mainFucnVar[1] = a;
+        a = 2 + 3;
+        # a = 2;
+        # mainFucnVar = a.length;
         return 0;
     }
 }
-
-class TestClass extends MainClass
-{
-    var stringClassVar : string;
-    var stringClassVar : int;
-    var array : int[];
-
-    def testMethod(firstArg : int[]): int[]
-    {
-        var testMethodVar : int;
-        var testMethodVar : int[];
-        {
-            array = firstArg;
-        }
-        return array;
-    }
-}
+#
+# class TestClass extends MainClass
+# {
+#     var stringClassVar : string;
+#     var stringClassVar : int;
+#     var array : int[];
+#
+#     def testMethod(firstArg : int[]): int[]
+#     {
+#         var testMethodVar2 : int;
+#         var testMethodVar : int[];
+#
+#         testMethodVar = new int[10];
+#
+#         if (testMethodVar2)
+#         {
+#             testMethodVar2 = !firstArg[0];
+#         }
+#             # firstArg = testMethodVar;
+#         # else
+#             # firstArg = testMethodVar;
+#
+#         return 1;
+#     }
+# }
 
 #          var str : string;
 #          var array : int[];

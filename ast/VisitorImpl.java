@@ -62,7 +62,7 @@ public class VisitorImpl implements Visitor {
             // System.out.println("## Putting Method: " + methodDec.getName() + " ,Args:" + s);
 
         //     SymbolTable.top.put(methodDec);
-            
+
         // } catch (ItemAlreadyExistsException error) {
         //     System.out.println("## put failed: ItemAlreadyExistsException");
         // }
@@ -79,7 +79,7 @@ public class VisitorImpl implements Visitor {
         // } catch (ItemAlreadyExistsException error) {
         //     System.out.println("ItemAlreadyExistsException.");
         // }
-        
+
         return ((SymbolTableItem) classDec);
     }
 
@@ -156,14 +156,14 @@ public class VisitorImpl implements Visitor {
         }
 
         // visit classes
-        for (int i = 0; i < classes.size(); i++) 
+        for (int i = 0; i < classes.size(); i++)
             classes.get(i).accept(new VisitorImpl());
 
         // SymbolTable.top.put(this.createClassDecSymbolTableItem(mainClass));
         mainClass.accept(new VisitorImpl());
 
         SymbolTable.pop();
-    }       
+    }
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
@@ -175,7 +175,7 @@ public class VisitorImpl implements Visitor {
 
             ArrayList<VarDeclaration> vars =
                 ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
-            ArrayList<MethodDeclaration> methods = 
+            ArrayList<MethodDeclaration> methods =
                 ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
             // add subItems to SymbolTableItem and ClassSymbolTable:
@@ -185,7 +185,7 @@ public class VisitorImpl implements Visitor {
                     SymbolTable.top.put(item);
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                   System.out.println("ErrorItemMessage: Redefinition of variable " + vars.get(i).getIdentifier().getName()); 
+                   System.out.println("ErrorItemMessage: Redefinition of variable " + vars.get(i).getIdentifier().getName());
                 }
 
             }
@@ -196,7 +196,7 @@ public class VisitorImpl implements Visitor {
                     SymbolTable.top.put(item);
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                   System.out.println("ErrorItemMessage: Redefinition of method " + methods.get(i).getName().getName()); 
+                   System.out.println("ErrorItemMessage: Redefinition of method " + methods.get(i).getName().getName());
                 }
                 // currentClass.put(item);
                 // SymbolTable.top.put(item);
@@ -220,15 +220,15 @@ public class VisitorImpl implements Visitor {
     public void visit(MethodDeclaration methodDeclaration) {
         createNewSymbolTable();
         System.out.println("Method Decleration: " + methodDeclaration.getName().getName());
-        
-        ArrayList<VarDeclaration> localVars = 
+
+        ArrayList<VarDeclaration> localVars =
             ((ArrayList<VarDeclaration>)methodDeclaration.getLocalVars());
-            
+
         for (int i = 0; i < localVars.size(); i++) {
             try {
                 SymbolTable.top.put(this.createVarDecSymbolItem(localVars.get(i)));
             } catch (ItemAlreadyExistsException error) {
-               System.out.println("ErrorItemMessage: Redefinition of variable " + localVars.get(i).getIdentifier().getName()); 
+               System.out.println("ErrorItemMessage: Redefinition of variable " + localVars.get(i).getIdentifier().getName());
             }
         }
 

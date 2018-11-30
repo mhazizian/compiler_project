@@ -263,7 +263,7 @@ grammar Smoola;
         {
           BinaryExpression currentRes = new BinaryExpression(
               $inhCurrentResult, $expressionAdd.synFinalResult,
-              ($operator.text.equals('>')) ? BinaryOperator.gt : BinaryOperator.lt
+              ($operator.text.equals(">")) ? BinaryOperator.gt : BinaryOperator.lt
           );
           $inhCurrentResult = currentRes;
         }
@@ -283,7 +283,7 @@ grammar Smoola;
         {
             BinaryExpression currentRes = new BinaryExpression(
                 $inhCurrentResult, $expressionMult.synFinalResult,
-                ($operator.text.equals('+')) ? BinaryOperator.add : BinaryOperator.sub
+                ($operator.text.equals("+")) ? BinaryOperator.add : BinaryOperator.sub
             );
         }
         expressionAddTemp[currentRes]
@@ -302,7 +302,7 @@ grammar Smoola;
         {
             BinaryExpression currentRes = new BinaryExpression(
                 $inhCurrentResult, $expressionUnary.synFinalResult,
-                ($operator.text.equals('*')) ? BinaryOperator.mult : BinaryOperator.div
+                ($operator.text.equals("*")) ? BinaryOperator.mult : BinaryOperator.div
             );
             $inhCurrentResult = currentRes;
         }
@@ -315,7 +315,7 @@ grammar Smoola;
         expressionUnary
         {
             $synFinalResult = new UnaryExpression(
-                ($operator.text.equals('!')) ? UnaryOperator.not : UnaryOperator.minus,
+                ($operator.text.equals("!")) ? UnaryOperator.not : UnaryOperator.minus,
                 $expressionUnary.synFinalResult
             );
         }
