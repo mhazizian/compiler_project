@@ -115,7 +115,6 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Program program) {
-        // System.out.println("Program.");
         createNewSymbolTable();
 
         ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)program.getClasses());
@@ -221,8 +220,12 @@ public class VisitorImpl implements Visitor {
         createNewSymbolTable();
         // System.out.println("Method Decleration: " + methodDeclaration.getName().getName());
 
+        Expression returnValue = methodDeclaration.getReturnValue();
+        Identifier name = methodDeclaration.getName();
+        ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
         ArrayList<VarDeclaration> localVars =
-            ((ArrayList<VarDeclaration>)methodDeclaration.getLocalVars());
+            methodDeclaration.getLocalVars();
+        ArrayList<Statement> body = methodDeclaration.getBody();
 
         for (int i = 0; i < localVars.size(); i++) {
             try {
@@ -231,101 +234,142 @@ public class VisitorImpl implements Visitor {
                System.out.println("Line:" + localVars.get(i).getLineNumber() + ":ErrorItemMessage: Redefinition of variable " + localVars.get(i).getIdentifier().getName());
             }
         }
+        name.accept(new VisitorImpl());
+
+        for (int i = 0; i < args.size(); i++)
+            args.get(i).accept(new VisitorImpl());
 
         // visit method members
         for (int i = 0; i < localVars.size(); i++)
             localVars.get(i).accept(new VisitorImpl());
+
+        for (int i = 0; i < body.size(); i++)
+            body.get(i).accept(new VisitorImpl());
+
+        returnValue.accept(new VisitorImpl());
+
 
         SymbolTable.pop();
     }
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        // System.out.println("Var Decleration: " + varDeclaration.getIdentifier().getName());
+        Identifier identifier = varDeclaration.getIdentifier();
+        identifier.accept(new VisitorImpl());
     }
 
-    @Override
+     @Override
     public void visit(ArrayCall arrayCall) {
-        //TODO: implement appropriate visit functionality
+        Expression instance = arrayCall.getInstance();
+        Expression index = arrayCall.getIndex();
+
+        instance.accept(new VisitorImpl());
+        index.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(BinaryExpression binaryExpression) {
-        //TODO: implement appropriate visit functionality
+        Expression left = binaryExpression.getLeft();
+        Expression right = binaryExpression.getRight();
+
+        left.accept(new VisitorImpl());
+        right.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(Identifier identifier) {
-        //TODO: implement appropriate visit functionality
     }
 
     @Override
     public void visit(Length length) {
-        //TODO: implement appropriate visit functionality
+        Expression expression = length.getExpression();
+        expression.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(MethodCall methodCall) {
-        //TODO: implement appropriate visit functionality
+        Expression instance = methodCall.getInstance();
+        Identifier methodName = methodCall.getMethodName();
+
+        instance.accept(new VisitorImpl());
+        methodName.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(NewArray newArray) {
-        //TODO: implement appropriate visit functionality
+        Expression expression = newArray.getExpression();
+        expression.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(NewClass newClass) {
-        //TODO: implement appropriate visit functionality
+        Identifier className = newClass.getClassName();
+        className.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(This instance) {
-        //TODO: implement appropriate visit functionality
     }
 
     @Override
     public void visit(UnaryExpression unaryExpression) {
-        //TODO: implement appropriate visit functionality
+        Expression value = unaryExpression.getValue();
+        value.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(BooleanValue value) {
-        //TODO: implement appropriate visit functionality
     }
 
     @Override
     public void visit(IntValue value) {
-        //TODO: implement appropriate visit functionality
     }
 
     @Override
     public void visit(StringValue value) {
-        //TODO: implement appropriate visit functionality
     }
 
     @Override
     public void visit(Assign assign) {
-        //TODO: implement appropriate visit functionality
+        Expression lValue = assign.getlValue();
+        Expression rValue = assign.getrValue();
+        lValue.accept(new VisitorImpl());
+        rValue.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(Block block) {
-        //TODO: implement appropriate visit functionality
+        ArrayList<Statement> body = block.getBody();
+
+        for (int i = 0; i < body.size(); ++i)
+            body.get(i).accept(new VisitorImpl());
     }
 
     @Override
     public void visit(Conditional conditional) {
-        //TODO: implement appropriate visit functionality
+        Expression expression = conditional.getExpression();
+        Statement consequenceBody = conditional.getConsequenceBody();
+        Statement alternativeBody = conditional.getAlternativeBody();
+
+        expression.accept(new VisitorImpl());
+        consequenceBody.accept(new VisitorImpl());
+
+        if (alternativeBody != null)
+            alternativeBody.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(While loop) {
-        //TODO: implement appropriate visit functionality
+        Expression condition = loop.getCondition();
+        Statement body = loop.getBody();
+
+        condition.accept(new VisitorImpl());
+        body.accept(new VisitorImpl());
     }
 
     @Override
     public void visit(Write write) {
-        //TODO: implement appropriate visit functionality
+        Expression arg = write.getArg();
+        arg.accept(new VisitorImpl());
     }
 }
