@@ -67,13 +67,13 @@ grammar Smoola;
     ;
 
     classDeclaration returns [ClassDeclaration synClassDeclaration]:
-        'class' name=ID ('extends' parent=ID)?
+        'class' name=ID
             {
                 Identifier self = new Identifier($name.text);
                 Identifier parent = new Identifier("");
-                if (!$parent.text.equals(""))
-                    parent.setName($parent.text);
-
+            }
+        ('extends' parent=ID { parent.setName($parent.text); } )?
+            {
                 ClassDeclaration classDec = new ClassDeclaration(self, parent, $name.line);
                 $synClassDeclaration = classDec;
             }

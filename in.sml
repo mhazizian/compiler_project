@@ -19,7 +19,7 @@ class MainClass
     }
 }
 
-class TestClass extends MainClass
+class TestClass
 {
     var stringClassVar : string;
     var stringClassVar : int;
