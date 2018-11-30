@@ -382,7 +382,6 @@ grammar Smoola;
         }
         expressionMethodsTemp[returnValue]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
-
       | { $synFinalResult = $inhCurrentResult; }
     ;
 
