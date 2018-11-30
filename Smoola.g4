@@ -11,6 +11,7 @@ grammar Smoola;
         import ast.node.declaration.*;
         import ast.node.expression.*;
         import ast.node.statement.*;
+        import symbolTable.*;
         import ast.Type.ArrayType.*;
         import ast.VisitorImplIter;
         import ast.VisitorImpl;
@@ -31,9 +32,14 @@ grammar Smoola;
               $classDeclaration.synClassDeclaration); } )*
         EOF
         {
+            try {
             program.accept(new VisitorImpl());
-            print("\n\n\n\n");
-            program.accept(new VisitorImplIter());
+            if (SymbolTable.isValidAst)
+              program.accept(new VisitorImplIter());
+            }
+            catch (Exception exception) {
+              // Parse Error
+            }
         }
     ;
 
@@ -47,7 +53,8 @@ grammar Smoola;
                 ClassDeclaration mainClass = new ClassDeclaration(
                     self, new Identifier(""), $self.line
                 );
-                MethodDeclaration mainMethod = new MethodDeclaration(methodName, $methodName.line);
+                MethodDeclaration mainMethod = new MethodDeclaration(
+                    methodName, $methodName.line);
                 mainClass.addMethodDeclaration(mainMethod);
 
                 mainMethod.setReturnType(new IntType());
@@ -74,7 +81,8 @@ grammar Smoola;
             }
         ('extends' parent=ID { parent.setName($parent.text); } )?
             {
-                ClassDeclaration classDec = new ClassDeclaration(self, parent, $name.line);
+                ClassDeclaration classDec = new ClassDeclaration(self,
+                    parent, $name.line);
                 $synClassDeclaration = classDec;
             }
             '{'
@@ -89,7 +97,8 @@ grammar Smoola;
         'var' name=ID ':' type ';'
         {
             Identifier id = new Identifier($name.text);
-            $synVariableDeclaration = new VarDeclaration(id, $type.synVarType, $name.line);
+            $synVariableDeclaration = new VarDeclaration(id,
+                $type.synVarType, $name.line);
         }
     ;
 
@@ -97,7 +106,8 @@ grammar Smoola;
         'def' methodName=ID
         {
             Identifier methodName = new Identifier($methodName.text);
-            $synMethodDeclaration = new MethodDeclaration(methodName, $methodName.line);
+            $synMethodDeclaration = new MethodDeclaration(methodName,
+                $methodName.line);
         }
         (
           '(' ')'
@@ -107,7 +117,8 @@ grammar Smoola;
                     Identifier firstArgIdentifier = new Identifier(
                         $firstArgId.text);
                     VarDeclaration firstArg = new VarDeclaration(
-                        firstArgIdentifier, $firstArgType.synVarType, $firstArgType.start.getLine()
+                        firstArgIdentifier, $firstArgType.synVarType,
+                            $firstArgType.start.getLine()
                     );
                     $synMethodDeclaration.addArg(firstArg);
                 }
@@ -339,33 +350,40 @@ grammar Smoola;
     ;
 
     expressionMethodsTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
-        '.'
-        ( id=ID '(' ')'
-          {
-              Expression instance = $inhCurrentResult;
-              Identifier id = new Identifier($id.text);
-              $synFinalResult = new MethodCall(instance, id);
-          }
-        | id=ID
-          {
-              Expression instance = $inhCurrentResult;
-              Identifier id = new Identifier($id.text);
-              $synFinalResult = new MethodCall(instance, id);
-          }
-            '(' (expression
-                { ((MethodCall)$synFinalResult).addArg($expression.synFinalResult); }
-                (',' expression
-                { ((MethodCall)$synFinalResult).addArg($expression.synFinalResult); }
-            )*) ')'
-        | 'length'
-          {
-              Expression instance = $inhCurrentResult;
-              $synFinalResult = new Length(instance);
-          }
-        )
-        expressionMethodsTemp[inhCurrentResult]
+      '.' id=ID '(' ')'
+        {
+            Expression instance = $inhCurrentResult;
+            Identifier identifier = new Identifier($id.text);
+            MethodCall returnValue = new MethodCall(instance, identifier);
+        }
+        expressionMethodsTemp[returnValue]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
-        | { $synFinalResult = $inhCurrentResult; }
+
+      | '.' id=ID
+        {
+            Expression instance = $inhCurrentResult;
+            Identifier id = new Identifier($id.text);
+            MethodCall returnValue = new MethodCall(instance, id);
+        }
+        '('
+          (
+            expression { ((MethodCall)returnValue).addArg($expression.synFinalResult); }
+            (',' expression { ((MethodCall)returnValue).addArg($expression.synFinalResult); } )*
+          )
+        ')'
+
+        expressionMethodsTemp[returnValue]
+        { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
+
+      | '.' 'length'
+        {
+            Expression instance = $inhCurrentResult;
+            Length returnValue = new Length(instance);
+        }
+        expressionMethodsTemp[returnValue]
+        { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
+
+      | { $synFinalResult = $inhCurrentResult; }
     ;
 
     expressionOther returns [Expression synFinalResult]:

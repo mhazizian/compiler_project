@@ -1,7 +1,10 @@
 class MainClass
 {
     def main(): int {
-        var mainFucnVar : int;
+        var c : int;
+        
+        return c - e.k()[5];
+
         # var mainFucnVar : int[];
         # var a : boolean;
         # a = 2;
@@ -15,41 +18,49 @@ class MainClass
         # if (False == True)
         #     mainFucnVar = 2;
 
-        return 0;
+        # return 0;
     }
 }
 
-class TestClass
-{
-    var stringClassVar : string;
-    var stringClassVar : int;
-    var array : int[];
-
-    def testMethod(firstArg : int[]): int[]
-    {
-        var testMethodVar2 : int;
-        var testMethodVar : int[];
-
-        testMethodVar = new int[+10];
-
-        if (testMethodVar2) then
-        {
-            testMethodVar2 = !firstArg[0];
-        }
-            # firstArg = testMethodVar;
-        # else
-            # firstArg = testMethodVar;
-        while (testMethodVar2 > (3 * 3))
-        {
-            if ((!firstArg[0] || -firstArg[1]) == True) then
-                testMethodVar2 = 10;
-            else
-                testMethodVar2 = 2;
-        }
-
-        return 1;
-    }
-}
+# class TestClass
+# {
+#     var stringClassVar : string;
+#     # var stringClassVar : int;
+#     var array : int[];
+#
+#     def testMethod(firstArg : int[]): int[]
+#     {
+#         var testMethodVar2 : int;
+#         var testMethodVar : int[];
+#
+#         testMethodVar = new int[+10];
+#         # testMethodVar = new int[0];
+#
+#         if (testMethodVar2) then
+#         {
+#             testMethodVar2 = !firstArg[0];
+#         }
+#             # firstArg = testMethodVar;
+#         # else
+#             # firstArg = testMethodVar;
+#         while (testMethodVar2 > (3 * 3))
+#         {
+#             if ((!firstArg[0] || -firstArg[1]) == True) then
+#                 testMethodVar2 = 10;
+#             else
+#                 testMethodVar2 = 2;
+#         }
+#
+#         return 1;
+#     }
+# }
+#
+# class a {
+# def b(c : int, e : d) : int
+#     {
+#     return c - e.k()[5];
+#     }
+# }
 
 #          var str : string;
 #          var array : int[];

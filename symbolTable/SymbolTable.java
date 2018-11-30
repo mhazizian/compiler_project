@@ -11,6 +11,7 @@ public class SymbolTable {
 
 	public static SymbolTable top;
 	public static int itemIndex = 0;
+	public static boolean isValidAst = true;
 
 	private static Stack<SymbolTable> stack = new Stack<SymbolTable>();
 

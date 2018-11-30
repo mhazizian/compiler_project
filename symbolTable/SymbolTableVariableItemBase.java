@@ -2,7 +2,6 @@ package symbolTable;
 
 import ast.Type.Type;
 
-// public abstract class SymbolTableVariableItemBase extends SymbolTableItem {
 public class SymbolTableVariableItemBase extends SymbolTableItem { 
 
     private int index;
