@@ -122,7 +122,7 @@ public class VisitorImpl implements Visitor {
         ClassDeclaration mainClass = program.getMainClass();
 
         if (classes.size() == 0 && mainClass == null) {
-            System.out.println("ErrorItemMessage: No class exists in the program");
+            System.out.println("Line:" + 0 + ":ErrorItemMessage: No class exists in the program");
             return;
         }
 
@@ -135,7 +135,7 @@ public class VisitorImpl implements Visitor {
                 SymbolTable.top.put(this.createClassDecSymbolTableItem(classes.get(i)));
                 // System.out.println("____ added class: " + classes.get(i).getName().getName());
             } catch (ItemAlreadyExistsException error) {
-                System.out.println("ErrorItemMessage: Redefinition of class " + classes.get(i).getName().getName());
+                System.out.println("Line:" + classes.get(i).getLineNumber() + ":ErrorItemMessage: Redefinition of class " + classes.get(i).getName().getName());
             }
         }
 
@@ -151,7 +151,7 @@ public class VisitorImpl implements Visitor {
                 SymbolTableClassItem curretClass = ((SymbolTableClassItem) SymbolTable.top.get(classes.get(i).getName().getName()));
                 curretClass.setParent(parentClass);
             } catch (ItemNotFoundException error) {
-                System.out.println("ErrorItemMessage: inherited class not found: " + parentClassName);
+                System.out.println("Line:" + classes.get(i).getLineNumber() + ":ErrorItemMessage: inherited class not found: " + parentClassName);
             }
         }
 
@@ -185,7 +185,7 @@ public class VisitorImpl implements Visitor {
                     SymbolTable.top.put(item);
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                   System.out.println("ErrorItemMessage: Redefinition of variable " + vars.get(i).getIdentifier().getName());
+                   System.out.println("Line:" + vars.get(i).getLineNumber() + ":ErrorItemMessage: Redefinition of variable " + vars.get(i).getIdentifier().getName());
                 }
 
             }
@@ -196,7 +196,7 @@ public class VisitorImpl implements Visitor {
                     SymbolTable.top.put(item);
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                   System.out.println("ErrorItemMessage: Redefinition of method " + methods.get(i).getName().getName());
+                   System.out.println("Line:" + methods.get(i).getLineNumber() + ":ErrorItemMessage: Redefinition of method " + methods.get(i).getName().getName());
                 }
                 // currentClass.put(item);
                 // SymbolTable.top.put(item);
@@ -228,7 +228,7 @@ public class VisitorImpl implements Visitor {
             try {
                 SymbolTable.top.put(this.createVarDecSymbolItem(localVars.get(i)));
             } catch (ItemAlreadyExistsException error) {
-               System.out.println("ErrorItemMessage: Redefinition of variable " + localVars.get(i).getIdentifier().getName());
+               System.out.println("Line:" + localVars.get(i).getLineNumber() + ":ErrorItemMessage: Redefinition of variable " + localVars.get(i).getIdentifier().getName());
             }
         }
 

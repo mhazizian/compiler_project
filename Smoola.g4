@@ -45,8 +45,9 @@ grammar Smoola;
                 Identifier methodName = new Identifier($methodName.text);
 
                 ClassDeclaration mainClass = new ClassDeclaration(
-                    self, new Identifier(""));
-                MethodDeclaration mainMethod = new MethodDeclaration(methodName);
+                    self, new Identifier(""), $self.line
+                );
+                MethodDeclaration mainMethod = new MethodDeclaration(methodName, $methodName.line);
                 mainClass.addMethodDeclaration(mainMethod);
 
                 mainMethod.setReturnType(new IntType());
@@ -73,7 +74,7 @@ grammar Smoola;
                 if (!$parent.text.equals(""))
                     parent.setName($parent.text);
 
-                ClassDeclaration classDec = new ClassDeclaration(self, parent);
+                ClassDeclaration classDec = new ClassDeclaration(self, parent, $name.line);
                 $synClassDeclaration = classDec;
             }
             '{'
@@ -88,7 +89,7 @@ grammar Smoola;
         'var' name=ID ':' type ';'
         {
             Identifier id = new Identifier($name.text);
-            $synVariableDeclaration = new VarDeclaration(id, $type.synVarType);
+            $synVariableDeclaration = new VarDeclaration(id, $type.synVarType, $name.line);
         }
     ;
 
@@ -96,7 +97,7 @@ grammar Smoola;
         'def' methodName=ID
         {
             Identifier methodName = new Identifier($methodName.text);
-            $synMethodDeclaration = new MethodDeclaration(methodName);
+            $synMethodDeclaration = new MethodDeclaration(methodName, $methodName.line);
         }
         (
           '(' ')'
@@ -106,14 +107,15 @@ grammar Smoola;
                     Identifier firstArgIdentifier = new Identifier(
                         $firstArgId.text);
                     VarDeclaration firstArg = new VarDeclaration(
-                        firstArgIdentifier, $firstArgType.synVarType);
+                        firstArgIdentifier, $firstArgType.synVarType, $firstArgType.start.getLine()
+                    );
                     $synMethodDeclaration.addArg(firstArg);
                 }
                 (',' argId=ID ':' argType=type
                   {
                       Identifier argIdentifier = new Identifier($argId.text);
                       VarDeclaration newArg = new VarDeclaration(argIdentifier,
-                          $argType.synVarType);
+                          $argType.synVarType, $argType.start.getLine());
                       $synMethodDeclaration.addArg(newArg);
                   }
                 )*

@@ -7,11 +7,19 @@ import ast.node.expression.Identifier;
 public class VarDeclaration extends Declaration {
     private Identifier identifier;
     private Type type;
+    private int lineNum;
 
-    public VarDeclaration(Identifier identifier, Type type) {
+    public VarDeclaration(Identifier identifier, Type type, int lineNum) {
         this.identifier = identifier;
         this.type = type;
+        this.lineNum = lineNum;
     }
+
+    
+    public int getLineNumber() {
+        return lineNum;
+    }
+
 
     public Identifier getIdentifier() {
         return identifier;

@@ -15,9 +15,15 @@ public class MethodDeclaration extends Declaration {
     private ArrayList<VarDeclaration> args = new ArrayList<>();
     private ArrayList<VarDeclaration> localVars = new ArrayList<>();
     private ArrayList<Statement> body = new ArrayList<>();
+    private int lineNum;
 
-    public MethodDeclaration(Identifier name) {
+    public MethodDeclaration(Identifier name, int lineNum) {
         this.name = name;
+        this.lineNum = lineNum;
+    }
+
+    public int getLineNumber() {
+        return lineNum;
     }
 
     public Expression getReturnValue() {
