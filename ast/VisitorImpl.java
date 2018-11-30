@@ -15,7 +15,6 @@ import ast.node.statement.*;
 import ast.Type.*;
 
 import symbolTable.*;
-// TODO Same method and field names
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
 
@@ -32,14 +31,6 @@ public class VisitorImpl implements Visitor {
         );
         this.ItemDecIndex += 1;
 
-        // try {
-            // System.out.println("## Putting Var: " + varDec.getName() +", "+ varDec.getIndex());
-        //     SymbolTable.top.put(varDec);
-        //     this.ItemDecIndex += 1;
-        // } catch (ItemAlreadyExistsException error) {
-        //     System.out.println("## put failed: ItemAlreadyExistsException");
-        // }
-
         return ((SymbolTableItem) varDec);
     }
 
@@ -54,32 +45,11 @@ public class VisitorImpl implements Visitor {
             varsType
         );
 
-        // try {
-            // String s = new String();
-            // for (int i = 0; i < methodDec.getArgs().size(); i++)
-            //     s = s + " " + methodDec.getArgs().get(i);
-
-            // System.out.println("## Putting Method: " + methodDec.getName() + " ,Args:" + s);
-
-        //     SymbolTable.top.put(methodDec);
-
-        // } catch (ItemAlreadyExistsException error) {
-        //     System.out.println("## put failed: ItemAlreadyExistsException");
-        // }
-
         return ((SymbolTableItem) methodDec);
     }
 
     public SymbolTableItem createClassDecSymbolTableItem(ClassDeclaration classDeclaration) {
         SymbolTableClassItem classDec = new SymbolTableClassItem(classDeclaration.getName().getName());
-
-        // try {
-            // System.out.println("## Putting: Class: " + classDec.getKey());
-        //     SymbolTable.top.put(classDec);
-        // } catch (ItemAlreadyExistsException error) {
-        //     System.out.println("ItemAlreadyExistsException.");
-        // }
-
         return ((SymbolTableItem) classDec);
     }
 
@@ -158,7 +128,6 @@ public class VisitorImpl implements Visitor {
         for (int i = 0; i < classes.size(); i++)
             classes.get(i).accept(new VisitorImpl());
 
-        // SymbolTable.top.put(this.createClassDecSymbolTableItem(mainClass));
         mainClass.accept(new VisitorImpl());
 
         SymbolTable.pop();
@@ -197,8 +166,6 @@ public class VisitorImpl implements Visitor {
                 } catch (ItemAlreadyExistsException error) {
                    System.out.println("Line:" + methods.get(i).getLineNumber() + ":ErrorItemMessage: Redefinition of method " + methods.get(i).getName().getName());
                 }
-                // currentClass.put(item);
-                // SymbolTable.top.put(item);
             }
 
 
