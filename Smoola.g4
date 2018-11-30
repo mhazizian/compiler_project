@@ -1,21 +1,21 @@
 grammar Smoola;
+
     @header {
         import javafx.util.Pair;
         import java.util.ArrayList;
 
-        import ast.node.*;
+        import ast.node.expression.Identifier;
+        import ast.node.expression.Value.*;
+        import ast.Type.UserDefinedType.*;
+        import ast.Type.PrimitiveType.*;
         import ast.node.declaration.*;
         import ast.node.expression.*;
         import ast.node.statement.*;
-        import ast.node.expression.Value.*;
-        import ast.node.expression.Identifier;
-        // import symbolTable.*;
-        import ast.Type.PrimitiveType.*;
         import ast.Type.ArrayType.*;
-        import ast.Type.UserDefinedType.*;
-        import ast.Type.*;
-        import ast.VisitorImpl;
         import ast.VisitorImplIter;
+        import ast.VisitorImpl;
+        import ast.node.*;
+        import ast.Type.*;
     }
 
     @members {
@@ -26,48 +26,46 @@ grammar Smoola;
 
     program:
         { Program program = new Program(); }
-        mainClass { program.setMainClass($mainClass.synClassDec); }
-        ( classDec=classDeclaration
-            { program.addClass($classDec.synClassDec); }
-        )*
+        mainClass { program.setMainClass($mainClass.synClassDeclaration); }
+        ( classDeclaration { program.addClass(
+              $classDeclaration.synClassDeclaration); } )*
         EOF
         {
             program.accept(new VisitorImpl());
-            // program.accept(new VisitorImplIter());
+            print("\n\n\n\n");
+            program.accept(new VisitorImplIter());
         }
     ;
 
-    mainClass returns [ClassDeclaration synClassDec]:
+    mainClass returns [ClassDeclaration synClassDeclaration]:
         // name should be checked later
-
         'class' self=ID '{' 'def' methodName=ID '(' ')' ':' 'int'
             {
                 Identifier self = new Identifier($self.text);
                 Identifier methodName = new Identifier($methodName.text);
 
-                ClassDeclaration mainClass = new ClassDeclaration(self,
-                    new Identifier(""));
-                MethodDeclaration mainMethod = new MethodDeclaration(
-                    methodName);
+                ClassDeclaration mainClass = new ClassDeclaration(
+                    self, new Identifier(""));
+                MethodDeclaration mainMethod = new MethodDeclaration(methodName);
                 mainClass.addMethodDeclaration(mainMethod);
 
                 mainMethod.setReturnType(new IntType());
-                $synClassDec = mainClass;
+                $synClassDeclaration = mainClass;
             }
             '{'
-                (
-                    varDeclaration
-                    {
-                        mainMethod.addLocalVar($varDeclaration.synVarDec);
-                    }
-                )*
-                statements
-                'return' expression ';'
+                ( varDeclaration { mainMethod.addLocalVar(
+                      $varDeclaration.synVariableDeclaration); } )*
+
+                ( statement { mainMethod.addStatement(
+                      $statement.synStatement); } )*
+                'return' expression
+                    { mainMethod.setReturnValue($expression.synFinalResult); }
+                ';'
             '}'
         '}'
     ;
 
-    classDeclaration returns [ClassDeclaration synClassDec]:
+    classDeclaration returns [ClassDeclaration synClassDeclaration]:
         'class' name=ID ('extends' parent=ID)?
             {
                 Identifier self = new Identifier($name.text);
@@ -76,72 +74,62 @@ grammar Smoola;
                     parent.setName($parent.text);
 
                 ClassDeclaration classDec = new ClassDeclaration(self, parent);
-                $synClassDec = classDec;
+                $synClassDeclaration = classDec;
             }
-            '{' (
-                    varDec=varDeclaration
-                    { classDec.addVarDeclaration($varDec.synVarDec); }
-                )*
-                (
-                    methodDec=methodDeclaration
-                    { classDec.addMethodDeclaration($methodDec.synMethodDec); }
-                )*
+            '{'
+                ( varDeclaration { classDec.addVarDeclaration(
+                      $varDeclaration.synVariableDeclaration); } )*
+                ( methodDeclaration { classDec.addMethodDeclaration(
+                      $methodDeclaration.synMethodDeclaration); } )*
             '}'
     ;
 
-    varDeclaration returns [VarDeclaration synVarDec]:
+    varDeclaration returns [VarDeclaration synVariableDeclaration]:
         'var' name=ID ':' type ';'
         {
             Identifier id = new Identifier($name.text);
-            VarDeclaration varDec = new VarDeclaration(id, $type.synVarType);
-            $synVarDec = varDec;
+            $synVariableDeclaration = new VarDeclaration(id, $type.synVarType);
         }
     ;
 
-    methodDeclaration returns [MethodDeclaration synMethodDec]:
+    methodDeclaration returns [MethodDeclaration synMethodDeclaration]:
         'def' methodName=ID
         {
             Identifier methodName = new Identifier($methodName.text);
-            $synMethodDec = new MethodDeclaration(methodName);
+            $synMethodDeclaration = new MethodDeclaration(methodName);
         }
         (
           '(' ')'
-          | ('(' firstArgId=ID ':' firstArgType=type
-          {
-            Identifier firstArgIdentifier = new Identifier($firstArgId.text);
-            VarDeclaration firstArg = new VarDeclaration(firstArgIdentifier,
-                $firstArgType.synVarType);
-
-            ((MethodDeclaration)$synMethodDec).addArg(firstArg);
-          }
-              (',' argId=ID ':' argType=type
+          | (
+              '(' firstArgId=ID ':' firstArgType=type
+                {
+                    Identifier firstArgIdentifier = new Identifier(
+                        $firstArgId.text);
+                    VarDeclaration firstArg = new VarDeclaration(
+                        firstArgIdentifier, $firstArgType.synVarType);
+                    $synMethodDeclaration.addArg(firstArg);
+                }
+                (',' argId=ID ':' argType=type
                   {
-                    Identifier argIdentifier = new Identifier($argId.text);
-                    VarDeclaration newArg = new VarDeclaration(argIdentifier,
-                        $argType.synVarType);
-                    ((MethodDeclaration)$synMethodDec).addArg(newArg);
+                      Identifier argIdentifier = new Identifier($argId.text);
+                      VarDeclaration newArg = new VarDeclaration(argIdentifier,
+                          $argType.synVarType);
+                      $synMethodDeclaration.addArg(newArg);
                   }
-              )*')'
+                )*
+              ')'
             )
         )
-        ':' type
-        {
-          $synMethodDec.setReturnType($type.synVarType);
-        }
+        ':' type { $synMethodDeclaration.setReturnType($type.synVarType); }
 
-        '{' (varDeclaration
-            {
-                ((MethodDeclaration)$synMethodDec).addLocalVar(
-                    $varDeclaration.synVarDec);
-            } )*
-            statements 'return' expression ';'
+        '{' (varDeclaration { ($synMethodDeclaration).
+              addLocalVar($varDeclaration.synVariableDeclaration); } )*
+              ( statement { $synMethodDeclaration.addStatement(
+                    $statement.synStatement); } )*
+              'return' expression
+                  { $synMethodDeclaration.setReturnValue($expression.synFinalResult); }
+              ';'
         '}'
-    ;
-
-    statements returns [Statement synStatement]:
-        { Block blockStatements = new Block(); }
-        ( statement { blockStatements.addStatement($statement.synStatement); } )*
-        { $synStatement = blockStatements; }
     ;
 
     statement returns [Statement synStatement]:
@@ -153,18 +141,18 @@ grammar Smoola;
     ;
 
     statementBlock returns [Statement synStatement]:
-        '{'  statements { $synStatement = $statements.synStatement; } '}'
+        { Block blockStatements = new Block(); }
+        '{' ( statement { blockStatements.addStatement($statement.synStatement); } )*
+        { $synStatement = blockStatements; } '}'
     ;
 
     statementCondition returns [Statement synStatement]:
         'if' '('expression')' 'then' statement
-        {
-          Conditional conditionalStatement = new Conditional($expression.synFinalResult,
-              $statement.synStatement);
-        }
-        ( 'else' statement
-            { conditionalStatement.setAlternativeBody($statement.synStatement); }
-        )?
+        { Conditional conditionalStatement = new Conditional(
+              $expression.synFinalResult, $statement.synStatement); }
+        ( 'else' statement { conditionalStatement.setAlternativeBody(
+              $statement.synStatement); } )?
+
         { $synStatement = conditionalStatement; }
     ;
 
@@ -181,19 +169,20 @@ grammar Smoola;
 
     statementAssignment returns [Statement synStatement]:
         expression ';'
-        { $synStatement = new Assign(((BinaryExpression)($expression.synFinalResult)).getLeft(),
-              ((BinaryExpression)($expression.synFinalResult)).getRight()); }
+        { $synStatement = new Assign(
+          ((BinaryExpression)($expression.synFinalResult)).getLeft(),
+          ((BinaryExpression)($expression.synFinalResult)).getRight()); }
     ;
 
     expression returns [Expression synFinalResult]:
-        expressionAssignment
-        { $synFinalResult = $expressionAssignment.synFinalResult; }
+        expressionAssignment { $synFinalResult =
+            $expressionAssignment.synFinalResult; }
     ;
 
     expressionAssignment returns [Expression synFinalResult]:
         expressionOr
         '='
-        expressionAssignment // a = b = c;
+        expressionAssignment
         {
             $synFinalResult = new BinaryExpression(
                 $expressionOr.synFinalResult,
@@ -258,7 +247,7 @@ grammar Smoola;
           );
           $inhCurrentResult = currentRes;
         }
-        expressionEqTemp[inhCurrentResult] // TODO a > b < c ??
+        expressionEqTemp[inhCurrentResult]
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
@@ -278,7 +267,7 @@ grammar Smoola;
           );
           $inhCurrentResult = currentRes;
         }
-        expressionCmpTemp[inhCurrentResult] // TODO a > b < c ??
+        expressionCmpTemp[inhCurrentResult]
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
@@ -315,7 +304,6 @@ grammar Smoola;
                 $inhCurrentResult, $expressionUnary.synFinalResult,
                 ($operator.text.equals('*')) ? BinaryOperator.mult : BinaryOperator.div
             );
-            // TODO : check it later:
             $inhCurrentResult = currentRes;
         }
         expressionMultTemp[inhCurrentResult]
@@ -336,7 +324,6 @@ grammar Smoola;
 
     expressionMem returns [Expression synFinalResult]:
         expressionMethods
-        // CHECKED
         expressionMemTemp[$expressionMethods.synFinalResult]
         { $synFinalResult = $expressionMemTemp.synFinalResult; }
     ;
@@ -385,12 +372,15 @@ grammar Smoola;
     ;
 
     expressionOther returns [Expression synFinalResult]:
-            num1=CONST_NUM { $synFinalResult = new IntValue(Integer.parseInt($num1.text), new IntType()); }
-        |   str=CONST_STR { $synFinalResult = new StringValue($str.text, new StringType()); }
+            num1=CONST_NUM { $synFinalResult =
+                new IntValue(Integer.parseInt($num1.text), new IntType()); }
+        |   str=CONST_STR { $synFinalResult =
+                new StringValue($str.text, new StringType()); }
         |   'new ' 'int' '[' num2=CONST_NUM ']'
             {
                 NewArray temp = new NewArray();
-                temp.setExpression(new IntValue(Integer.parseInt($num2.text), new IntType()));
+                temp.setExpression(new IntValue(Integer.parseInt($num2.text),
+                    new IntType()));
                 $synFinalResult = temp;
             }
         |   'new ' newClassId=ID '(' ')'
@@ -421,8 +411,9 @@ grammar Smoola;
                 UserDefinedType temp = new UserDefinedType();
                 temp.setName(new Identifier($id.text));
                 $synVarType = temp;
-            } // TODO : generate compatible statment
+            }
     ;
+
     CONST_NUM:
         [0-9]+
     ;

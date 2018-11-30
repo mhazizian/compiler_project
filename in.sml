@@ -9,7 +9,6 @@ class MainClass
         mainFucnVar = a.length;
         return 0;
     }
-
 }
 
 class TestClass extends MainClass
@@ -22,15 +21,12 @@ class TestClass extends MainClass
     {
         var testMethodVar : int;
         var testMethodVar : int[];
-        array = firstArg;
+        {
+            array = firstArg;
+        }
         return array;
     }
-
-    def testMethod(a : int): int[]
-    {
-    }
 }
-
 
 #          var str : string;
 #          var array : int[];

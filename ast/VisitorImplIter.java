@@ -17,115 +17,56 @@ import ast.Type.*;
 import symbolTable.*;
 
 public class VisitorImplIter implements Visitor {
-    private static int ItemDecIndex = 0;
-
-    public static void createNewSymbolTable() {
-            if (SymbolTable.top == null)
-                SymbolTable.push(new SymbolTable());
-            else
-                SymbolTable.push(new SymbolTable(SymbolTable.top.getPreSymbolTable()));
-    }
-
-    public SymbolTableItem addVarToSymbolTable(VarDeclaration varDecleration) {
-        SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase(
-            varDecleration.getIdentifier().getName(),
-            varDecleration.getType(),
-            this.ItemDecIndex
-        );
-
-        try {
-            SymbolTable.top.put(varDec);
-            this.ItemDecIndex += 1;
-        } catch (ItemAlreadyExistsException error) {
-            System.out.println("## put failed: ItemAlreadyExistsException");
-        }
-        return ((SymbolTableItem) varDec);
-    }
-
-    public SymbolTableItem addMethodToSymbolTable(MethodDeclaration methodDecleration) {
-        ArrayList<VarDeclaration> varsDec = methodDecleration.getArgs();
-        ArrayList<Type> varsType = new ArrayList<Type> ();
-        for (int i = 0; i < varsDec.size(); i++)
-            varsType.add(varsDec.get(i).getType());
-
-        SymbolTableMethodItem methodDec = new SymbolTableMethodItem(
-            methodDecleration.getName().getName(),
-            varsType
-        );
-
-        try {
-            String s = new String();
-            for (int i = 0; i < methodDec.getArgs().size(); i++)
-                s = s + " " + methodDec.getArgs().get(i);
-
-            System.out.println("## Putting Method: " + methodDec.getName() + " ,Args:" + s);
-
-            SymbolTable.top.put(methodDec);
-
-        } catch (ItemAlreadyExistsException error) {
-            System.out.println("## put failed: ItemAlreadyExistsException");
-        }
-
-        return ((SymbolTableItem) methodDec);
-    }
-
-    public SymbolTableItem addClassToSymbolTable(ClassDeclaration classDeclaration) {
-        SymbolTableClassItem classDec = new SymbolTableClassItem(classDeclaration.getName().getName());
-
-        try {
-            SymbolTable.top.put(classDec);
-        } catch (ItemAlreadyExistsException error) {
-            System.out.println("ItemAlreadyExistsException.");
-        }
-
-        return ((SymbolTableItem) classDec);
-    }
-
     @Override
-    public void visit(Program program) {
+    public void visit(Program program) { // DONE
         System.out.println(program.toString());
-        createNewSymbolTable();
 
+        ClassDeclaration mainClass = program.getMainClass();
         ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)
             program.getClasses());
+
+        mainClass.accept(new VisitorImplIter());
 
         for (int i = 0; i < classes.size(); i++) {
             classes.get(i).accept(new VisitorImplIter());
         }
-        SymbolTable.pop();
     }
 
     @Override
-    public void visit(ClassDeclaration classDeclaration) {
+    public void visit(ClassDeclaration classDeclaration) { // DONE
         System.out.println(classDeclaration.toString());
-        this.addClassToSymbolTable(classDeclaration);
-        createNewSymbolTable();
 
-          ArrayList<VarDeclaration> vars = ((ArrayList<VarDeclaration>)
-              classDeclaration.getVarDeclarations());
-          ArrayList<MethodDeclaration> methods = ((ArrayList<MethodDeclaration>)
-              classDeclaration.getMethodDeclarations());
+        Identifier name = classDeclaration.getName();
+        Identifier parentName = classDeclaration.getParentName();
+        ArrayList<VarDeclaration> variables = classDeclaration.getVarDeclarations();
+        ArrayList<MethodDeclaration> methods = classDeclaration.getMethodDeclarations();
 
-          for (int i = 0; i < vars.size(); i++)
-              vars.get(i).accept(new VisitorImplIter());
+        name.accept(new VisitorImplIter()); // DONE
 
-          for (int i = 0; i < methods.size(); i++)
-              methods.get(i).accept(new VisitorImplIter());
+        if (!parentName.getName().equals(""))
+            parentName.accept(new VisitorImplIter()); // DONE
 
-        SymbolTable.pop();
+        for (int i = 0; i < variables.size(); i++)
+            variables.get(i).accept(new VisitorImplIter());
+
+        for (int i = 0; i < methods.size(); i++)
+            methods.get(i).accept(new VisitorImplIter());
     }
 
     @Override
-    public void visit(MethodDeclaration methodDeclaration) {
+    public void visit(MethodDeclaration methodDeclaration) { // DONE
         System.out.println(methodDeclaration.toString());
-        this.addMethodToSymbolTable(methodDeclaration);
-        createNewSymbolTable();
 
-        ArrayList<VarDeclaration> localVars = ((ArrayList<VarDeclaration>)
-            methodDeclaration.getLocalVars());
+        Expression returnValue = methodDeclaration.getReturnValue();
+        Identifier name = methodDeclaration.getName();
+        ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
+        ArrayList<VarDeclaration> localVars = methodDeclaration.getLocalVars();
+        ArrayList<Statement> body = methodDeclaration.getBody();
 
-        ArrayList<Statement> body = ((ArrayList<Statement>)
-            methodDeclaration.getBody());
+        name.accept(new VisitorImplIter()); // DONE
+
+        for (int i = 0; i < args.size(); i++)
+            args.get(i).accept(new VisitorImplIter());
 
         for (int i = 0; i < localVars.size(); i++)
             localVars.get(i).accept(new VisitorImplIter());
@@ -133,7 +74,7 @@ public class VisitorImplIter implements Visitor {
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorImplIter());
 
-        SymbolTable.pop();
+        returnValue.accept(new VisitorImplIter()); // DONE
     }
 
     @Override
@@ -152,7 +93,7 @@ public class VisitorImplIter implements Visitor {
     }
 
     @Override
-    public void visit(Identifier identifier) {
+    public void visit(Identifier identifier) { // DONE
         System.out.println(identifier.toString());
     }
 
