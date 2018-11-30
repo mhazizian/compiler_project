@@ -19,8 +19,18 @@ public class SymbolTableClassItem extends SymbolTableItem {
         this.items = new HashMap<String, SymbolTableItem>();
     }
 
-    public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
+    public boolean hasItem(SymbolTableItem item) {
         if(items.containsKey(item.getKey()))
+            return true;
+
+        if (this.parent == null)
+            return false;
+
+        return this.parent.hasItem(item);
+    }
+
+    public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
+        if(this.hasItem(item))
             throw new ItemAlreadyExistsException();
         items.put(item.getKey(), item);
     }

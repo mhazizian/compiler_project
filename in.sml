@@ -16,7 +16,7 @@ class Test1 {
 class Test2 extends Test1 {
     var variable : int[];
 
-    def method2(): int {
+    def method1(): int {
         i = 10;
         variable = new int[10];
         return i;
