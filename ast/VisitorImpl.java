@@ -28,7 +28,7 @@ public class VisitorImpl implements Visitor {
     }
 
     public SymbolTableItem createVarDecSymbolItem(VarDeclaration varDecleration) {
-        SymbolTableVariableItemBase varDec = new SymbolTableVariableItemBase(
+        SymbolTableVariableItem varDec = new SymbolTableVariableItem(
             varDecleration.getIdentifier().getName(),
             varDecleration.getType(),
             this.ItemDecIndex
@@ -305,20 +305,36 @@ public class VisitorImpl implements Visitor {
         methodName.accept(new VisitorImpl());
 
         try {
-            System.out.println("MethodCall: :D : " + "c_" + instance.getType());
-            SymbolTableClassItem instanceItem = (SymbolTableClassItem)SymbolTable.top.get("c_" + instance.getType());
-            System.out.println("MethodCall: " + "c_" + instanceItem.getKey());
-            SymbolTableMethodItem methodItem =  (SymbolTableMethodItem)instanceItem.get("m_" + methodName.getName());
-            System.out.println("MethodCall: " + "m_" + methodItem.getReturnType());
-            methodCall.setType(methodItem.getReturnType());
-            // System.out.println("MethodCall: " + "c_" + instance.getType());
-            // SymbolTableMethodItem methodItem = (SymbolTableMethodItem)SymbolTable.top.get("m_" + methodName.getName());
+            SymbolTableItem instanceItem = SymbolTable.top.getItem(instance.getType().toString());
+
+            if (instanceItem.getItemType().equals("class")) {
+
+                SymbolTableMethodItem methodItem =  (SymbolTableMethodItem)((SymbolTableClassItem)instanceItem).get("m_" + methodName.getName());
+
+                methodCall.setType(methodItem.getReturnType());
+                System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
+
+            } else if (instanceItem.getItemType().equals("var")) {
+                // System.out.println("here");
+                // Type varType = ((SymbolTableVariableItem)instanceItem).getType();
+                // System.out.println("MethodCall: Type is Var: " + varType.getType());
+
+                // if (varType.getType().equals("UserDefinedType")) {
+                //     SymbolTableItem instanceVarItem = SymbolTable.top.get("c_" + varType);
+                //     SymbolTableMethodItem methodItem = (SymbolTableMethodItem)((SymbolTableClassItem)instanceVarItem).get("m_" + methodName.getName());
+                //     methodCall.setType(methodItem.getReturnType());
+                //     System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
+                // } else {
+                //     // @TODO : print error or throw.
+                // }
+
+            }
+            System.out.println("here_end");
+        
         } catch (ItemNotFoundException error) {
-            System.out.println("here :DDD");
             // @TODO : complete this section. :))
+            System.out.println("Error on Method Call");
         }
-        // methodCall.setType(type);
-        // @TODO : find return type of methodName in SymbolTable
     }
 
     @Override
@@ -339,8 +355,8 @@ public class VisitorImpl implements Visitor {
         System.out.println(newClass);
         Identifier className = newClass.getClassName();
         className.accept(new VisitorImpl());
-        System.out.println("NewClass: " + new UserDefinedType(className));
-        newClass.setType(new UserDefinedType(new Identifier(className.getName())));
+        // System.out.println("NewClass: " + new UserDefinedType(className));
+        newClass.setType(new UserDefinedType(className));
     }
 
     @Override

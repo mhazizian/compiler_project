@@ -7,12 +7,16 @@ class MainClass {
 # class B {
 #     var i : int;
 # }
-
+class B {
+    def j(): int {
+        return 0;
+    }
+}
 class A{
-    def i(): int {
+    def i(): B {
         # var q : Test2;
         # q = new Test2().method();
-        return 2;
+        return new B();
     }
 }
 
@@ -20,8 +24,9 @@ class C {
     def t(): int {
         var a : A;
         var b : int;
-        a = new A();
-        b = a.i();
+
+        a = new A().i().j();
+        # b = a.j();
         return 2;
     }
 }
