@@ -2,6 +2,8 @@ package ast;
 
 import java.util.ArrayList;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import ast.node.Program;
 import ast.node.declaration.ClassDeclaration;
 import ast.node.declaration.MethodDeclaration;
@@ -102,21 +104,27 @@ public class VisitorImpl implements Visitor {
         // create SymbolTableItem for each classDec
         putToSymbolTable(this.createClassDecSymbolTableItem(mainClass));
 
+        ArrayList<Boolean> classDecIsValid = new ArrayList<Boolean>(classes.size());
         for (int i = 0; i < classes.size(); i++) {
             try {
                 SymbolTable.top.put(this.createClassDecSymbolTableItem(
                     classes.get(i)));
+                classDecIsValid.set(i, true);
             } catch (ItemAlreadyExistsException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
                     ":Redefinition of class " +
                     classes.get(i).getName().getName());
                 SymbolTable.isValidAst = false;
+                classDecIsValid.set(i, false);
             }
         }
 
 
         // add parentClass for each ClassDecSymbolTableItem
         for (int i = 0; i < classes.size(); i++) {
+            if (!classDecIsValid.get(i))
+                continue;
+
             String parentClassName = classes.get(i).getParentName().getName();
             if (parentClassName.equals(""))
                 parentClassName = objectClassName;
