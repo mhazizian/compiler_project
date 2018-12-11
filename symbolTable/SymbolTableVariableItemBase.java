@@ -11,6 +11,7 @@ public class SymbolTableVariableItemBase extends SymbolTableItem {
         this.name = name;
         this.type = type;
         this.index = index;
+        this.itemType = "var";
     }
 
     public String getName() {
@@ -23,7 +24,8 @@ public class SymbolTableVariableItemBase extends SymbolTableItem {
 
     @Override
     public String getKey() {
-        return name;
+        return "v_" + name;
+        // return name;
     }
 
     public int getIndex() {

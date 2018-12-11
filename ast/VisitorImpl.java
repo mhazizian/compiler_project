@@ -131,10 +131,10 @@ public class VisitorImpl implements Visitor {
 
             try {
                 SymbolTableClassItem parentClass =
-                    ((SymbolTableClassItem) SymbolTable.top.get(parentClassName));
+                    ((SymbolTableClassItem) SymbolTable.top.get("c_" + parentClassName));
                 SymbolTableClassItem curretClass =
                     ((SymbolTableClassItem) SymbolTable.top.get(
-                        classes.get(i).getName().getName()));
+                        "c_" + classes.get(i).getName().getName()));
                 curretClass.setParent(parentClass);
             } catch (ItemNotFoundException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
@@ -158,7 +158,7 @@ public class VisitorImpl implements Visitor {
         try {
             SymbolTableClassItem currentClass =
                 ((SymbolTableClassItem) SymbolTable.top.get(
-                classDeclaration.getName().getName()));
+                "c_" + classDeclaration.getName().getName()));
 
             ArrayList<VarDeclaration> vars =
                 ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());

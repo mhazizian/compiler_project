@@ -13,6 +13,7 @@ public class SymbolTableMethodItem extends SymbolTableItem {
     public SymbolTableMethodItem(String name, ArrayList<Type> argTypes) {
         this.name = name;
         this.argTypes = argTypes;
+        this.itemType = "method";
     }
 
     public void setThisObject(SymbolTableClassItem thisObj) {
@@ -25,6 +26,7 @@ public class SymbolTableMethodItem extends SymbolTableItem {
 
     @Override
     public String getKey() {
+        return "m_" + name;
         return this.name;
         //@TODO
     }

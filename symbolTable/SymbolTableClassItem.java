@@ -17,10 +17,11 @@ public class SymbolTableClassItem extends SymbolTableItem {
         this.name = name;
         this.parent = newParent;
         this.items = new HashMap<String, SymbolTableItem>();
+        this.itemType = "class";
     }
 
     public boolean hasItem(SymbolTableItem item) {
-        if(items.containsKey(item.getKey()))
+        if(items.containsKey(item.getKey())) 
             return true;
 
         if (this.parent == null)
@@ -30,6 +31,7 @@ public class SymbolTableClassItem extends SymbolTableItem {
     }
 
     public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
+
         if(this.hasItem(item))
             throw new ItemAlreadyExistsException();
         items.put(item.getKey(), item);
@@ -57,7 +59,7 @@ public class SymbolTableClassItem extends SymbolTableItem {
 
     @Override
     public String getKey() {
-        //@TODO
-        return this.name;
+        return "c_" + this.name;
+        // return this.name;
     }
 }
