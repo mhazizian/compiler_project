@@ -305,12 +305,17 @@ public class VisitorImpl implements Visitor {
         methodName.accept(new VisitorImpl());
 
         try {
-            System.out.println("here :D");
+            System.out.println("MethodCall: :D : " + "c_" + instance.getType());
             SymbolTableClassItem instanceItem = (SymbolTableClassItem)SymbolTable.top.get("c_" + instance.getType());
-            System.out.println("MethodCall: " + "c_" + instance.getType());
+            System.out.println("MethodCall: " + "c_" + instanceItem.getKey());
+            SymbolTableMethodItem methodItem =  (SymbolTableMethodItem)instanceItem.get("m_" + methodName.getName());
+            System.out.println("MethodCall: " + "m_" + methodItem.getReturnType());
+            methodCall.setType(methodItem.getReturnType());
+            // System.out.println("MethodCall: " + "c_" + instance.getType());
             // SymbolTableMethodItem methodItem = (SymbolTableMethodItem)SymbolTable.top.get("m_" + methodName.getName());
         } catch (ItemNotFoundException error) {
-
+            System.out.println("here :DDD");
+            // @TODO : complete this section. :))
         }
         // methodCall.setType(type);
         // @TODO : find return type of methodName in SymbolTable
@@ -334,8 +339,8 @@ public class VisitorImpl implements Visitor {
         System.out.println(newClass);
         Identifier className = newClass.getClassName();
         className.accept(new VisitorImpl());
-
-        newClass.setType(new UserDefinedType(className));
+        System.out.println("NewClass: " + new UserDefinedType(className));
+        newClass.setType(new UserDefinedType(new Identifier(className.getName())));
     }
 
     @Override

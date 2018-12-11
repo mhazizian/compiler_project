@@ -1,6 +1,6 @@
 class MainClass {
     def main(): int {
-        return new Test2().method2();
+        return 0;
     }
 }
 
@@ -10,19 +10,21 @@ class MainClass {
 
 class A{
     def i(): int {
-        var q : Test2;
-        q = new Test2().method();
-        return new Test2().method2();
+        # var q : Test2;
+        # q = new Test2().method();
+        return 2;
     }
 }
 
-# class C extends B {
-#     def t(): int {
-#         var a : Test2;
-#         a = new Test2().method2();
-#         return new Test2().method2();
-#     }
-# }
+class C {
+    def t(): int {
+        var a : A;
+        var b : int;
+        a = new A();
+        b = a.i();
+        return 2;
+    }
+}
 
 
 # class Test1 {

@@ -8,7 +8,7 @@ public abstract class Expression extends Node{
     private Type type;
 
     public Type getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(Type type) {
