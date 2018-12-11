@@ -4,13 +4,17 @@ class MainClass {
     }
 }
 
-class A {
-    def t(): int {
+class B {
+    var i : int;
+}
+
+class A extends B{
+    def i(): int {
         return new Test2().method2();
     }
 }
 
-class A extends B {
+class C extends B {
     def t(): int {
         return new Test2().method2();
     }

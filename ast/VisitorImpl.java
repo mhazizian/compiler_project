@@ -155,6 +155,7 @@ public class VisitorImpl implements Visitor {
         }
 
         // visit classes
+        // @TODO check order of visiting classes.
         for (int i = 0; i < classes.size(); i++)
             classes.get(i).accept(new VisitorImpl());
 
