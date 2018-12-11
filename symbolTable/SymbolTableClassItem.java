@@ -59,9 +59,12 @@ public class SymbolTableClassItem extends SymbolTableItem {
     @Override
     public String getKey() {
         return "c_" + this.name;
-        // return this.name;
     }
     
+    @Override
+    public String getName() {
+        return this.name;
+    }
     @Override
     public String getItemType() {
         return "class";

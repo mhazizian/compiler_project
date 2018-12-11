@@ -25,8 +25,8 @@ class C {
         var a : A;
         var b : int;
 
-        a = new A().i().j();
-        # b = a.j();
+        a = new A().i();
+        b = a.j();
         return 2;
     }
 }

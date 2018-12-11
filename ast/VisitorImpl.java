@@ -285,8 +285,18 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Identifier identifier) {
-        // @TODO : type check with SymbolTable
-        // @TODO : must distinguish between Class, Method, Variable
+        try {
+            SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
+            if (item.getItemType().equals("class")) {
+                identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+            } else {
+                // @TODO : primitive types
+            }
+            // @TODO : type check with SymbolTable
+            // @TODO : must distinguish between Class, Method, Variable
+        } catch (ItemNotFoundException error) {
+
+        }
     }
 
     @Override
@@ -305,7 +315,9 @@ public class VisitorImpl implements Visitor {
         methodName.accept(new VisitorImpl());
 
         try {
+            System.out.println("1: " + instance.getType().toString());
             SymbolTableItem instanceItem = SymbolTable.top.getItem(instance.getType().toString());
+            System.out.println("here");
 
             if (instanceItem.getItemType().equals("class")) {
 
