@@ -34,7 +34,7 @@ public class VisitorImpl implements Visitor {
     }
 
     public SymbolTableItem createMethodDecSymbolTableItem(
-      MethodDeclaration methodDecleration) {
+      MethodDeclaration methodDecleration, SymbolTableClassItem currentClass) {
         ArrayList<VarDeclaration> varsDec = methodDecleration.getArgs();
         ArrayList<Type> varsType = new ArrayList<Type> ();
         for (int i = 0; i < varsDec.size(); i++)
@@ -44,6 +44,7 @@ public class VisitorImpl implements Visitor {
             methodDecleration.getName().getName(),
             varsType
         );
+        methodDec.setThisObject(currentClass);
 
         return ((SymbolTableItem) methodDec);
     }
@@ -177,7 +178,7 @@ public class VisitorImpl implements Visitor {
 
             for (int i = 0; i < methods.size(); i++) {
                 SymbolTableItem item = this.createMethodDecSymbolTableItem(
-                    methods.get(i));
+                    methods.get(i), currentClass);
                 try {
                     SymbolTable.top.put(item);
                     currentClass.put(item);
