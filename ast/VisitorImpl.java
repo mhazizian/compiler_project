@@ -87,10 +87,7 @@ public class VisitorImpl implements Visitor {
     public void visit(Program program) {
         createNewSymbolTable();
         SymbolTableClassItem objectClass = new SymbolTableClassItem(objectClassName);
-        try {
-            SymbolTable.top.put(objectClass);
-        } catch (ItemAlreadyExistsException error) {}
-
+        putToSymbolTable(objectClass);
 
         ArrayList<ClassDeclaration> classes =
             ((ArrayList<ClassDeclaration>)program.getClasses());
@@ -106,27 +103,25 @@ public class VisitorImpl implements Visitor {
         // create SymbolTableItem for each classDec
         putToSymbolTable(this.createClassDecSymbolTableItem(mainClass));
 
-        ArrayList<Boolean> classDecIsValid = new ArrayList<Boolean>(classes.size());
+        ArrayList<Boolean> classDecIsValid = new ArrayList<Boolean>();
         for (int i = 0; i < classes.size(); i++) {
             try {
                 SymbolTable.top.put(this.createClassDecSymbolTableItem(
-                    classes.get(i)));
-                classDecIsValid.set(i, true);
+                    classes.get(i))
+                );
+                classDecIsValid.add(true);
             } catch (ItemAlreadyExistsException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
                     ":Redefinition of class " +
-                    classes.get(i).getName().getName());
-                SymbolTable.isValidAst = false;
-                classDecIsValid.set(i, false);
+                    classes.get(i).getName().getName()
+                );
+                classDecIsValid.add(false);
             }
         }
 
 
         // add parentClass for each ClassDecSymbolTableItem
         for (int i = 0; i < classes.size(); i++) {
-            if (!classDecIsValid.get(i))
-                continue;
-
             String parentClassName = classes.get(i).getParentName().getName();
             if (parentClassName.equals(""))
                 parentClassName = objectClassName;
@@ -145,9 +140,12 @@ public class VisitorImpl implements Visitor {
                 SymbolTableClassItem curretClass =
                     ((SymbolTableClassItem) SymbolTable.top.get(
                         "c_" + classes.get(i).getName().getName()));
+
+                if (!classDecIsValid.get(i))
+                        continue;
+        
                 curretClass.setParent(parentClass);
-                
-                System.out.println("parentClassName: " + parentClassName);
+
             } catch (ItemNotFoundException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
                     ":inherited class not found: " +
@@ -200,7 +198,7 @@ public class VisitorImpl implements Visitor {
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
                     System.out.println("Line:" + methods.get(i).getLineNumber() +
-                        ":ErrorItemMessage: Redefinition of method " +
+                        ":Redefinition of method " +
                         methods.get(i).getName().getName());
                     SymbolTable.isValidAst = false;
                 }
