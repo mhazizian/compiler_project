@@ -8,19 +8,19 @@ import symbolTable.SymbolTableClassItem;
 public class SymbolTableMethodItem extends SymbolTableItem {
 
     ArrayList<Type> argTypes = new ArrayList<>();
-    SymbolTableClassItem this_obj;
+    SymbolTableClassItem thisObj;
 
     public SymbolTableMethodItem(String name, ArrayList<Type> argTypes) {
         this.name = name;
         this.argTypes = argTypes;
     }
 
-    public void setThisObject(SymbolTableClassItem this_obj) {
-        this.this_obj = this_obj;
+    public void setThisObject(SymbolTableClassItem thisObj) {
+        this.thisObj = thisObj;
     }
 
     public SymbolTableClassItem getThisObject() {
-        return this.this_obj;
+        return this.thisObj;
     }
 
     @Override
