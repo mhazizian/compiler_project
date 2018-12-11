@@ -335,8 +335,11 @@ public class VisitorImpl implements Visitor {
                 System.out.println("MethodCall: Type is Var: " + varType.getType());
 
                 if (varType.getType().equals("UserDefinedType")) {
+                    System.out.println("10");
                     SymbolTableItem instanceVarItem = SymbolTable.top.get("c_" + varType);
+                    System.out.println("11: " + methodName.getName());
                     SymbolTableMethodItem methodItem = (SymbolTableMethodItem)((SymbolTableClassItem)instanceVarItem).get("m_" + methodName.getName());
+                    System.out.println("12");
                     methodCall.setType(methodItem.getReturnType());
                     System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
                 } else {
