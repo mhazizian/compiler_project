@@ -8,4 +8,9 @@ public class BooleanType extends Type {
     public String toString() {
         return "bool";
     }
+
+    @Override
+    public String getType() {
+        return "Boolean";
+    }
 }

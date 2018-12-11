@@ -16,4 +16,9 @@ public class ArrayType extends Type {
     public void setSize(int size) {
         this.size = size;
     }
+
+    @Override
+    public String getType() {
+        return "Array";
+    }
 }

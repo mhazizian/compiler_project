@@ -37,4 +37,9 @@ public class UserDefinedType extends Type {
         return this.name.getName();
         // return classDeclaration.getName().getName();
     }
+
+    @Override
+    public String getType() {
+        return "UserDefinedType";
+    }
 }
