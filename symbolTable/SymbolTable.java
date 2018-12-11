@@ -58,6 +58,33 @@ public class SymbolTable {
 			return value;
 	}
 
+	public SymbolTableItem getItem(String name) throws ItemNotFoundException {
+		System.out.println("before check class");
+		try {
+			System.out.println("check class");
+			return this.get("c_" + name);
+		} catch (ItemNotFoundException e) {
+			System.out.println("before check method");
+			try {
+				System.out.println("check method");
+				return this.get("m_" + name);
+			} catch (ItemNotFoundException e2) {
+				System.out.println("check var");
+				return this.get("v_" + name);
+			}
+		}
+	}
+
+	public Boolean hasItem(String key) {
+		SymbolTableItem value = items.get(key);
+		if(value == null && pre != null)
+			return true;
+		else if(value == null)
+			return false;
+		else
+			return true;
+	} 
+
 	public SymbolTable getPreSymbolTable() {
 		return pre;
 	}

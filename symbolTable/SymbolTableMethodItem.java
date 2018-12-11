@@ -15,7 +15,6 @@ public class SymbolTableMethodItem extends SymbolTableItem {
         this.name = name;
         this.argTypes = argTypes;
         this.returnType = returnType;
-        this.itemType = "method";
     }
 
     public void setThisObject(SymbolTableClassItem thisObj) {
@@ -32,6 +31,12 @@ public class SymbolTableMethodItem extends SymbolTableItem {
         // return this.name;
         //@TODO
     }
+
+    @Override
+    public String getItemType() {
+        return "method";
+    }
+
 
     public Type getReturnType() {
         return this.returnType;

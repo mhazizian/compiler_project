@@ -17,7 +17,6 @@ public class SymbolTableClassItem extends SymbolTableItem {
         this.name = name;
         this.parent = newParent;
         this.items = new HashMap<String, SymbolTableItem>();
-        this.itemType = "class";
     }
 
     public boolean hasItem(SymbolTableItem item) {
@@ -61,5 +60,10 @@ public class SymbolTableClassItem extends SymbolTableItem {
     public String getKey() {
         return "c_" + this.name;
         // return this.name;
+    }
+    
+    @Override
+    public String getItemType() {
+        return "class";
     }
 }
