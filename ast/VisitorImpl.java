@@ -285,9 +285,12 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Identifier identifier) {
+        System.out.println(identifier);
         try {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
-            if (item.getItemType().equals("class")) {
+            System.out.println("identifier itemType: " + item.getItemType());
+            if (item.getItemType().equals("var")) {
+                System.out.println("identifier: " + new Identifier(item.getName()));
                 identifier.setType(new UserDefinedType(new Identifier(item.getName())));
             } else {
                 // @TODO : primitive types
@@ -327,18 +330,18 @@ public class VisitorImpl implements Visitor {
                 System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
 
             } else if (instanceItem.getItemType().equals("var")) {
-                // System.out.println("here");
-                // Type varType = ((SymbolTableVariableItem)instanceItem).getType();
-                // System.out.println("MethodCall: Type is Var: " + varType.getType());
+                System.out.println("here");
+                Type varType = ((SymbolTableVariableItem)instanceItem).getType();
+                System.out.println("MethodCall: Type is Var: " + varType.getType());
 
-                // if (varType.getType().equals("UserDefinedType")) {
-                //     SymbolTableItem instanceVarItem = SymbolTable.top.get("c_" + varType);
-                //     SymbolTableMethodItem methodItem = (SymbolTableMethodItem)((SymbolTableClassItem)instanceVarItem).get("m_" + methodName.getName());
-                //     methodCall.setType(methodItem.getReturnType());
-                //     System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
-                // } else {
-                //     // @TODO : print error or throw.
-                // }
+                if (varType.getType().equals("UserDefinedType")) {
+                    SymbolTableItem instanceVarItem = SymbolTable.top.get("c_" + varType);
+                    SymbolTableMethodItem methodItem = (SymbolTableMethodItem)((SymbolTableClassItem)instanceVarItem).get("m_" + methodName.getName());
+                    methodCall.setType(methodItem.getReturnType());
+                    System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
+                } else {
+                    // @TODO : print error or throw.
+                }
 
             }
             System.out.println("here_end");
