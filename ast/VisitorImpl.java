@@ -94,7 +94,7 @@ public class VisitorImpl implements Visitor {
 
         if (classes.size() == 0 && mainClass == null) {
             System.out.println("Line:" + 0 +
-                ":ErrorItemMessage: No class exists in the program");
+                ":No class exists in the program");
             SymbolTable.isValidAst = false;
             return;
         }
@@ -108,7 +108,7 @@ public class VisitorImpl implements Visitor {
                     classes.get(i)));
             } catch (ItemAlreadyExistsException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
-                    ":ErrorItemMessage: Redefinition of class " +
+                    ":Redefinition of class " +
                     classes.get(i).getName().getName());
                 SymbolTable.isValidAst = false;
             }
@@ -123,7 +123,7 @@ public class VisitorImpl implements Visitor {
 
             if (parentClassName.equals(classes.get(i).getName().getName())) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
-                    ":ErrorItemMessage: self-inheritance is not valid, class name: " +
+                    ":self-inheritance is not valid, class name: " +
                     parentClassName);
                 SymbolTable.isValidAst = false;
                 continue;
@@ -138,7 +138,7 @@ public class VisitorImpl implements Visitor {
                 curretClass.setParent(parentClass);
             } catch (ItemNotFoundException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
-                    ":ErrorItemMessage: inherited class not found: " +
+                    ":inherited class not found: " +
                     parentClassName);
                 SymbolTable.isValidAst = false;
             }
@@ -173,7 +173,7 @@ public class VisitorImpl implements Visitor {
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
                     System.out.println("Line:" + vars.get(i).getLineNumber() +
-                        ":ErrorItemMessage: Redefinition of variable " +
+                        ":Redefinition of variable " +
                         vars.get(i).getIdentifier().getName());
                     SymbolTable.isValidAst = false;
                 }
@@ -222,7 +222,7 @@ public class VisitorImpl implements Visitor {
                 SymbolTable.top.put(this.createVarDecSymbolItem(localVars.get(i)));
             } catch (ItemAlreadyExistsException error) {
                System.out.println("Line:" + localVars.get(i).getLineNumber()
-                  + ":ErrorItemMessage: Redefinition of variable " +
+                  + ":Redefinition of variable " +
                   localVars.get(i).getIdentifier().getName());
               SymbolTable.isValidAst = false;
             }
@@ -299,7 +299,7 @@ public class VisitorImpl implements Visitor {
         IntValue arraySize = ((IntValue) newArray.getExpression());
         if (arraySize.getConstant() <= 0) {
             System.out.println("Line:" + newArray.getLineNumber() +
-                ":ErrorItemMessage: Array length should not be zero or negative");
+                ":Array length should not be zero or negative");
             SymbolTable.isValidAst = false;
         }
         expression.accept(new VisitorImpl());
