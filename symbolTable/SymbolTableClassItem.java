@@ -57,7 +57,7 @@ public class SymbolTableClassItem extends SymbolTableItem {
 
     @Override
     public String getKey() {
-        //todo
+        //@TODO
         return this.name;
     }
 }

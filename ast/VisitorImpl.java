@@ -265,10 +265,14 @@ public class VisitorImpl implements Visitor {
 
         left.accept(new VisitorImpl());
         right.accept(new VisitorImpl());
+
+        // @TODO type check expression
     }
 
     @Override
     public void visit(Identifier identifier) {
+        // @TODO : type check with SymbolTable
+        // @TODO : must distinguish between Class, Method, Variable
     }
 
     @Override
@@ -284,6 +288,8 @@ public class VisitorImpl implements Visitor {
 
         instance.accept(new VisitorImpl());
         methodName.accept(new VisitorImpl());
+
+        // @TODO : find return type of methodName in SymbolTable
     }
 
     @Override
@@ -317,14 +323,17 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(BooleanValue value) {
+        // type checked in Parser
     }
 
     @Override
     public void visit(IntValue value) {
+        // type checked in Parser
     }
 
     @Override
     public void visit(StringValue value) {
+        // type checked in Parser
     }
 
     @Override
@@ -354,6 +363,8 @@ public class VisitorImpl implements Visitor {
 
         if (alternativeBody != null)
             alternativeBody.accept(new VisitorImpl());
+
+        // @TODO : check booleanity.
     }
 
     @Override
@@ -363,11 +374,16 @@ public class VisitorImpl implements Visitor {
 
         condition.accept(new VisitorImpl());
         body.accept(new VisitorImpl());
+
+        // @TODO : check booleanity.
+
     }
 
     @Override
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorImpl());
+
+        // @TODO : type check arg, must be int or string
     }
 }

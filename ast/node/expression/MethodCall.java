@@ -8,13 +8,12 @@ import java.util.ArrayList;
 public class MethodCall extends Expression {
     private Expression instance;
     private Identifier methodName;
+    private ArrayList<Expression> args = new ArrayList<>();
 
     public MethodCall(Expression instance, Identifier methodName) {
         this.instance = instance;
         this.methodName = methodName;
     }
-
-    private ArrayList<Expression> args = new ArrayList<>();
 
     public Expression getInstance() {
         return instance;
