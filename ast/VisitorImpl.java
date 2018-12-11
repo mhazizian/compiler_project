@@ -17,6 +17,7 @@ import ast.Type.*;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
+    public static string objectClassName = "Object";
 
     public static void createNewSymbolTable() {
         SymbolTable.push(new SymbolTable(SymbolTable.top));
@@ -83,6 +84,9 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(Program program) {
         createNewSymbolTable();
+        SymbolTableClassItem objectClass = new SymbolTableClassItem(objectClassName);
+        SymbolTable.top.put(objectClass);
+
 
         ArrayList<ClassDeclaration> classes =
             ((ArrayList<ClassDeclaration>)program.getClasses());
@@ -115,7 +119,7 @@ public class VisitorImpl implements Visitor {
         for (int i = 0; i < classes.size(); i++) {
             String parentClassName = classes.get(i).getParentName().getName();
             if (parentClassName.equals(""))
-                continue;
+                parentClassName = objectClassName;
 
             if (parentClassName.equals(classes.get(i).getName().getName())) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
