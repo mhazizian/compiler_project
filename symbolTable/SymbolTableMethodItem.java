@@ -8,11 +8,13 @@ import symbolTable.SymbolTableClassItem;
 public class SymbolTableMethodItem extends SymbolTableItem {
 
     ArrayList<Type> argTypes = new ArrayList<>();
+    Type returnType;
     SymbolTableClassItem thisObj;
 
-    public SymbolTableMethodItem(String name, ArrayList<Type> argTypes) {
+    public SymbolTableMethodItem(String name, ArrayList<Type> argTypes, Type returnType) {
         this.name = name;
         this.argTypes = argTypes;
+        this.returnType = returnType;
         this.itemType = "method";
     }
 
@@ -29,6 +31,10 @@ public class SymbolTableMethodItem extends SymbolTableItem {
         return "m_" + this.name;
         // return this.name;
         //@TODO
+    }
+
+    public Type getReturnType() {
+        return this.returnType;
     }
 
     public ArrayList<Type> getArgs() {

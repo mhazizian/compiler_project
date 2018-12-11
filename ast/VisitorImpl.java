@@ -2,6 +2,8 @@ package ast;
 
 import java.util.ArrayList;
 
+import javax.sound.midi.SysexMessage;
+
 // import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ast.node.Program;
@@ -15,7 +17,7 @@ import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 
 import ast.Type.*;
-
+import ast.Type.UserDefinedType.UserDefinedType;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
@@ -45,7 +47,7 @@ public class VisitorImpl implements Visitor {
 
         SymbolTableMethodItem methodDec = new SymbolTableMethodItem(
             methodDecleration.getName().getName(),
-            varsType
+            varsType, methodDecleration.getReturnType()
         );
         methodDec.setThisObject(currentClass);
 
@@ -220,6 +222,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
+        System.out.println(methodDeclaration);
         createNewSymbolTable();
         Expression returnValue = methodDeclaration.getReturnValue();
         Identifier name = methodDeclaration.getName();
@@ -294,12 +297,22 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(MethodCall methodCall) {
+        System.out.println(methodCall);
         Expression instance = methodCall.getInstance();
         Identifier methodName = methodCall.getMethodName();
 
         instance.accept(new VisitorImpl());
         methodName.accept(new VisitorImpl());
 
+        try {
+            System.out.println("here :D");
+            SymbolTableClassItem instanceItem = (SymbolTableClassItem)SymbolTable.top.get("c_" + instance.getType());
+            System.out.println("MethodCall: " + "c_" + instance.getType());
+            // SymbolTableMethodItem methodItem = (SymbolTableMethodItem)SymbolTable.top.get("m_" + methodName.getName());
+        } catch (ItemNotFoundException error) {
+
+        }
+        // methodCall.setType(type);
         // @TODO : find return type of methodName in SymbolTable
     }
 
@@ -318,8 +331,11 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(NewClass newClass) {
+        System.out.println(newClass);
         Identifier className = newClass.getClassName();
         className.accept(new VisitorImpl());
+
+        newClass.setType(new UserDefinedType(className));
     }
 
     @Override
