@@ -4,6 +4,19 @@ class MainClass {
     }
 }
 
+class A {
+    def t(): int {
+        return new Test2().method2();
+    }
+}
+
+class A extends B {
+    def t(): int {
+        return new Test2().method2();
+    }
+}
+
+
 class Test1 {
     var i : int;
     def method1() : string {

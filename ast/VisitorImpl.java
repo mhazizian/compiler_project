@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
+// import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ast.node.Program;
 import ast.node.declaration.ClassDeclaration;
@@ -19,7 +19,7 @@ import ast.Type.*;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
-    public static string objectClassName = "Object";
+    public static String objectClassName = "Object";
 
     public static void createNewSymbolTable() {
         SymbolTable.push(new SymbolTable(SymbolTable.top));
@@ -87,7 +87,9 @@ public class VisitorImpl implements Visitor {
     public void visit(Program program) {
         createNewSymbolTable();
         SymbolTableClassItem objectClass = new SymbolTableClassItem(objectClassName);
-        SymbolTable.top.put(objectClass);
+        try {
+            SymbolTable.top.put(objectClass);
+        } catch (ItemAlreadyExistsException error) {}
 
 
         ArrayList<ClassDeclaration> classes =
@@ -144,6 +146,8 @@ public class VisitorImpl implements Visitor {
                     ((SymbolTableClassItem) SymbolTable.top.get(
                         "c_" + classes.get(i).getName().getName()));
                 curretClass.setParent(parentClass);
+                
+                System.out.println("parentClassName: " + parentClassName);
             } catch (ItemNotFoundException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
                     ":inherited class not found: " +

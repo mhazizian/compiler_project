@@ -42,6 +42,7 @@ public class SymbolTable {
 		if(items.containsKey(item.getKey()))
 			throw new ItemAlreadyExistsException();
 		items.put(item.getKey(), item);
+		System.out.println("Putting :" + item.getKey());
 	}
 
 	public SymbolTableItem getInCurrentScope(String key) {
