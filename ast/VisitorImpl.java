@@ -78,14 +78,12 @@ public class VisitorImpl implements Visitor {
         }
     }
 
-    String getType(Expression condition)
-    {   
+    String getType(Expression condition) {   
         String type = condition.getType().toString();
         
         try {
             SymbolTableItem item = SymbolTable.top.getItem(type);
-            if (item.getItemType() == SymbolTableItemType.variableType)
-            {
+            if (item.getItemType() == SymbolTableItemType.variableType) {
                 Type varType = ((SymbolTableVariableItem)item).getType();
                 type = varType.toString();
             }
@@ -95,14 +93,26 @@ public class VisitorImpl implements Visitor {
         return type;
     }
 
-    boolean checkBooleanity(String type)
-    {
+    boolean checkBooleanity(String type) {
         if (!type.equals("bool")) {
             System.out.println("ErrorItemMessage: condition type must be boolean");
             SymbolTable.isValidAst = false;
             return false;
         }
         return true;
+    }
+
+    boolean isArithmetic(BinaryOperator operator) {
+        switch (operator) {
+            case add:
+            case sub:
+            case mult:
+            case div:
+                return true;
+
+            default:
+                return false;
+        }
     }
 
 // ##############################################################################
@@ -312,6 +322,19 @@ public class VisitorImpl implements Visitor {
 
         left.accept(new VisitorImpl());
         right.accept(new VisitorImpl());
+
+        String leftType = getType(left);
+        String rightType = getType(right);
+
+        BinaryOperator operator = binaryExpression.getBinaryOperator();
+        if (isArithmetic(operator)) {
+            System.out.println("It is arithmetic");
+        } else {
+            if (!(checkBooleanity(leftType) && checkBooleanity(rightType))) {
+                System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
+                SymbolTable.isValidAst = false;
+            }
+        }
 
         // @TODO type check expression
     }

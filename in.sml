@@ -45,8 +45,8 @@ class C {
             while(true)
                 writeln(b);
         
-        boolVal2 = !boolVal;
-
+        boolVal2 = !boolVal && b;
+        boolVal2 = !boolVal && boolVal2;
         return a.j();
     }
 }
