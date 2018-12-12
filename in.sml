@@ -36,7 +36,7 @@ class C {
         if(a.j()) then
             writeln("Hello");
 
-        if (!boolVal) then
+        if (!boolVal <> boolVal2) then
             writeln(arr);
         
         if (false) then

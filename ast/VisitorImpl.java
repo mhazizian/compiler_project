@@ -18,6 +18,7 @@ import ast.node.statement.*;
 
 import ast.Type.*;
 import ast.Type.PrimitiveType.BooleanType;
+import ast.Type.PrimitiveType.IntType;
 import ast.Type.UserDefinedType.UserDefinedType;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
@@ -337,9 +338,13 @@ public class VisitorImpl implements Visitor {
         if (isArithmetic(operator)) {
             if (!(checkIntegrity(leftType) && checkIntegrity(rightType)))
                 System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
+            else
+                binaryExpression.setType(new IntType());
         } else {
             if (!(checkBooleanity(leftType) && checkBooleanity(rightType)))
                 System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
+            else
+                binaryExpression.setType(new BooleanType());
         }
 
         // @TODO type check expression
