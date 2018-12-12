@@ -1,6 +1,7 @@
 package ast.Type.UserDefinedType;
 
 import ast.Type.Type;
+import ast.Type.TypeName;
 import ast.node.declaration.ClassDeclaration;
 import ast.node.expression.Identifier;
 
@@ -39,7 +40,7 @@ public class UserDefinedType extends Type {
     }
 
     @Override
-    public String getType() {
-        return "UserDefinedType";
+    public TypeName getType() {
+        return TypeName.userDefinedType;
     }
 }

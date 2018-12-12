@@ -1,6 +1,7 @@
 package ast.Type.ArrayType;
 
 import ast.Type.Type;
+import ast.Type.TypeName;
 
 public class ArrayType extends Type {
     private int size;
@@ -18,7 +19,7 @@ public class ArrayType extends Type {
     }
 
     @Override
-    public String getType() {
-        return "Array";
+    public TypeName getType() {
+        return TypeName.arrayType;
     }
 }

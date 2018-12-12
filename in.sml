@@ -24,9 +24,15 @@ class C {
     def t(): int {
         var a : B;
         var b : int;
+        var arr : int[];
 
         a = new A().i();
         b = a.j();
+        writeln("Hello");
+        writeln(b);
+        writeln(a.j());
+        writeln(arr);
+        
         return 2;
     }
 }

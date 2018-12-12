@@ -1,6 +1,7 @@
 package ast.Type.PrimitiveType;
 
 import ast.Type.Type;
+import ast.Type.TypeName;
 
 public class StringType extends Type {
 
@@ -9,7 +10,7 @@ public class StringType extends Type {
         return "string";
     }
     @Override
-    public String getType() {
-        return "String";
+    public TypeName getType() {
+        return TypeName.stringType;
     }
 }

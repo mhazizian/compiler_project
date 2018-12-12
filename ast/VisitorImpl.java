@@ -286,11 +286,21 @@ public class VisitorImpl implements Visitor {
     public void visit(Identifier identifier) {
         try {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
-            if (item.getItemType() == SymbolTableItemType.variableType) {
-              // It's been added to use in method call verification
-                identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-            } else {
-                // @TODO : primitive types
+            switch (item.getItemType()) {
+                case variableType:
+                    identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+                    break;
+
+                // case classType:
+                //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+                //     break;
+
+                // case methodType:
+                //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+                //     break;
+            
+                default:
+                    break;
             }
             // @TODO : type check with SymbolTable
             // @TODO : must distinguish between Class, Method, Variable
@@ -323,7 +333,7 @@ public class VisitorImpl implements Visitor {
             } else if (instanceItem.getItemType() == SymbolTableItemType.variableType) {
                 Type varType = ((SymbolTableVariableItem)instanceItem).getType();
 
-                if (varType.getType().equals("UserDefinedType")) {
+                if (varType.getType() == TypeName.userDefinedType) {
                     SymbolTableItem instanceClassItem = SymbolTable.top.get("c_" + varType);
                     SymbolTableMethodItem methodItem = (SymbolTableMethodItem)(
                         (SymbolTableClassItem)instanceClassItem).get("m_" + methodName.getName());
@@ -431,6 +441,25 @@ public class VisitorImpl implements Visitor {
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorImpl());
+        System.out.println("*****" + arg.getType());
+        System.out.println("#####" + arg.getClass());
+
+        // switch (item.getItemType()) {
+        //     case variableType:
+        //         identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+        //         break;
+
+        //     // case classType:
+        //     //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+        //     //     break;
+
+        //     // case methodType:
+        //     //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+        //     //     break;
+        
+        //     default:
+        //         break;
+        // }
 
         // @TODO : type check arg, must be int or string
     }
