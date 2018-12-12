@@ -10,16 +10,11 @@ public class ClassDeclaration extends Declaration{
     private Identifier parentName;
     private ArrayList<VarDeclaration> varDeclarations = new ArrayList<>();
     private ArrayList<MethodDeclaration> methodDeclarations = new ArrayList<>();
-    private int lineNum;
-
-    public ClassDeclaration(Identifier name, Identifier parentName, int lineNum) {
+    
+    public ClassDeclaration(Identifier name, Identifier parentName, int lineNumber) {
         this.name = name;
         this.parentName = parentName;
-        this.lineNum = lineNum;
-    }
-
-    public int getLineNumber() {
-        return lineNum;
+        this.lineNumber = lineNumber;
     }
 
     public Identifier getName() {

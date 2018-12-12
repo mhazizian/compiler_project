@@ -322,14 +322,7 @@ public class VisitorImpl implements Visitor {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
 
             if (item.getItemType() == SymbolTableItemType.variableType)
-            {
                 identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-                // SymbolTableItem instanceItem = SymbolTable.top.getItem(identifier.getName());
-                // Type varType = ((SymbolTableVariableItem)instanceItem).getType();
-                
-                // if (varType.getType() == TypeName.userDefinedType)
-                    // System.out.println("***** " + ((UserDefinedType)varType).getName().getName());
-            }
             
         } catch (ItemNotFoundException error) {
 
@@ -378,7 +371,6 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(NewArray newArray) {
         Expression expression = newArray.getExpression();
-        // Here.
         IntValue arraySize = ((IntValue) newArray.getExpression());
         if (arraySize.getConstant() <= 0) {
             System.out.println("Line:" + newArray.getLineNumber() +
