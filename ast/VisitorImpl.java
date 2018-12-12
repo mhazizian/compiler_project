@@ -145,7 +145,7 @@ public class VisitorImpl implements Visitor {
 
                 if (!classDecIsValid.get(i))
                         continue;
-        
+
                 curretClass.setParent(parentClass);
 
             } catch (ItemNotFoundException error) {
@@ -222,7 +222,6 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
-        System.out.println(methodDeclaration);
         createNewSymbolTable();
         Expression returnValue = methodDeclaration.getReturnValue();
         Identifier name = methodDeclaration.getName();
@@ -285,12 +284,10 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Identifier identifier) {
-        System.out.println(identifier);
         try {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
-            System.out.println("identifier itemType: " + item.getItemType());
-            if (item.getItemType().equals("var")) {
-                System.out.println("identifier: " + new Identifier(item.getName()));
+            if (item.getItemType() == SymbolTableItemType.variableType) {
+              // It's been added to use in method call verification
                 identifier.setType(new UserDefinedType(new Identifier(item.getName())));
             } else {
                 // @TODO : primitive types
@@ -310,45 +307,31 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(MethodCall methodCall) {
-        System.out.println(methodCall);
         Expression instance = methodCall.getInstance();
         Identifier methodName = methodCall.getMethodName();
-
         instance.accept(new VisitorImpl());
         methodName.accept(new VisitorImpl());
 
         try {
-            System.out.println("1: " + instance.getType().toString());
             SymbolTableItem instanceItem = SymbolTable.top.getItem(instance.getType().toString());
-            System.out.println("here");
 
-            if (instanceItem.getItemType().equals("class")) {
-
-                SymbolTableMethodItem methodItem =  (SymbolTableMethodItem)((SymbolTableClassItem)instanceItem).get("m_" + methodName.getName());
-
+            if (instanceItem.getItemType() == SymbolTableItemType.classType) {
+                SymbolTableMethodItem methodItem = (SymbolTableMethodItem)(
+                    (SymbolTableClassItem)instanceItem).get("m_" + methodName.getName());
                 methodCall.setType(methodItem.getReturnType());
-                System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
 
-            } else if (instanceItem.getItemType().equals("var")) {
-                System.out.println("here");
+            } else if (instanceItem.getItemType() == SymbolTableItemType.variableType) {
                 Type varType = ((SymbolTableVariableItem)instanceItem).getType();
-                System.out.println("MethodCall: Type is Var: " + varType.getType());
 
                 if (varType.getType().equals("UserDefinedType")) {
-                    System.out.println("10");
-                    SymbolTableItem instanceVarItem = SymbolTable.top.get("c_" + varType);
-                    System.out.println("11: " + methodName.getName());
-                    SymbolTableMethodItem methodItem = (SymbolTableMethodItem)((SymbolTableClassItem)instanceVarItem).get("m_" + methodName.getName());
-                    System.out.println("12");
+                    SymbolTableItem instanceClassItem = SymbolTable.top.get("c_" + varType);
+                    SymbolTableMethodItem methodItem = (SymbolTableMethodItem)(
+                        (SymbolTableClassItem)instanceClassItem).get("m_" + methodName.getName());
                     methodCall.setType(methodItem.getReturnType());
-                    System.out.println("MethodCall: Type is set to: " + methodItem.getReturnType());
                 } else {
                     // @TODO : print error or throw.
                 }
-
             }
-            System.out.println("here_end");
-        
         } catch (ItemNotFoundException error) {
             // @TODO : complete this section. :))
             System.out.println("Error on Method Call");
@@ -370,10 +353,9 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(NewClass newClass) {
-        System.out.println(newClass);
         Identifier className = newClass.getClassName();
         className.accept(new VisitorImpl());
-        // System.out.println("NewClass: " + new UserDefinedType(className));
+        // className is an Identifier not a primitive type (It's been checked in parser)
         newClass.setType(new UserDefinedType(className));
     }
 

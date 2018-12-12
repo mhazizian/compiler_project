@@ -22,7 +22,7 @@ class A{
 
 class C {
     def t(): int {
-        var a : A;
+        var a : B;
         var b : int;
 
         a = new A().i();

@@ -20,7 +20,7 @@ public class SymbolTableClassItem extends SymbolTableItem {
     }
 
     public boolean hasItem(SymbolTableItem item) {
-        if(items.containsKey(item.getKey())) 
+        if(items.containsKey(item.getKey()))
             return true;
 
         if (this.parent == null)
@@ -60,13 +60,13 @@ public class SymbolTableClassItem extends SymbolTableItem {
     public String getKey() {
         return "c_" + this.name;
     }
-    
+
     @Override
     public String getName() {
         return this.name;
     }
     @Override
-    public String getItemType() {
-        return "class";
+    public SymbolTableItemType getItemType() {
+        return SymbolTableItemType.classType;
     }
 }

@@ -33,10 +33,9 @@ public class SymbolTableMethodItem extends SymbolTableItem {
     }
 
     @Override
-    public String getItemType() {
-        return "method";
+    public SymbolTableItemType getItemType() {
+        return SymbolTableItemType.methodType;
     }
-
 
     public Type getReturnType() {
         return this.returnType;
