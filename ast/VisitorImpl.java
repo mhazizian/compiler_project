@@ -95,7 +95,14 @@ public class VisitorImpl implements Visitor {
 
     boolean checkBooleanity(String type) {
         if (!type.equals("bool")) {
-            System.out.println("ErrorItemMessage: condition type must be boolean");
+            SymbolTable.isValidAst = false;
+            return false;
+        }
+        return true;
+    }
+
+    boolean checkIntegrity(String type) {
+        if (!type.equals("int")) {
             SymbolTable.isValidAst = false;
             return false;
         }
@@ -328,12 +335,11 @@ public class VisitorImpl implements Visitor {
 
         BinaryOperator operator = binaryExpression.getBinaryOperator();
         if (isArithmetic(operator)) {
-            System.out.println("It is arithmetic");
-        } else {
-            if (!(checkBooleanity(leftType) && checkBooleanity(rightType))) {
+            if (!(checkIntegrity(leftType) && checkIntegrity(rightType)))
                 System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
-                SymbolTable.isValidAst = false;
-            }
+        } else {
+            if (!(checkBooleanity(leftType) && checkBooleanity(rightType)))
+                System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
         }
 
         // @TODO type check expression
@@ -421,8 +427,10 @@ public class VisitorImpl implements Visitor {
         value.accept(new VisitorImpl());
         
         String type = getType(value);
-        if (checkBooleanity(type))
+        if (checkBooleanity(type)) {
             unaryExpression.setType(new BooleanType());
+        // else -> Error
+        }
     }
 
     @Override
@@ -469,7 +477,8 @@ public class VisitorImpl implements Visitor {
             alternativeBody.accept(new VisitorImpl());
 
         String type = getType(expression);
-        checkBooleanity(type);
+        if (!checkBooleanity(type))
+            System.out.println("ErrorItemMessage: condition type must be boolean");
     }
 
     @Override
@@ -481,7 +490,8 @@ public class VisitorImpl implements Visitor {
         body.accept(new VisitorImpl());
 
         String type = getType(condition);
-        checkBooleanity(type);
+        if (!checkBooleanity(type))
+            System.out.println("ErrorItemMessage: condition type must be boolean");
     }
 
     @Override
