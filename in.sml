@@ -26,6 +26,7 @@ class C {
         var b : int;
         var arr : int[];
         var boolVal : boolean;
+        var boolVal2 : boolean;
 
         a = new A().i();
         b = a.j();
@@ -35,7 +36,7 @@ class C {
         if(a.j()) then
             writeln("Hello");
 
-        if (boolVal) then
+        if (!boolVal) then
             writeln(arr);
         
         if (false) then
@@ -44,6 +45,8 @@ class C {
             while(true)
                 writeln(b);
         
+        boolVal2 = !boolVal;
+
         return a.j();
     }
 }

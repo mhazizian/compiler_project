@@ -17,6 +17,7 @@ import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 
 import ast.Type.*;
+import ast.Type.PrimitiveType.BooleanType;
 import ast.Type.UserDefinedType.UserDefinedType;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
@@ -78,9 +79,9 @@ public class VisitorImpl implements Visitor {
     }
 
     String getType(Expression condition)
-    {    
+    {   
         String type = condition.getType().toString();
-
+        
         try {
             SymbolTableItem item = SymbolTable.top.getItem(type);
             if (item.getItemType() == SymbolTableItemType.variableType)
@@ -94,12 +95,14 @@ public class VisitorImpl implements Visitor {
         return type;
     }
 
-    void checkBooleanity(String type)
+    boolean checkBooleanity(String type)
     {
         if (!type.equals("bool")) {
             System.out.println("ErrorItemMessage: condition type must be boolean");
             SymbolTable.isValidAst = false;
+            return false;
         }
+        return true;
     }
 
 // ##############################################################################
@@ -401,6 +404,10 @@ public class VisitorImpl implements Visitor {
     public void visit(UnaryExpression unaryExpression) {
         Expression value = unaryExpression.getValue();
         value.accept(new VisitorImpl());
+        
+        String type = getType(value);
+        if (checkBooleanity(type))
+            unaryExpression.setType(new BooleanType());
     }
 
     @Override
@@ -448,7 +455,6 @@ public class VisitorImpl implements Visitor {
 
         String type = getType(expression);
         checkBooleanity(type);
-        
     }
 
     @Override
