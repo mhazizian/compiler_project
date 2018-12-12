@@ -32,17 +32,17 @@ class C {
         
         writeln(a.j());
         
-        while(a.j())
+        if(a.j()) then
             writeln("Hello");
 
-        while (boolVal)
+        if (boolVal) then
             writeln(arr);
         
-        while (false)
+        if (false) then
             writeln(a);
-        
-        while (true)
-            writeln(b);
+        else
+            while(true)
+                writeln(b);
         
         return a.j();
     }

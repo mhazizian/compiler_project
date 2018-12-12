@@ -94,6 +94,13 @@ public class VisitorImpl implements Visitor {
         return type;
     }
 
+    void checkBooleanity(String type)
+    {
+        if (!type.equals("bool")) {
+            System.out.println("ErrorItemMessage: condition type must be boolean");
+            SymbolTable.isValidAst = false;
+        }
+    }
 
 // ##############################################################################
 // ##############################################################################
@@ -439,7 +446,9 @@ public class VisitorImpl implements Visitor {
         if (alternativeBody != null)
             alternativeBody.accept(new VisitorImpl());
 
-        // @TODO : check booleanity.
+        String type = getType(expression);
+        checkBooleanity(type);
+        
     }
 
     @Override
@@ -451,11 +460,7 @@ public class VisitorImpl implements Visitor {
         body.accept(new VisitorImpl());
 
         String type = getType(condition);
-
-        if (type != "bool") {
-            System.out.println("ErrorItemMessage: condition type must be boolean");
-            SymbolTable.isValidAst = false;
-        }        
+        checkBooleanity(type);
     }
 
     @Override
@@ -469,6 +474,5 @@ public class VisitorImpl implements Visitor {
             System.out.println("ErrorItemMessage: unsupported type for writeln");
             SymbolTable.isValidAst = false;
         }
-
     }
 }
