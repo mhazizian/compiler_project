@@ -77,6 +77,24 @@ public class VisitorImpl implements Visitor {
         }
     }
 
+    String getType(Expression condition)
+    {    
+        String type = condition.getType().toString();
+
+        try {
+            SymbolTableItem item = SymbolTable.top.getItem(type);
+            if (item.getItemType() == SymbolTableItemType.variableType)
+            {
+                Type varType = ((SymbolTableVariableItem)item).getType();
+                type = varType.toString();
+            }
+        } catch (ItemNotFoundException error) {
+            // @TODO Throw something!
+        }
+        return type;
+    }
+
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -432,26 +450,20 @@ public class VisitorImpl implements Visitor {
         condition.accept(new VisitorImpl());
         body.accept(new VisitorImpl());
 
-        // @TODO : check booleanity.
+        String type = getType(condition);
 
+        if (type != "bool") {
+            System.out.println("ErrorItemMessage: condition type must be boolean");
+            SymbolTable.isValidAst = false;
+        }        
     }
 
     @Override
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorImpl());
-        String type = arg.getType().toString();
 
-        try {
-            SymbolTableItem item = SymbolTable.top.getItem(type);
-            if (item.getItemType() == SymbolTableItemType.variableType)
-            {
-                Type varType = ((SymbolTableVariableItem)item).getType();
-                type = varType.toString();
-            }
-        } catch (ItemNotFoundException error) {
-
-        }
+        String type = getType(arg);
 
         if (type != "int[]" && type != "int" && type != "string") {
             System.out.println("ErrorItemMessage: unsupported type for writeln");

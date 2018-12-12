@@ -25,18 +25,26 @@ class C {
         var a : B;
         var b : int;
         var arr : int[];
+        var boolVal : boolean;
 
         a = new A().i();
         b = a.j();
         
         writeln(a.j());
-        writeln("Hello");
-        writeln(2);
-        writeln(arr);
-        writeln(b);
-        writeln(a);
         
-        return 2;
+        while(a.j())
+            writeln("Hello");
+
+        while (boolVal)
+            writeln(arr);
+        
+        while (false)
+            writeln(a);
+        
+        while (true)
+            writeln(b);
+        
+        return a.j();
     }
 }
 
