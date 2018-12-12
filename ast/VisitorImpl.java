@@ -120,8 +120,6 @@ public class VisitorImpl implements Visitor {
                 classDecIsValid.add(false);
             }
         }
-
-
         // add parentClass for each ClassDecSymbolTableItem
         for (int i = 0; i < classes.size(); i++) {
             String parentClassName = classes.get(i).getParentName().getName();
@@ -286,24 +284,17 @@ public class VisitorImpl implements Visitor {
     public void visit(Identifier identifier) {
         try {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
-            switch (item.getItemType()) {
-                case variableType:
-                    identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-                    break;
 
-                // case classType:
-                //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-                //     break;
-
-                // case methodType:
-                //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-                //     break;
-            
-                default:
-                    break;
+            if (item.getItemType() == SymbolTableItemType.variableType)
+            {
+                identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+                // SymbolTableItem instanceItem = SymbolTable.top.getItem(identifier.getName());
+                // Type varType = ((SymbolTableVariableItem)instanceItem).getType();
+                
+                // if (varType.getType() == TypeName.userDefinedType)
+                    // System.out.println("***** " + ((UserDefinedType)varType).getName().getName());
             }
-            // @TODO : type check with SymbolTable
-            // @TODO : must distinguish between Class, Method, Variable
+            
         } catch (ItemNotFoundException error) {
 
         }
@@ -441,26 +432,23 @@ public class VisitorImpl implements Visitor {
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorImpl());
-        System.out.println("*****" + arg.getType());
-        System.out.println("#####" + arg.getClass());
+        String type = arg.getType().toString();
 
-        // switch (item.getItemType()) {
-        //     case variableType:
-        //         identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-        //         break;
+        try {
+            SymbolTableItem item = SymbolTable.top.getItem(type);
+            if (item.getItemType() == SymbolTableItemType.variableType)
+            {
+                Type varType = ((SymbolTableVariableItem)item).getType();
+                type = varType.toString();
+            }
+        } catch (ItemNotFoundException error) {
 
-        //     // case classType:
-        //     //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-        //     //     break;
+        }
 
-        //     // case methodType:
-        //     //     identifier.setType(new UserDefinedType(new Identifier(item.getName())));
-        //     //     break;
-        
-        //     default:
-        //         break;
-        // }
+        if (type != "int[]" && type != "int" && type != "string") {
+            System.out.println("ErrorItemMessage: unsupported type for writeln");
+            SymbolTable.isValidAst = false;
+        }
 
-        // @TODO : type check arg, must be int or string
     }
 }

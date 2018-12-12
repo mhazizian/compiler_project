@@ -111,3 +111,5 @@ hs_err_pid*
 *.interp
 *.tokens
 smoola*.java
+.antlr/
+.vscode/

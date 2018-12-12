@@ -28,10 +28,13 @@ class C {
 
         a = new A().i();
         b = a.j();
-        writeln("Hello");
-        writeln(b);
+        
         writeln(a.j());
+        writeln("Hello");
+        writeln(2);
         writeln(arr);
+        writeln(b);
+        writeln(a);
         
         return 2;
     }
