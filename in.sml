@@ -21,7 +21,7 @@ class A{
 }
 
 class C {
-    def t(): int {
+    def t(): int[] {
         var a : B;
         var b : int;
         var arr : int[];

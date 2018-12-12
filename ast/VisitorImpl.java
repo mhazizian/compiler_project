@@ -251,6 +251,14 @@ public class VisitorImpl implements Visitor {
             body.get(i).accept(new VisitorImpl());
 
         returnValue.accept(new VisitorImpl());
+
+        if (!returnValue.getType().toString().equals(methodDeclaration.getReturnType().toString()))
+        {
+            System.out.println("ErrorItemMessage: " + methodDeclaration.getName() +
+                    " return type must be " + methodDeclaration.getReturnType());
+            SymbolTable.isValidAst = false;
+        }
+
         SymbolTable.pop();
     }
 
