@@ -9,6 +9,7 @@ public class StringValue extends Value {
     public StringValue(String constant, Type type) {
         this.constant = constant;
         this.type = type;
+        this.isAbsoluteValue = true;
     }
 
     public String getConstant() {

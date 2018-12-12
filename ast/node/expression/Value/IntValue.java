@@ -9,6 +9,7 @@ public class IntValue extends Value {
     public IntValue(int constant, Type type) {
         this.constant = constant;
         this.type = type;
+        this.isAbsoluteValue = true;
     }
 
     public int getConstant() {

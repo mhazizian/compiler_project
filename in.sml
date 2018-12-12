@@ -47,7 +47,7 @@ class C {
         
         boolVal2 = !boolVal && b;
         boolVal2 = !boolVal - true;
-        boolVal2 = !boolVal && boolVal2;
+        2 = !boolVal && boolVal2;
         return a.j();
     }
 }

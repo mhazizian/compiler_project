@@ -6,6 +6,7 @@ import ast.node.Node;
 
 public abstract class Expression extends Node{
     private Type type;
+    public boolean isAbsoluteValue;
 
     public Type getType() {
         return this.type;

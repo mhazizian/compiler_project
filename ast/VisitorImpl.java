@@ -459,6 +459,11 @@ public class VisitorImpl implements Visitor {
         Expression rValue = assign.getrValue();
         lValue.accept(new VisitorImpl());
         rValue.accept(new VisitorImpl());
+
+        if (lValue.isAbsoluteValue) {
+            System.out.println("ErrorItemMessage: left side of assignment must be a valid lvalue");
+            SymbolTable.isValidAst = false;
+        }
     }
 
     @Override
