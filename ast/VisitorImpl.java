@@ -20,6 +20,7 @@ import ast.Type.*;
 import ast.Type.PrimitiveType.BooleanType;
 import ast.Type.PrimitiveType.IntType;
 import ast.Type.UserDefinedType.UserDefinedType;
+import ast.Type.NoType.NoType;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
@@ -95,7 +96,8 @@ public class VisitorImpl implements Visitor {
     }
 
     boolean checkBooleanity(String type) {
-        if (!type.equals("bool")) {
+        // @TODO Is it correct to check the NoType here?
+        if (!type.equals("bool") && !type.equals("NoType")) {
             SymbolTable.isValidAst = false;
             return false;
         }
@@ -103,7 +105,8 @@ public class VisitorImpl implements Visitor {
     }
 
     boolean checkIntegrity(String type) {
-        if (!type.equals("int")) {
+        // @TODO Is it correct to check the NoType here?
+        if (!type.equals("int") && !type.equals("NoType")) {
             SymbolTable.isValidAst = false;
             return false;
         }
@@ -121,6 +124,12 @@ public class VisitorImpl implements Visitor {
             default:
                 return false;
         }
+    }
+
+    boolean isWritable(String type) {
+        // @TODO Is it correct to check the NoType here?
+        return (type.equals("int[]") || type.equals("int") 
+                || type.equals("string") || type.equals("NoType"));
     }
 
 // ##############################################################################
@@ -181,11 +190,10 @@ public class VisitorImpl implements Visitor {
             }
 
             try {
-                SymbolTableClassItem parentClass =
-                    ((SymbolTableClassItem) SymbolTable.top.get("c_" + parentClassName));
-                SymbolTableClassItem curretClass =
-                    ((SymbolTableClassItem) SymbolTable.top.get(
-                        "c_" + classes.get(i).getName().getName()));
+                SymbolTableClassItem parentClass = ((SymbolTableClassItem)
+                        SymbolTable.top.get("c_" + parentClassName));
+                SymbolTableClassItem curretClass = ((SymbolTableClassItem)
+                        SymbolTable.top.get("c_" + classes.get(i).getName().getName()));
 
                 if (!classDecIsValid.get(i))
                         continue;
@@ -194,8 +202,7 @@ public class VisitorImpl implements Visitor {
 
             } catch (ItemNotFoundException error) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
-                    ":inherited class not found: " +
-                    parentClassName);
+                    ":inherited class not found: " + parentClassName);
                 SymbolTable.isValidAst = false;
             }
         }
@@ -336,18 +343,24 @@ public class VisitorImpl implements Visitor {
 
         BinaryOperator operator = binaryExpression.getBinaryOperator();
         if (isArithmetic(operator)) {
-            if (!(checkIntegrity(leftType) && checkIntegrity(rightType)))
+            if (!(checkIntegrity(leftType) && checkIntegrity(rightType))) {
                 System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
+                
+                // NoType class has been used for invalid types
+                binaryExpression.setType(new NoType());
+            }
             else
                 binaryExpression.setType(new IntType());
         } else {
-            if (!(checkBooleanity(leftType) && checkBooleanity(rightType)))
+            if (!(checkBooleanity(leftType) && checkBooleanity(rightType))) {
                 System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
+
+                // NoType class has been used for invalid types
+                binaryExpression.setType(new NoType());
+            }
             else
                 binaryExpression.setType(new BooleanType());
         }
-
-        // @TODO type check expression
     }
 
     @Override
@@ -408,7 +421,7 @@ public class VisitorImpl implements Visitor {
         IntValue arraySize = ((IntValue) newArray.getExpression());
         if (arraySize.getConstant() <= 0) {
             System.out.println("Line:" + newArray.getLineNumber() +
-                ":Array length should not be zero or negative");
+                    ":Array length should not be zero or negative");
             SymbolTable.isValidAst = false;
         }
         expression.accept(new VisitorImpl());
@@ -432,25 +445,30 @@ public class VisitorImpl implements Visitor {
         value.accept(new VisitorImpl());
         
         String type = getType(value);
-        if (checkBooleanity(type)) {
+        if (checkBooleanity(type))
             unaryExpression.setType(new BooleanType());
-        // else -> Error
+        else {
+            System.out.println("ErrorItemMessage: unsupported operand type for " +
+                    unaryExpression.getUnaryOperator());
+
+            // NoType class has been used for invalid types
+            unaryExpression.setType(new NoType());
         }
     }
 
     @Override
     public void visit(BooleanValue value) {
-        // type checked in Parser
+        // Type checked in Parser
     }
 
     @Override
     public void visit(IntValue value) {
-        // type checked in Parser
+        // Type checked in Parser
     }
 
     @Override
     public void visit(StringValue value) {
-        // type checked in Parser
+        // Type checked in Parser
     }
 
     @Override
@@ -460,14 +478,20 @@ public class VisitorImpl implements Visitor {
         lValue.accept(new VisitorImpl());
         rValue.accept(new VisitorImpl());
 
+        // @TODO Is it the only case of right-hand-side value?
         if (lValue.isAbsoluteValue) {
             System.out.println("ErrorItemMessage: left side of assignment must be a valid lvalue");
+            
+            // It should be ignored to continue the process
+            lValue.isAbsoluteValue = false;
             SymbolTable.isValidAst = false;
         }
     }
 
     @Override
     public void visit(Block block) {
+        // Nothing to type check in block
+
         ArrayList<Statement> body = block.getBody();
 
         for (int i = 0; i < body.size(); ++i)
@@ -489,6 +513,7 @@ public class VisitorImpl implements Visitor {
         String type = getType(expression);
         if (!checkBooleanity(type))
             System.out.println("ErrorItemMessage: condition type must be boolean");
+        // Nothing to do in the else statement
     }
 
     @Override
@@ -502,6 +527,7 @@ public class VisitorImpl implements Visitor {
         String type = getType(condition);
         if (!checkBooleanity(type))
             System.out.println("ErrorItemMessage: condition type must be boolean");
+        // Nothing to do in the else statement
     }
 
     @Override
@@ -511,9 +537,10 @@ public class VisitorImpl implements Visitor {
 
         String type = getType(arg);
 
-        if (type != "int[]" && type != "int" && type != "string") {
+        if (!isWritable(type)) {
             System.out.println("ErrorItemMessage: unsupported type for writeln");
             SymbolTable.isValidAst = false;
         }
+        // Nothing to do in the else statement
     }
 }
