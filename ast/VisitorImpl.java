@@ -141,6 +141,24 @@ public class VisitorImpl implements Visitor {
                 binaryExpression.setType(new BooleanType());
     }
 
+    void findTheMethodInClass(MethodCall methodCall, SymbolTableItem instanceItem,
+            String methodName, String className) {
+        try {
+            SymbolTableMethodItem methodItem = (SymbolTableMethodItem)(
+                    (SymbolTableClassItem)instanceItem).get("m_" + methodName);
+        
+            methodCall.setType(methodItem.getReturnType());
+
+        } catch (ItemNotFoundException error) {
+            System.out.println("ErrorItemMessage: there is no method named " +
+            methodName + " in class " + className);
+
+            SymbolTable.isValidAst = false;
+            // NoType class has been used for invalid types
+            methodCall.setType(new NoType());
+        }
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -355,6 +373,7 @@ public class VisitorImpl implements Visitor {
 
         BinaryOperator operator = binaryExpression.getBinaryOperator();
 
+        // Both the operands should be valid
         if (isArithmetic(operator))
             checkOperandsValidity(leftType, rightType, binaryExpression, "int");
         else 
@@ -370,7 +389,7 @@ public class VisitorImpl implements Visitor {
                 identifier.setType(new UserDefinedType(new Identifier(item.getName())));
             
         } catch (ItemNotFoundException error) {
-
+            // @TODO What should we do here? :)
         }
     }
 
@@ -378,6 +397,15 @@ public class VisitorImpl implements Visitor {
     public void visit(Length length) {
         Expression expression = length.getExpression();
         expression.accept(new VisitorImpl());
+
+        String type = getType(expression);
+        if (isValidType(type, "int[]"))
+            length.setType(new IntType());
+        else {
+            // This error message doesn't exist in project description
+            System.out.println("ErrorItemMessage: unsupported type for length");
+            length.setType(new NoType());
+        }
     }
 
     @Override
@@ -389,20 +417,20 @@ public class VisitorImpl implements Visitor {
 
         try {
             SymbolTableItem instanceItem = SymbolTable.top.getItem(instance.getType().toString());
-
+            
             if (instanceItem.getItemType() == SymbolTableItemType.classType) {
-                SymbolTableMethodItem methodItem = (SymbolTableMethodItem)(
-                    (SymbolTableClassItem)instanceItem).get("m_" + methodName.getName());
-                methodCall.setType(methodItem.getReturnType());
-
+                findTheMethodInClass(methodCall, instanceItem,
+                        methodName.getName(), instance.getType().toString());
+                        
             } else if (instanceItem.getItemType() == SymbolTableItemType.variableType) {
                 Type varType = ((SymbolTableVariableItem)instanceItem).getType();
 
                 if (varType.getType() == TypeName.userDefinedType) {
                     SymbolTableItem instanceClassItem = SymbolTable.top.get("c_" + varType);
-                    SymbolTableMethodItem methodItem = (SymbolTableMethodItem)(
-                        (SymbolTableClassItem)instanceClassItem).get("m_" + methodName.getName());
-                    methodCall.setType(methodItem.getReturnType());
+
+                    findTheMethodInClass(methodCall, instanceClassItem,
+                            methodName.getName(), varType.toString());
+                    
                 } else {
                     // @TODO : print error or throw.
                 }
