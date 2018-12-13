@@ -28,7 +28,7 @@ class C {
         var boolVal : boolean;
         var boolVal2 : boolean;
 
-        a = new A().i();
+        a = new A().i().p();
         b = a.k();
         
         writeln(a.j());

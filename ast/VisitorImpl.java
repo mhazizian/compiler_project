@@ -159,6 +159,19 @@ public class VisitorImpl implements Visitor {
         }
     }
 
+    void findTheClass(MethodCall methodCall, String methodName, String className) {
+        try {
+        SymbolTableItem instanceClassItem = SymbolTable.top.get("c_" + className);
+        findTheMethodInClass(methodCall, instanceClassItem, methodName, className);
+        } catch (ItemNotFoundException error) {
+            System.out.println("ErrorItemMessage: class " + className + " is not declared");
+            
+            SymbolTable.isValidAst = false;
+            // NoType class has been used for invalid types
+            methodCall.setType(new NoType());
+        }
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -418,26 +431,21 @@ public class VisitorImpl implements Visitor {
         try {
             SymbolTableItem instanceItem = SymbolTable.top.getItem(instance.getType().toString());
             
-            if (instanceItem.getItemType() == SymbolTableItemType.classType) {
+            if (instanceItem.getItemType() == SymbolTableItemType.classType)
                 findTheMethodInClass(methodCall, instanceItem,
                         methodName.getName(), instance.getType().toString());
-                        
-            } else if (instanceItem.getItemType() == SymbolTableItemType.variableType) {
+
+            else if (instanceItem.getItemType() == SymbolTableItemType.variableType) {
                 Type varType = ((SymbolTableVariableItem)instanceItem).getType();
 
-                if (varType.getType() == TypeName.userDefinedType) {
-                    SymbolTableItem instanceClassItem = SymbolTable.top.get("c_" + varType);
-
-                    findTheMethodInClass(methodCall, instanceClassItem,
-                            methodName.getName(), varType.toString());
-                    
-                } else {
-                    // @TODO : print error or throw.
+                if (varType.getType() == TypeName.userDefinedType)
+                    findTheClass(methodCall, methodName.getName(), varType.toString());
+                else {
+                    // @TODO : Which kind of error?
                 }
             }
         } catch (ItemNotFoundException error) {
-            // @TODO : complete this section. :))
-            System.out.println("Error on Method Call");
+            // @TODO : Which kind of error?
         }
     }
 
