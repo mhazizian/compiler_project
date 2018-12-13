@@ -95,18 +95,9 @@ public class VisitorImpl implements Visitor {
         return type;
     }
 
-    boolean checkBooleanity(String type) {
+    boolean isValidType(String type, String base) {
         // @TODO Is it correct to check the NoType here?
-        if (!type.equals("bool") && !type.equals("NoType")) {
-            SymbolTable.isValidAst = false;
-            return false;
-        }
-        return true;
-    }
-
-    boolean checkIntegrity(String type) {
-        // @TODO Is it correct to check the NoType here?
-        if (!type.equals("int") && !type.equals("NoType")) {
+        if (!type.equals(base) && !type.equals("NoType")) {
             SymbolTable.isValidAst = false;
             return false;
         }
@@ -130,6 +121,24 @@ public class VisitorImpl implements Visitor {
         // @TODO Is it correct to check the NoType here?
         return (type.equals("int[]") || type.equals("int") 
                 || type.equals("string") || type.equals("NoType"));
+    }
+
+    void checkOperandsValidity(String leftType, String rightType,
+            BinaryExpression binaryExpression, String base)
+    {
+        BinaryOperator operator = binaryExpression.getBinaryOperator();
+     
+        if (!(isValidType(leftType, base) && isValidType(rightType, base))) {
+            System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
+            
+            // NoType class has been used for invalid types
+            binaryExpression.setType(new NoType());
+        }
+        else
+            if (base.equals("int"))
+                binaryExpression.setType(new IntType());
+            else
+                binaryExpression.setType(new BooleanType());
     }
 
 // ##############################################################################
@@ -241,7 +250,6 @@ public class VisitorImpl implements Visitor {
                         vars.get(i).getIdentifier().getName());
                     SymbolTable.isValidAst = false;
                 }
-
             }
 
             for (int i = 0; i < methods.size(); i++) {
@@ -317,12 +325,16 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
+        // Nothing to type check in 'VarDeclaration'
+
         Identifier identifier = varDeclaration.getIdentifier();
         identifier.accept(new VisitorImpl());
     }
 
      @Override
     public void visit(ArrayCall arrayCall) {
+        // Nothing to type check in 'ArrayCall'
+
         Expression instance = arrayCall.getInstance();
         Expression index = arrayCall.getIndex();
 
@@ -342,25 +354,11 @@ public class VisitorImpl implements Visitor {
         String rightType = getType(right);
 
         BinaryOperator operator = binaryExpression.getBinaryOperator();
-        if (isArithmetic(operator)) {
-            if (!(checkIntegrity(leftType) && checkIntegrity(rightType))) {
-                System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
-                
-                // NoType class has been used for invalid types
-                binaryExpression.setType(new NoType());
-            }
-            else
-                binaryExpression.setType(new IntType());
-        } else {
-            if (!(checkBooleanity(leftType) && checkBooleanity(rightType))) {
-                System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
 
-                // NoType class has been used for invalid types
-                binaryExpression.setType(new NoType());
-            }
-            else
-                binaryExpression.setType(new BooleanType());
-        }
+        if (isArithmetic(operator))
+            checkOperandsValidity(leftType, rightType, binaryExpression, "int");
+        else 
+            checkOperandsValidity(leftType, rightType, binaryExpression, "bool");
     }
 
     @Override
@@ -445,7 +443,7 @@ public class VisitorImpl implements Visitor {
         value.accept(new VisitorImpl());
         
         String type = getType(value);
-        if (checkBooleanity(type))
+        if (isValidType(type, "bool"))
             unaryExpression.setType(new BooleanType());
         else {
             System.out.println("ErrorItemMessage: unsupported operand type for " +
@@ -490,7 +488,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(Block block) {
-        // Nothing to type check in block
+        // Nothing to type check in 'block'
 
         ArrayList<Statement> body = block.getBody();
 
@@ -511,7 +509,7 @@ public class VisitorImpl implements Visitor {
             alternativeBody.accept(new VisitorImpl());
 
         String type = getType(expression);
-        if (!checkBooleanity(type))
+        if (!isValidType(type, "bool"))
             System.out.println("ErrorItemMessage: condition type must be boolean");
         // Nothing to do in the else statement
     }
@@ -525,7 +523,7 @@ public class VisitorImpl implements Visitor {
         body.accept(new VisitorImpl());
 
         String type = getType(condition);
-        if (!checkBooleanity(type))
+        if (!isValidType(type, "bool"))
             System.out.println("ErrorItemMessage: condition type must be boolean");
         // Nothing to do in the else statement
     }
