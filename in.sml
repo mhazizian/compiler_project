@@ -52,11 +52,15 @@ class B {
         return a;
     }
 }
-class A{
+class A extends B{
     def i(): B {
         # var q : Test2;
         # q = new Test2().method();
         return new B();
+    }
+    def j(): int {
+        var a : int[];
+        return a;
     }
 }
 

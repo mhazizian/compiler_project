@@ -71,13 +71,12 @@ public class SymbolTable {
 	}
 
 	public Boolean hasItem(String key) {
-		SymbolTableItem value = items.get(key);
-		if(value == null && pre != null)
+		try {
+			SymbolTableItem value = this.get(key);
 			return true;
-		else if(value == null)
+		} catch (ItemNotFoundException e) {
 			return false;
-		else
-			return true;
+		}
 	}
 
 	public SymbolTable getPreSymbolTable() {

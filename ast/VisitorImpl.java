@@ -1,6 +1,9 @@
 package ast;
 
-import java.util.ArrayList;
+import java.util.*;
+// import java.util.ArrayList;
+// import java.util.Arrays;
+// import java.util.Collection;
 
 import javax.sound.midi.SysexMessage;
 
@@ -60,40 +63,6 @@ public class VisitorImpl implements Visitor {
     public SymbolTableItem createClassDecSymbolTableItem(ClassDeclaration classDeclaration) {
         SymbolTableClassItem classDec = new SymbolTableClassItem(
             classDeclaration.getName().getName());
-
-        ArrayList<VarDeclaration> vars =
-            ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
-        ArrayList<MethodDeclaration> methods =
-            ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
-
-        // add subItems to SymbolTableItem and ClassSymbolTable:
-        for (int i = 0; i < vars.size(); i++) {
-            SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
-            try {
-                // SymbolTable.top.put(item);
-                classDec.put(item);
-            } catch (ItemAlreadyExistsException error) {
-                System.out.println("Line:" + vars.get(i).getLineNumber() +
-                    ":Redefinition of variable " +
-                    vars.get(i).getIdentifier().getName());
-                SymbolTable.isValidAst = false;
-            }
-        }
-
-        for (int i = 0; i < methods.size(); i++) {
-            SymbolTableItem item = this.createMethodDecSymbolTableItem(
-                methods.get(i), classDec);
-            try {
-                // SymbolTable.top.put(item);
-                classDec.put(item);
-            } catch (ItemAlreadyExistsException error) {
-                System.out.println("Line:" + methods.get(i).getLineNumber() +
-                    ":Redefinition of method " +
-                    methods.get(i).getName().getName());
-                SymbolTable.isValidAst = false;
-            }
-        }
-        
         return ((SymbolTableItem) classDec);
     }
 
@@ -280,10 +249,24 @@ public class VisitorImpl implements Visitor {
             }
         }
 
-        // visit classes
-        for (int i = 0; i < classes.size(); i++)
-            classes.get(i).accept(new VisitorImpl());
+        // visit classes with proper order:
+        int i = 0;
+        HashMap<String, Boolean> visitedClasses = new HashMap<>(); 
+        visitedClasses.put(objectClassName, true);
+        visitedClasses.put("", true);
 
+        while(visitedClasses.size() < classes.size() + 2) {
+            if (visitedClasses.getOrDefault(classes.get(i).getName().getName(), false))
+                continue;
+            
+            if (visitedClasses.getOrDefault(classes.get(i).getParentName().getName(), false)
+                || !(SymbolTable.top.hasItem(classes.get(i).getParentName().getName()))
+            ) {
+                classes.get(i).accept(new VisitorImpl());
+                visitedClasses.put(classes.get(i).getName().getName(), true);
+            }
+            i = (i + 1) % classes.size();
+        }
         mainClass.accept(new VisitorImpl());
         SymbolTable.pop();
     }
@@ -300,24 +283,32 @@ public class VisitorImpl implements Visitor {
                 ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
             ArrayList<MethodDeclaration> methods =
                 ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
-
-
-            // add variables and method to SymbolTable:
+    
+            // add subItems to SymbolTableItem and ClassSymbolTable:
             for (int i = 0; i < vars.size(); i++) {
-                SymbolTableItem item = currentClass.get("v_" + vars.get(i).getIdentifier().getName());
+                SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
                 try {
                     SymbolTable.top.put(item);
+                    currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                    // do nothing
+                    System.out.println("Line:" + vars.get(i).getLineNumber() +
+                        ":Redefinition of variable " +
+                        vars.get(i).getIdentifier().getName());
+                    SymbolTable.isValidAst = false;
                 }
             }
     
             for (int i = 0; i < methods.size(); i++) {
-                SymbolTableItem item = currentClass.get("m_" + methods.get(i).getName().getName());
+                SymbolTableItem item = this.createMethodDecSymbolTableItem(
+                    methods.get(i), currentClass);
                 try {
                     SymbolTable.top.put(item);
+                    currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                    // do nothing
+                    System.out.println("Line:" + methods.get(i).getLineNumber() +
+                        ":Redefinition of method " +
+                        methods.get(i).getName().getName());
+                    SymbolTable.isValidAst = false;
                 }
             }
 
