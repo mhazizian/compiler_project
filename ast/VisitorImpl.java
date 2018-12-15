@@ -92,7 +92,7 @@ public class VisitorImpl implements Visitor {
                 type = varType.toString();
             }
         } catch (ItemNotFoundException error) {
-            // @TODO Throw something!
+            // do nothing
         }
         return type;
     }
@@ -131,7 +131,7 @@ public class VisitorImpl implements Visitor {
         BinaryOperator operator = binaryExpression.getBinaryOperator();
      
         if (!(isValidType(leftType, base) && isValidType(rightType, base))) {
-            System.out.println("ErrorItemMessage: unsupported operand type for " + operator);
+            System.out.println("Line:" + binaryExpression.getLineNumber() + ":unsupported operand type for " + operator);
             
             // NoType class has been used for invalid types
             binaryExpression.setType(new NoType());
@@ -430,11 +430,17 @@ public class VisitorImpl implements Visitor {
         try {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
 
-            if (item.getItemType() == SymbolTableItemType.variableType)
+            if (item.getItemType() == SymbolTableItemType.variableType) 
                 identifier.setType(new UserDefinedType(new Identifier(item.getName())));
             
         } catch (ItemNotFoundException error) {
-            // @TODO What should we do here? :)
+            // if (!identifier.getName().equals("")) {
+            //     System.out.println("Line:" + identifier.getLineNumber() + ":variable "
+            //         + identifier.getName() + " is not declared"
+            //     );
+            //     SymbolTable.isValidAst = false;
+            //     identifier.setType(new NoType());
+            // }
         }
     }
 
@@ -514,7 +520,7 @@ public class VisitorImpl implements Visitor {
         if (isValidType(type, "bool"))
             unaryExpression.setType(new BooleanType());
         else {
-            System.out.println("ErrorItemMessage: unsupported operand type for " +
+            System.out.println("Line:" + unaryExpression.getLineNumber() + ":unsupported operand type for " +
                     unaryExpression.getUnaryOperator());
 
             // NoType class has been used for invalid types

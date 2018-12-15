@@ -22,11 +22,16 @@ class C {
         b = a.k();
 
         arr = new int[10];
+        ccc = 2;
+
         b = arr[2];
         b = arr[2 + 5 / 3];
         b = arr[true];
+        ccc = b;
+
         
         writeln(a.j());
+        ccc = a;
         
         if(a.j()) then
             writeln("Hello");
