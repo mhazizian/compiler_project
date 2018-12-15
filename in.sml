@@ -22,6 +22,10 @@ class C {
         b = a.k();
 
         arr = new int[10];
+        b = arr.length;
+        b = a.length;
+        b = boolVal.length;
+        
         ccc = 2;
 
         b = arr[2];

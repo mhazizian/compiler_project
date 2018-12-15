@@ -388,10 +388,11 @@ grammar Smoola;
         expressionMethodsTemp[returnValue]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
 
-      | '.' 'length'
+      | '.' length='length'
         {
             Expression instance = $inhCurrentResult;
             Length returnValue = new Length(instance);
+            returnValue.setLineNumber($length.line);
         }
         expressionMethodsTemp[returnValue]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }

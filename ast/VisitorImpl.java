@@ -454,7 +454,7 @@ public class VisitorImpl implements Visitor {
             length.setType(new IntType());
         else {
             // This error message doesn't exist in project description
-            System.out.println("ErrorItemMessage: unsupported type for length");
+            System.out.println("Line:" + length.getLineNumber() + ": unsupported type for length");
             length.setType(new NoType());
         }
     }
