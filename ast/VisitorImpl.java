@@ -57,10 +57,43 @@ public class VisitorImpl implements Visitor {
         return ((SymbolTableItem) methodDec);
     }
 
-    public SymbolTableItem createClassDecSymbolTableItem(
-      ClassDeclaration classDeclaration) {
+    public SymbolTableItem createClassDecSymbolTableItem(ClassDeclaration classDeclaration) {
         SymbolTableClassItem classDec = new SymbolTableClassItem(
             classDeclaration.getName().getName());
+
+        ArrayList<VarDeclaration> vars =
+            ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
+        ArrayList<MethodDeclaration> methods =
+            ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
+
+        // add subItems to SymbolTableItem and ClassSymbolTable:
+        for (int i = 0; i < vars.size(); i++) {
+            SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
+            try {
+                SymbolTable.top.put(item);
+                classDec.put(item);
+            } catch (ItemAlreadyExistsException error) {
+                System.out.println("Line:" + vars.get(i).getLineNumber() +
+                    ":Redefinition of variable " +
+                    vars.get(i).getIdentifier().getName());
+                SymbolTable.isValidAst = false;
+            }
+        }
+
+        for (int i = 0; i < methods.size(); i++) {
+            SymbolTableItem item = this.createMethodDecSymbolTableItem(
+                methods.get(i), classDec);
+            try {
+                SymbolTable.top.put(item);
+                classDec.put(item);
+            } catch (ItemAlreadyExistsException error) {
+                System.out.println("Line:" + methods.get(i).getLineNumber() +
+                    ":Redefinition of method " +
+                    methods.get(i).getName().getName());
+                SymbolTable.isValidAst = false;
+            }
+        }
+        
         return ((SymbolTableItem) classDec);
     }
 
@@ -268,34 +301,6 @@ public class VisitorImpl implements Visitor {
                 ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
             ArrayList<MethodDeclaration> methods =
                 ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
-
-            // add subItems to SymbolTableItem and ClassSymbolTable:
-            for (int i = 0; i < vars.size(); i++) {
-                SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
-                try {
-                    SymbolTable.top.put(item);
-                    currentClass.put(item);
-                } catch (ItemAlreadyExistsException error) {
-                    System.out.println("Line:" + vars.get(i).getLineNumber() +
-                        ":Redefinition of variable " +
-                        vars.get(i).getIdentifier().getName());
-                    SymbolTable.isValidAst = false;
-                }
-            }
-
-            for (int i = 0; i < methods.size(); i++) {
-                SymbolTableItem item = this.createMethodDecSymbolTableItem(
-                    methods.get(i), currentClass);
-                try {
-                    SymbolTable.top.put(item);
-                    currentClass.put(item);
-                } catch (ItemAlreadyExistsException error) {
-                    System.out.println("Line:" + methods.get(i).getLineNumber() +
-                        ":Redefinition of method " +
-                        methods.get(i).getName().getName());
-                    SymbolTable.isValidAst = false;
-                }
-            }
 
             // visit subItems:
             for (int i = 0; i < vars.size(); i++)

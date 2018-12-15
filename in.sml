@@ -7,18 +7,7 @@ class MainClass {
 # class B {
 #     var i : int;
 # }
-class B {
-    def j(): int {
-        return 0;
-    }
-}
-class A{
-    def i(): B {
-        # var q : Test2;
-        # q = new Test2().method();
-        return new B();
-    }
-}
+
 
 class C {
     def t(): int[] {
@@ -28,7 +17,7 @@ class C {
         var boolVal : boolean;
         var boolVal2 : boolean;
 
-        a = new A().i().p();
+        a = new A().i().j();
         b = a.k();
         
         writeln(a.j());
@@ -50,6 +39,19 @@ class C {
         2 = !boolVal && boolVal2;
         boolVal2 = 2;
         return a.j();
+    }
+}
+
+class B {
+    def j(): int {
+        return 0;
+    }
+}
+class A{
+    def i(): B {
+        # var q : Test2;
+        # q = new Test2().method();
+        return new B();
     }
 }
 
