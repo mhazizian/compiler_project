@@ -337,9 +337,12 @@ grammar Smoola;
     ;
 
     expressionMemTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
-        '[' expression ']'
-          { $synFinalResult = new ArrayCall($inhCurrentResult,
-                $expression.synFinalResult); }
+        '[' exp=expression ']'
+            {
+                $synFinalResult = new ArrayCall($inhCurrentResult,
+                    $expression.synFinalResult);
+                $synFinalResult.setLineNumber($exp.start.getLine());
+            }
         | { $synFinalResult = $inhCurrentResult; }
     ;
 
@@ -412,6 +415,7 @@ grammar Smoola;
                 Identifier instance = new Identifier($id.text);
                 Expression exp = $expression.synFinalResult;
                 $synFinalResult = new ArrayCall(instance, exp);
+                $synFinalResult.setLineNumber($id.line);
             }
         |   '(' expression ')' { $synFinalResult = $expression.synFinalResult; }
     ;

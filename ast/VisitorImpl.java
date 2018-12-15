@@ -384,6 +384,7 @@ public class VisitorImpl implements Visitor {
                 System.out.println("Line:" + varDeclaration.getLineNumber() + ":class "
                     + className + " is not declared"
                 );
+                SymbolTable.isValidAst = false;
             }
         }
     }
@@ -397,6 +398,11 @@ public class VisitorImpl implements Visitor {
 
         instance.accept(new VisitorImpl());
         index.accept(new VisitorImpl());
+
+        if (index.getType().getType() != TypeName.intType) {
+            System.out.println("Line:" + arrayCall.getLineNumber() + ":array index must be int");
+            SymbolTable.isValidAst = false;
+        }
     }
 
     @Override

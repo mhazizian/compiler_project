@@ -20,6 +20,11 @@ class C {
 
         a = new A().i().j();
         b = a.k();
+
+        arr = new int[10];
+        b = arr[2];
+        b = arr[2 + 5 / 3];
+        b = arr[true];
         
         writeln(a.j());
         
