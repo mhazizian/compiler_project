@@ -301,18 +301,14 @@ public class VisitorImpl implements Visitor {
             ArrayList<MethodDeclaration> methods =
                 ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
-                
+
             // add variables and method to SymbolTable:
             for (int i = 0; i < vars.size(); i++) {
                 SymbolTableItem item = currentClass.get("v_" + vars.get(i).getIdentifier().getName());
                 try {
                     SymbolTable.top.put(item);
-                    // classDec.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                    System.out.println("Line:" + vars.get(i).getLineNumber() +
-                        ":Redefinition of variable " +
-                        vars.get(i).getIdentifier().getName());
-                    SymbolTable.isValidAst = false;
+                    // do nothing
                 }
             }
     
@@ -320,15 +316,10 @@ public class VisitorImpl implements Visitor {
                 SymbolTableItem item = currentClass.get("m_" + methods.get(i).getName().getName());
                 try {
                     SymbolTable.top.put(item);
-                    // classDec.put(item);
                 } catch (ItemAlreadyExistsException error) {
-                    System.out.println("Line:" + methods.get(i).getLineNumber() +
-                        ":Redefinition of method " +
-                        methods.get(i).getName().getName());
-                    SymbolTable.isValidAst = false;
+                    // do nothing
                 }
             }
-            
 
             // visit subItems:
             for (int i = 0; i < vars.size(); i++)

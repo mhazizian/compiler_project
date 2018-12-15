@@ -46,6 +46,9 @@ class B {
     def j(): int {
         return 0;
     }
+    def j(): int {
+        return 0;
+    }
 }
 class A{
     def i(): B {
