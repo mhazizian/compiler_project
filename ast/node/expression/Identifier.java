@@ -9,6 +9,11 @@ public class Identifier extends Expression {
         this.name = name;
     }
 
+    public Identifier(String name, int lineNumber) {
+        this.name = name;
+        this.lineNumber = lineNumber;
+    }
+
     public String getName() {
         return name;
     }
