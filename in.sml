@@ -11,6 +11,7 @@ class MainClass {
 
 class C {
     def t(): int[] {
+        var c : D;
         var a : B;
         var b : int;
         var arr : int[];

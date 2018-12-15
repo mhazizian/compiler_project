@@ -382,10 +382,19 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        // Nothing to type check in 'VarDeclaration'
-
         Identifier identifier = varDeclaration.getIdentifier();
         identifier.accept(new VisitorImpl());
+
+        if (varDeclaration.getType().getType() == TypeName.userDefinedType) {
+            String className = ((UserDefinedType)varDeclaration.getType()).getName().getName();
+            try {
+                SymbolTableItem item = SymbolTable.top.get("c_" + className);
+            } catch (ItemNotFoundException e) {
+                System.out.println("Line:" + varDeclaration.getLineNumber() + ":class "
+                    + className + " is not declared"
+                );
+            }
+        }
     }
 
      @Override
