@@ -25,11 +25,11 @@ class C {
         b = arr.length;
         b = a.length;
         b = boolVal.length;
-        
+
         ccc = 2;
 
         b = arr[2];
-        b = arr[2 + 5 / 3];
+        b = arr[2 + 5 / arr[2]];
         b = arr[true];
         ccc = b;
 

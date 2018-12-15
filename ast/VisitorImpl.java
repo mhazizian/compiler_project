@@ -399,6 +399,9 @@ public class VisitorImpl implements Visitor {
         instance.accept(new VisitorImpl());
         index.accept(new VisitorImpl());
 
+        // only array of int is valid:
+        arrayCall.setType(new IntType());
+
         if (index.getType().getType() != TypeName.intType) {
             System.out.println("Line:" + arrayCall.getLineNumber() + ":array index must be int");
             SymbolTable.isValidAst = false;
