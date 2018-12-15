@@ -47,8 +47,8 @@ grammar Smoola;
         // name should be checked later
         'class' self=ID '{' 'def' methodName=ID '(' ')' ':' 'int'
             {
-                Identifier self = new Identifier($self.text);
-                Identifier methodName = new Identifier($methodName.text);
+                Identifier self = new Identifier($self.text, $self.line);
+                Identifier methodName = new Identifier($methodName.text, $methodName.line);
 
                 ClassDeclaration mainClass = new ClassDeclaration(
                     self, new Identifier(""), $self.line
@@ -76,7 +76,7 @@ grammar Smoola;
     classDeclaration returns [ClassDeclaration synClassDeclaration]:
         'class' name=ID
             {
-                Identifier self = new Identifier($name.text);
+                Identifier self = new Identifier($name.text, $name.line);
                 Identifier parent = new Identifier("");
             }
         ('extends' parent=ID { parent.setName($parent.text); } )?
@@ -96,7 +96,7 @@ grammar Smoola;
     varDeclaration returns [VarDeclaration synVariableDeclaration]:
         'var' name=ID ':' type ';'
         {
-            Identifier id = new Identifier($name.text);
+            Identifier id = new Identifier($name.text, $name.line);
             $synVariableDeclaration = new VarDeclaration(id,
                 $type.synVarType, $name.line);
         }
@@ -105,7 +105,7 @@ grammar Smoola;
     methodDeclaration returns [MethodDeclaration synMethodDeclaration]:
         'def' methodName=ID
         {
-            Identifier methodName = new Identifier($methodName.text);
+            Identifier methodName = new Identifier($methodName.text, $methodName.line);
             $synMethodDeclaration = new MethodDeclaration(methodName,
                 $methodName.line);
         }
@@ -115,7 +115,7 @@ grammar Smoola;
               '(' firstArgId=ID ':' firstArgType=type
                 {
                     Identifier firstArgIdentifier = new Identifier(
-                        $firstArgId.text);
+                        $firstArgId.text, $firstArgId.line);
                     VarDeclaration firstArg = new VarDeclaration(
                         firstArgIdentifier, $firstArgType.synVarType,
                             $firstArgType.start.getLine()
@@ -124,7 +124,7 @@ grammar Smoola;
                 }
                 (',' argId=ID ':' argType=type
                   {
-                      Identifier argIdentifier = new Identifier($argId.text);
+                      Identifier argIdentifier = new Identifier($argId.text, $argId.line);
                       VarDeclaration newArg = new VarDeclaration(argIdentifier,
                           $argType.synVarType, $argType.start.getLine());
                       $synMethodDeclaration.addArg(newArg);
@@ -194,7 +194,7 @@ grammar Smoola;
 
     expressionAssignment returns [Expression synFinalResult]:
         expressionOr
-        '='
+        operator='='
         expressionAssignment
         {
             $synFinalResult = new BinaryExpression(
@@ -202,6 +202,7 @@ grammar Smoola;
                 $expressionAssignment.synFinalResult,
                 BinaryOperator.assign
             );
+            $synFinalResult.setLineNumber($operator.line);
         }
         | expressionOr { $synFinalResult = $expressionOr.synFinalResult; }
     ;
@@ -213,12 +214,13 @@ grammar Smoola;
     ;
 
     expressionOrTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
-        '||'
+        operator='||'
         expressionAnd
         {
-          BinaryExpression currentRes = new BinaryExpression(
-              $inhCurrentResult, $expressionAnd.synFinalResult, BinaryOperator.or
-          );
+            BinaryExpression currentRes = new BinaryExpression(
+                $inhCurrentResult, $expressionAnd.synFinalResult, BinaryOperator.or
+            );
+            currentRes.setLineNumber($operator.line);
         }
         expressionOrTemp[currentRes]
         { $synFinalResult = $expressionOrTemp.synFinalResult; }
@@ -232,11 +234,12 @@ grammar Smoola;
     ;
 
     expressionAndTemp [Expression inhCurrentResult] returns [Expression synFinalResult]:
-        '&&'
+        operator='&&'
         expressionEq
         {
-          BinaryExpression currentRes = new BinaryExpression($inhCurrentResult,
-              $expressionEq.synFinalResult, BinaryOperator.and);
+            BinaryExpression currentRes = new BinaryExpression($inhCurrentResult,
+                $expressionEq.synFinalResult, BinaryOperator.and);
+            currentRes.setLineNumber($operator.line);
         }
         expressionAndTemp[currentRes]
         { $synFinalResult = $expressionAndTemp.synFinalResult; }
@@ -253,9 +256,10 @@ grammar Smoola;
         operator=('==' | '<>')
         expressionCmp
         {
-          BinaryExpression currentRes = new BinaryExpression(
-              $inhCurrentResult, $expressionCmp.synFinalResult,
-              (($operator.text.equals("==")) ? BinaryOperator.eq : BinaryOperator.neq));
+            BinaryExpression currentRes = new BinaryExpression(
+                $inhCurrentResult, $expressionCmp.synFinalResult,
+                (($operator.text.equals("==")) ? BinaryOperator.eq : BinaryOperator.neq));
+            currentRes.setLineNumber($operator.line);
         }
         expressionEqTemp[currentRes]
         { $synFinalResult = $expressionEqTemp.synFinalResult; }
@@ -272,9 +276,10 @@ grammar Smoola;
         operator=('<' | '>')
         expressionAdd
         {
-          BinaryExpression currentRes = new BinaryExpression(
-              $inhCurrentResult, $expressionAdd.synFinalResult,
-              ($operator.text.equals(">")) ? BinaryOperator.gt : BinaryOperator.lt);
+            BinaryExpression currentRes = new BinaryExpression(
+                $inhCurrentResult, $expressionAdd.synFinalResult,
+                ($operator.text.equals(">")) ? BinaryOperator.gt : BinaryOperator.lt);
+            currentRes.setLineNumber($operator.line);
         }
         expressionCmpTemp[currentRes]
         { $synFinalResult = $expressionCmpTemp.synFinalResult; }
@@ -295,6 +300,7 @@ grammar Smoola;
                 $inhCurrentResult, $expressionMult.synFinalResult,
                 ($operator.text.equals("+")) ? BinaryOperator.add : BinaryOperator.sub
             );
+            currentRes.setLineNumber($operator.line);
         }
         expressionAddTemp[currentRes]
         { $synFinalResult = $expressionAddTemp.synFinalResult; }
@@ -314,6 +320,7 @@ grammar Smoola;
             BinaryExpression currentRes = new BinaryExpression(
                 $inhCurrentResult, $expressionUnary.synFinalResult,
                 ($operator.text.equals("*")) ? BinaryOperator.mult : BinaryOperator.div);
+            currentRes.setLineNumber($operator.line);
         }
         expressionMultTemp[currentRes]
         { $synFinalResult = $expressionMultTemp.synFinalResult; }
@@ -323,10 +330,13 @@ grammar Smoola;
     expressionUnary returns [Expression synFinalResult]:
         operator=('!' | '-')
         expressionUnary
-        { $synFinalResult = new UnaryExpression(
-              ($operator.text.equals("!")) ? UnaryOperator.not : UnaryOperator.minus,
-              $expressionUnary.synFinalResult
-        ); }
+        { 
+            $synFinalResult = new UnaryExpression(
+                ($operator.text.equals("!")) ? UnaryOperator.not : UnaryOperator.minus,
+                $expressionUnary.synFinalResult
+            );
+            $synFinalResult.setLineNumber($operator.line);
+        }
         | expressionMem { $synFinalResult = $expressionMem.synFinalResult; }
     ;
 
@@ -356,7 +366,7 @@ grammar Smoola;
       '.' id=ID '(' ')'
         {
             Expression instance = $inhCurrentResult;
-            Identifier identifier = new Identifier($id.text);
+            Identifier identifier = new Identifier($id.text, $id.line);
             MethodCall returnValue = new MethodCall(instance, identifier);
         }
         expressionMethodsTemp[returnValue]
@@ -365,7 +375,7 @@ grammar Smoola;
       | '.' id=ID
         {
             Expression instance = $inhCurrentResult;
-            Identifier id = new Identifier($id.text);
+            Identifier id = new Identifier($id.text, $id.line);
             MethodCall returnValue = new MethodCall(instance, id);
         }
         '('
@@ -403,16 +413,16 @@ grammar Smoola;
             }
         |   'new ' newClassId=ID '(' ')'
             {
-                Identifier id = new Identifier($newClassId.text);
+                Identifier id = new Identifier($newClassId.text, $newClassId.line);
                 $synFinalResult = new NewClass(id);
             }
         |   'this'  { $synFinalResult = new This();}
         |   'true'  { $synFinalResult = new BooleanValue(true, new BooleanType());}
         |   'false' { $synFinalResult = new BooleanValue(false, new BooleanType());}
-        |   id=ID   { $synFinalResult = new Identifier($id.text); }
+        |   id=ID   { $synFinalResult = new Identifier($id.text, $id.line); }
         |   id=ID '[' expression ']'
             {
-                Identifier instance = new Identifier($id.text);
+                Identifier instance = new Identifier($id.text, $id.line);
                 Expression exp = $expression.synFinalResult;
                 $synFinalResult = new ArrayCall(instance, exp);
                 $synFinalResult.setLineNumber($id.line);
@@ -428,7 +438,7 @@ grammar Smoola;
         id=ID
             {
                 UserDefinedType temp = new UserDefinedType();
-                temp.setName(new Identifier($id.text));
+                temp.setName(new Identifier($id.text, $id.line));
                 $synVarType = temp;
             }
     ;
