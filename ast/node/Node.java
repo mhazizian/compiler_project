@@ -4,7 +4,7 @@ import ast.Visitor;
 
 public abstract class Node {
     public void accept(Visitor visitor) {}
-    public int lineNumber;
+    public int lineNumber = -1;
 
     public int getLineNumber() {
         return lineNumber;
