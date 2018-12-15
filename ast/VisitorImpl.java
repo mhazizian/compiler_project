@@ -370,8 +370,10 @@ public class VisitorImpl implements Visitor {
 
         if (!returnValue.getType().toString().equals(methodDeclaration.getReturnType().toString()))
         {
-            System.out.println("ErrorItemMessage: " + methodDeclaration.getName() +
-                    " return type must be " + methodDeclaration.getReturnType());
+            System.out.println("Line:" + methodDeclaration.getLineNumber() + ":"
+                + methodDeclaration.getName().getName() + " return type must be "
+                + methodDeclaration.getReturnType()
+            );
             SymbolTable.isValidAst = false;
         }
 

@@ -43,11 +43,12 @@ class C {
 }
 
 class B {
+    # def j(): int {
+    #     return 0;
+    # }
     def j(): int {
-        return 0;
-    }
-    def j(): int {
-        return 0;
+        var a : int[];
+        return a;
     }
 }
 class A{
