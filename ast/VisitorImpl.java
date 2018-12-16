@@ -166,7 +166,7 @@ public class VisitorImpl implements Visitor {
         SymbolTableItem instanceClassItem = SymbolTable.top.get("c_" + className);
         findTheMethodInClass(methodCall, instanceClassItem, methodName, className);
         } catch (ItemNotFoundException error) {
-            System.out.println("ErrorItemMessage: class " + className + " is not declared");
+            System.out.println("Line:" + methodCall.getLineNumber() + ":class " + className + " is not declared");
             
             SymbolTable.isValidAst = false;
             // NoType class has been used for invalid types
@@ -590,7 +590,7 @@ public class VisitorImpl implements Visitor {
 
         String type = getType(expression);
         if (!isValidType(type, "bool"))
-            System.out.println("ErrorItemMessage: condition type must be boolean");
+            System.out.println("Line:" + conditional.getLineNumber() + ":condition type must be boolean");
         // Nothing to do in the else statement
     }
 
@@ -604,7 +604,7 @@ public class VisitorImpl implements Visitor {
 
         String type = getType(condition);
         if (!isValidType(type, "bool"))
-            System.out.println("ErrorItemMessage: condition type must be boolean");
+            System.out.println("Line:" + loop.getLineNumber() + ":condition type must be boolean");
         // Nothing to do in the else statement
     }
 

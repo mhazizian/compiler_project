@@ -160,9 +160,12 @@ grammar Smoola;
     ;
 
     statementCondition returns [Statement synStatement]:
-        'if' '('expression')' 'then' statement
-        { Conditional conditionalStatement = new Conditional(
-              $expression.synFinalResult, $statement.synStatement); }
+        ifExp='if' '('expression')' 'then' statement
+        {
+            Conditional conditionalStatement = new Conditional(
+                $expression.synFinalResult, $statement.synStatement);
+            conditionalStatement.setLineNumber($ifExp.line);
+        }
         ( 'else' statement { conditionalStatement.setAlternativeBody(
               $statement.synStatement); } )?
 
@@ -170,9 +173,12 @@ grammar Smoola;
     ;
 
     statementLoop returns [Statement synStatement]:
-        'while' '(' expression ')' statement
-        { $synStatement = new While($expression.synFinalResult,
-              $statement.synStatement); }
+        whl='while' '(' expression ')' statement
+        {
+            $synStatement = new While($expression.synFinalResult,
+                $statement.synStatement);
+            $synStatement.setLineNumber($whl.line);
+        }
     ;
 
     statementWrite returns [Statement synStatement]:
