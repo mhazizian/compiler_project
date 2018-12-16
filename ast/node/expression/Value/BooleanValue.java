@@ -9,7 +9,6 @@ public class BooleanValue extends Value {
     public BooleanValue(boolean constant, Type type) {
         this.constant = constant;
         this.type = type;
-        this.isAbsoluteValue = true;
     }
 
     public boolean isConstant() {

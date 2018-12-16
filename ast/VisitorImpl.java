@@ -608,11 +608,11 @@ public class VisitorImpl implements Visitor {
         rValue.accept(new VisitorImpl());
 
         // @TODO Is it the only case of right-hand-side value?
-        if (lValue.isAbsoluteValue || lValue.toString().equals("This")) {
+        if (!lValue.islValue) {
             System.out.println("Line:" + assign.getLineNumber() + ":left side of assignment must be a valid lvalue");
             
             // It should be ignored to continue the process
-            lValue.isAbsoluteValue = false;
+            lValue.islValue = true;
             SymbolTable.isValidAst = false;
         }
     }

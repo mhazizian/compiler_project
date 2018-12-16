@@ -7,6 +7,7 @@ public class Identifier extends Expression {
 
     public Identifier(String name) {
         this.name = name;
+        this.islValue = true;
     }
 
     public Identifier(String name, int lineNumber) {

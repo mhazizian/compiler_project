@@ -9,6 +9,7 @@ public class ArrayCall extends Expression {
     public ArrayCall(Expression instance, Expression index) {
         this.instance = instance;
         this.index = index;
+        this.islValue = true;
     }
 
     public Expression getInstance() {

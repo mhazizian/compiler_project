@@ -4,10 +4,6 @@ class MainClass {
     }
 }
 
-# class B {
-#     var i : int;
-# }
-
 class C {
     def t(): int[] {
         var c : D;
@@ -57,18 +53,14 @@ class C {
 }
 
 class B {
-    # def j(): int {
-    #     return 0;
-    # }
     def j(): int {
         var a : int[];
         return a;
     }
 }
+
 class A extends B{
     def i(): B {
-        # var q : Test2;
-        # q = new Test2().method();
         return new B();
     }
     def j(): int {
@@ -76,44 +68,3 @@ class A extends B{
         return a;
     }
 }
-
-
-# class Test1 {
-#     var i : int;
-#     def method1() : string {
-#         var j : string;
-#         j = "hello world!";
-#         return j;
-#     }
-# }
-
-# class Test2 extends Test1 {
-#     var variable : int[];
-
-#     def method1(): int {
-#         i = 10;
-#         variable = new int[10];
-#         return i;
-#     }
-
-#     def method3(): int {
-#         if(a == 2) then
-#             b = true;
-#         else
-#             b = false;
-
-#         while(a <> 0) {
-#             a = a - 1;
-#         }
-
-#         writeln("Hello kiki!");
-#         return 0;
-#     }
-
-#     def method4(): int {
-#         var arr : int[];
-#         arr = new int[666];
-#         writeln(arr.length);
-#         return 0;
-#     }
-# }
