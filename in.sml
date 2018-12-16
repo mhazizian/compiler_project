@@ -8,7 +8,6 @@ class MainClass {
 #     var i : int;
 # }
 
-
 class C {
     def t(): int[] {
         var c : D;
