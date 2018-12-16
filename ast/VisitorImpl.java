@@ -526,6 +526,8 @@ public class VisitorImpl implements Visitor {
             }
         } catch (ItemNotFoundException error) {
             // @TODO : Which kind of error?
+            System.out.println("Line:" + methodName.getLineNumber() + ":primitive types are not callable.");
+            SymbolTable.isValidAst = false;
         }
     }
 
@@ -534,8 +536,8 @@ public class VisitorImpl implements Visitor {
         Expression expression = newArray.getExpression();
         IntValue arraySize = ((IntValue) newArray.getExpression());
         if (arraySize.getConstant() <= 0) {
-            System.out.println("Line:" + newArray.getLineNumber() +
-                    ":Array length should not be zero or negative");
+            System.out.println("Line:" + newArray.getLineNumber()
+                    + ":Array length should not be zero or negative");
             SymbolTable.isValidAst = false;
         }
         expression.accept(new VisitorImpl());
@@ -593,7 +595,7 @@ public class VisitorImpl implements Visitor {
         rValue.accept(new VisitorImpl());
 
         // @TODO Is it the only case of right-hand-side value?
-        if (lValue.isAbsoluteValue) {
+        if (lValue.isAbsoluteValue || lValue.toString().equals("This")) {
             System.out.println("Line:" + assign.getLineNumber() + ":left side of assignment must be a valid lvalue");
             
             // It should be ignored to continue the process
@@ -605,11 +607,14 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(Block block) {
         // Nothing to type check in 'block'
+        createNewSymbolTable();
 
         ArrayList<Statement> body = block.getBody();
 
         for (int i = 0; i < body.size(); ++i)
             body.get(i).accept(new VisitorImpl());
+
+        SymbolTable.pop();
     }
 
     @Override
@@ -619,10 +624,17 @@ public class VisitorImpl implements Visitor {
         Statement alternativeBody = conditional.getAlternativeBody();
 
         expression.accept(new VisitorImpl());
+        
+        createNewSymbolTable();
         consequenceBody.accept(new VisitorImpl());
+        SymbolTable.pop();
 
-        if (alternativeBody != null)
+        if (alternativeBody != null) {
+            createNewSymbolTable();
             alternativeBody.accept(new VisitorImpl());
+            SymbolTable.pop();
+        }
+
 
         String type = getType(expression);
         if (!isValidType(type, "bool"))
