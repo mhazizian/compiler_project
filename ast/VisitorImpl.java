@@ -152,8 +152,8 @@ public class VisitorImpl implements Visitor {
             methodCall.setType(methodItem.getReturnType());
 
         } catch (ItemNotFoundException error) {
-            System.out.println("ErrorItemMessage: there is no method named " +
-            methodName + " in class " + className);
+            System.out.println("Line:" + methodCall.getLineNumber() + ": there is no method named " +
+                methodName + " in class " + className);
 
             SymbolTable.isValidAst = false;
             // NoType class has been used for invalid types
@@ -469,6 +469,9 @@ public class VisitorImpl implements Visitor {
         instance.accept(new VisitorImpl());
         methodName.accept(new VisitorImpl());
 
+        if (methodCall.getLineNumber() == -1)
+            methodCall.setLineNumber(instance.getLineNumber());
+
         try {
             SymbolTableItem instanceItem = SymbolTable.top.getItem(instance.getType().toString());
             
@@ -555,7 +558,7 @@ public class VisitorImpl implements Visitor {
 
         // @TODO Is it the only case of right-hand-side value?
         if (lValue.isAbsoluteValue) {
-            System.out.println("ErrorItemMessage: left side of assignment must be a valid lvalue");
+            System.out.println("Line:" + assign.getLineNumber() + ":left side of assignment must be a valid lvalue");
             
             // It should be ignored to continue the process
             lValue.isAbsoluteValue = false;
@@ -613,7 +616,7 @@ public class VisitorImpl implements Visitor {
         String type = getType(arg);
 
         if (!isWritable(type)) {
-            System.out.println("ErrorItemMessage: unsupported type for writeln");
+            System.out.println("Line:" + write.getLineNumber() + ":unsupported type for writeln");
             SymbolTable.isValidAst = false;
         }
         // Nothing to do in the else statement

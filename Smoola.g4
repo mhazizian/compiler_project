@@ -176,15 +176,22 @@ grammar Smoola;
     ;
 
     statementWrite returns [Statement synStatement]:
-        'writeln(' expression ')' ';'
-        { $synStatement = new Write($expression.synFinalResult); }
+        wrl='writeln(' expression ')' ';'
+        {
+            $synStatement = new Write($expression.synFinalResult);
+            $synStatement.setLineNumber($wrl.line);
+        }
     ;
 
     statementAssignment returns [Statement synStatement]:
-        expression ';'
-        { $synStatement = new Assign(
-          ((BinaryExpression)($expression.synFinalResult)).getLeft(),
-          ((BinaryExpression)($expression.synFinalResult)).getRight()); }
+        exp=expression ';'
+        {
+            $synStatement = new Assign(
+                ((BinaryExpression)($expression.synFinalResult)).getLeft(),
+                ((BinaryExpression)($expression.synFinalResult)).getRight()
+            );
+            $synStatement.setLineNumber($exp.start.getLine());
+        }
     ;
 
     expression returns [Expression synFinalResult]:
@@ -368,6 +375,7 @@ grammar Smoola;
             Expression instance = $inhCurrentResult;
             Identifier identifier = new Identifier($id.text, $id.line);
             MethodCall returnValue = new MethodCall(instance, identifier);
+            returnValue.setLineNumber($id.line);
         }
         expressionMethodsTemp[returnValue]
         { $synFinalResult = $expressionMethodsTemp.synFinalResult; }
@@ -377,6 +385,7 @@ grammar Smoola;
             Expression instance = $inhCurrentResult;
             Identifier id = new Identifier($id.text, $id.line);
             MethodCall returnValue = new MethodCall(instance, id);
+            returnValue.setLineNumber($id.line);
         }
         '('
           (
