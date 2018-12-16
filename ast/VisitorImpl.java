@@ -37,9 +37,9 @@ public class VisitorImpl implements Visitor {
         SymbolTableVariableItem varDec = new SymbolTableVariableItem(
             varDecleration.getIdentifier().getName(),
             varDecleration.getType(),
-            this.ItemDecIndex
+            VisitorImpl.ItemDecIndex
         );
-        this.ItemDecIndex += 1;
+        VisitorImpl.ItemDecIndex += 1;
 
         return ((SymbolTableItem) varDec);
     }
