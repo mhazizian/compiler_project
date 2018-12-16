@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class MethodCall extends Expression {
     private Expression instance;
-    private Identifier methodName;
+    private MethodCallIdentifier methodName;
     private ArrayList<Expression> args = new ArrayList<>();
 
-    public MethodCall(Expression instance, Identifier methodName) {
+    public MethodCall(Expression instance, MethodCallIdentifier methodName) {
         this.instance = instance;
         this.methodName = methodName;
     }
@@ -23,11 +23,11 @@ public class MethodCall extends Expression {
         this.instance = instance;
     }
 
-    public Identifier getMethodName() {
+    public MethodCallIdentifier getMethodName() {
         return methodName;
     }
 
-    public void setMethodName(Identifier methodName) {
+    public void setMethodName(MethodCallIdentifier methodName) {
         this.methodName = methodName;
     }
 

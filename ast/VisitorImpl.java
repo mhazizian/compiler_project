@@ -473,13 +473,26 @@ public class VisitorImpl implements Visitor {
                 identifier.setType(new UserDefinedType(new Identifier(item.getName())));
             
         } catch (ItemNotFoundException error) {
-            // if (!identifier.getName().equals("")) {
-            //     System.out.println("Line:" + identifier.getLineNumber() + ":variable "
-            //         + identifier.getName() + " is not declared"
-            //     );
-            //     SymbolTable.isValidAst = false;
-            //     identifier.setType(new NoType());
-            // }
+            if (!identifier.getName().equals("")) {
+                System.out.println("Line:" + identifier.getLineNumber() + ":variable "
+                    + identifier.getName() + " is not declared"
+                );
+                SymbolTable.isValidAst = false;
+                identifier.setType(new NoType());
+            }
+        }
+    }
+
+    @Override
+    public void visit(MethodCallIdentifier identifier) {
+        try {
+            SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
+
+            if (item.getItemType() == SymbolTableItemType.variableType) 
+                identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+            
+        } catch (ItemNotFoundException error) {
+            // :thinking:
         }
     }
 
@@ -501,7 +514,7 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(MethodCall methodCall) {
         Expression instance = methodCall.getInstance();
-        Identifier methodName = methodCall.getMethodName();
+        MethodCallIdentifier methodName = methodCall.getMethodName();
         instance.accept(new VisitorImpl());
         methodName.accept(new VisitorImpl());
 

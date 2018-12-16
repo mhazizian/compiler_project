@@ -116,6 +116,11 @@ public class VisitorImplIter implements Visitor {
     }
 
     @Override
+    public void visit(MethodCallIdentifier identifier) {
+        System.out.println(identifier.toString());
+    }
+
+    @Override
     public void visit(Length length) {
         System.out.println(length.toString());
 
@@ -128,7 +133,7 @@ public class VisitorImplIter implements Visitor {
         System.out.println(methodCall.toString());
 
         Expression instance = methodCall.getInstance();
-        Identifier methodName = methodCall.getMethodName();
+        MethodCallIdentifier methodName = methodCall.getMethodName();
 
         instance.accept(new VisitorImplIter());
         methodName.accept(new VisitorImplIter());
