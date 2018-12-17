@@ -82,4 +82,13 @@ public class SymbolTable {
 	public SymbolTable getPreSymbolTable() {
 		return pre;
 	}
+
+	public void printItems() {
+		Iterator it = this.items.entrySet().iterator();    
+        while (it.hasNext()) {
+
+			Map.Entry pair = (Map.Entry)it.next();
+			System.out.println("### STI:" + (String)pair.getKey());
+        }
+	}
 }

@@ -296,6 +296,7 @@ public class VisitorImpl implements Visitor {
 
         // create SymbolTableItem for each classDec
         putToSymbolTable(this.createClassDecSymbolTableItem(mainClass));
+        completeClassSymbolTableBody(mainClass);
 
         ArrayList<Boolean> classDecIsValid = new ArrayList<Boolean>();
         for (int i = 0; i < classes.size(); i++) {
@@ -384,9 +385,11 @@ public class VisitorImpl implements Visitor {
                 ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
             ArrayList<MethodDeclaration> methods =
                 ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
-    
+
             // add subItems to SymbolTableItem and ClassSymbolTable:
             currentClass.addSubItemsToSymbolTable();
+            // SymbolTable.top.printItems();
+
 
             // visit subItems:
             for (int i = 0; i < vars.size(); i++)
@@ -527,7 +530,7 @@ public class VisitorImpl implements Visitor {
             
         } catch (ItemNotFoundException error) {
             if (!identifier.getName().equals("")) {
-                System.out.println("Line:" + identifier.getLineNumber() + ":variable "
+                System.out.println("#Line:" + identifier.getLineNumber() + ":variable "
                     + identifier.getName() + " is not declared"
                 );
                 SymbolTable.isValidAst = false;
