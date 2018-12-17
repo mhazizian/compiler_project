@@ -55,6 +55,7 @@ grammar Smoola;
                 );
                 MethodDeclaration mainMethod = new MethodDeclaration(
                     methodName, $methodName.line);
+
                 mainClass.addMethodDeclaration(mainMethod);
 
                 mainMethod.setReturnType(new IntType());
@@ -66,8 +67,11 @@ grammar Smoola;
 
                 ( statement { mainMethod.addStatement(
                       $statement.synStatement); } )*
-                'return' expression
-                    { mainMethod.setReturnValue($expression.synFinalResult); }
+                ret='return' expression
+                    {
+                        $expression.synFinalResult.setLineNumber($ret.line);
+                        mainMethod.setReturnValue($expression.synFinalResult);
+                    }
                 ';'
             '}'
         '}'
