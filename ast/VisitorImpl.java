@@ -256,11 +256,13 @@ public class VisitorImpl implements Visitor {
     }
 
     boolean canAssign(Type lValue, Type rValue) {
+        if (lValue.getType() == TypeName.noType || rValue.getType() == TypeName.noType)
+            return true;
+        
         if (lValue.getType() == rValue.getType()) {
             if (!this.isCastAble(lValue.toString(), rValue.toString())) {
                 return false;
             }
-
         } else {            
             return false;
         }
