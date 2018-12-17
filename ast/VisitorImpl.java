@@ -371,6 +371,17 @@ public class VisitorImpl implements Visitor {
             methodDeclaration.getLocalVars();
         ArrayList<Statement> body = methodDeclaration.getBody();
 
+        for (int i = 0; i < args.size(); i++) {
+            try {
+                SymbolTable.top.put(this.createVarDecSymbolItem(args.get(i)));
+            } catch (ItemAlreadyExistsException error) {
+               System.out.println("Line:" + args.get(i).getLineNumber()
+                  + ":Redefinition of variable " +
+                  args.get(i).getIdentifier().getName());
+              SymbolTable.isValidAst = false;
+            }
+        }
+
         for (int i = 0; i < localVars.size(); i++) {
             try {
                 SymbolTable.top.put(this.createVarDecSymbolItem(localVars.get(i)));
@@ -381,6 +392,8 @@ public class VisitorImpl implements Visitor {
               SymbolTable.isValidAst = false;
             }
         }
+
+
         name.accept(new VisitorImpl());
 
         for (int i = 0; i < args.size(); i++)
