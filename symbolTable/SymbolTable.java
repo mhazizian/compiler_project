@@ -60,12 +60,12 @@ public class SymbolTable {
 
 	public SymbolTableItem getItem(String name) throws ItemNotFoundException {
 		try {
-			return this.get("c_" + name);
+			return this.get("v_" + name);
 		} catch (ItemNotFoundException e) {
 			try {
 				return this.get("m_" + name);
 			} catch (ItemNotFoundException e2) {
-				return this.get("v_" + name);
+				return this.get("c_" + name);
 			}
 		}
 	}
