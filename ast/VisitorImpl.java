@@ -188,10 +188,32 @@ public class VisitorImpl implements Visitor {
 
     void findTheMethodInClass(MethodCall methodCall, SymbolTableItem instanceItem,
             String methodName, String className) {
+
+        ArrayList<Expression> args = methodCall.getArgs();
+
         try {
             SymbolTableMethodItem methodItem = (SymbolTableMethodItem)(
                     (SymbolTableClassItem)instanceItem).get("m_" + methodName);
-        
+            
+            if (args.size() != methodItem.getArgs().size()) {
+                System.out.println("Line:" + methodCall.getLineNumber() + ": invalid number of args passed to method " +
+                methodName + " in class " + className);
+
+                SymbolTable.isValidAst = false;
+                methodCall.setType(new NoType());
+                return;
+            }
+
+            for (int i = 0; i < args.size(); i++) {
+                if (!canAssign(methodItem.getArgs().get(i), methodCall.getArgs().get(i).getType())) {
+                    System.out.println("Line:" + methodCall.getLineNumber()
+                        + ":in methodCall: "+ methodName + ":argument " + (i + 1)
+                        + "th has invalid type from refrence method.");
+    
+                    SymbolTable.isValidAst = false;
+                }
+            }
+
             methodCall.setType(methodItem.getReturnType());
 
         } catch (ItemNotFoundException error) {
@@ -230,6 +252,18 @@ public class VisitorImpl implements Visitor {
         } catch(ItemNotFoundException error) {
             return false;
         }
+    }
+
+    boolean canAssign(Type lValue, Type rValue) {
+        if (lValue.getType() == rValue.getType()) {
+            if (!this.isCastAble(lValue.toString(), rValue.toString())) {
+                return false;
+            }
+
+        } else {            
+            return false;
+        }
+        return true;
     }
 
 // ##############################################################################
@@ -547,11 +581,16 @@ public class VisitorImpl implements Visitor {
     public void visit(MethodCall methodCall) {
         Expression instance = methodCall.getInstance();
         MethodCallIdentifier methodName = methodCall.getMethodName();
+        ArrayList<Expression> args = methodCall.getArgs();
+
         instance.accept(new VisitorImpl());
         methodName.accept(new VisitorImpl());
+        for (int i = 0; i < args.size(); i++)
+            args.get(i).accept(new VisitorImpl());
 
         if (methodCall.getLineNumber() == -1)
             methodCall.setLineNumber(instance.getLineNumber());
+
 
         try {
             SymbolTableItem instanceItem = SymbolTable.top.getItem(instance.getType().toString());
@@ -639,14 +678,7 @@ public class VisitorImpl implements Visitor {
         lValue.accept(new VisitorImpl());
         rValue.accept(new VisitorImpl());
 
-        if (lValue.getType().getType() == rValue.getType().getType()) {
-
-            if (!this.isCastAble(lValue.getType().toString(), rValue.getType().toString())) {
-                System.out.println("Line:" + assign.getLineNumber() + ":unsupported operand type for assign");
-                SymbolTable.isValidAst = false;
-            }
-
-        } else {            
+        if (!canAssign(lValue.getType(), rValue.getType())) {
             System.out.println("Line:" + assign.getLineNumber() + ":unsupported operand type for assign");
             SymbolTable.isValidAst = false;
         }
