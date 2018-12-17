@@ -457,7 +457,6 @@ public class VisitorImpl implements Visitor {
 
         returnValue.accept(new VisitorImpl());
 
-        // if (!returnValue.getType().toString().equals(methodDeclaration.getReturnType().toString()))
         if (!canAssign(methodDeclaration.getReturnType(), returnValue.getType()))
         {
             System.out.println("Line:" + returnValue.getLineNumber() + ":"
