@@ -410,6 +410,9 @@ public class VisitorImpl implements Visitor {
 
         if (!returnValue.getType().toString().equals(methodDeclaration.getReturnType().toString()))
         {
+            System.out.println("## type1: " + returnValue.getType().getClass());
+            System.out.println("## type2: " + methodDeclaration.getReturnType().toString());
+
             System.out.println("Line:" + returnValue.getLineNumber() + ":"
                 + methodDeclaration.getName().getName() + " return type must be "
                 + methodDeclaration.getReturnType()
@@ -483,7 +486,8 @@ public class VisitorImpl implements Visitor {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
 
             if (item.getItemType() == SymbolTableItemType.variableType) 
-                identifier.setType(new UserDefinedType(new Identifier(item.getName())));
+                identifier.setType(((SymbolTableVariableItem)item).getType());
+                // identifier.setType(new UserDefinedType(new Identifier(item.getName())));
             
         } catch (ItemNotFoundException error) {
             if (!identifier.getName().equals("")) {
