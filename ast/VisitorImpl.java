@@ -528,12 +528,18 @@ public class VisitorImpl implements Visitor {
             if (item.getItemType() == SymbolTableItemType.variableType) 
                 identifier.setType(((SymbolTableVariableItem)item).getType());
             
+            if (item.getItemType() == SymbolTableItemType.NoType) 
+                identifier.setType(new NoType());
+                
         } catch (ItemNotFoundException error) {
             if (!identifier.getName().equals("")) {
                 System.out.println("#Line:" + identifier.getLineNumber() + ":variable "
                     + identifier.getName() + " is not declared"
                 );
                 SymbolTable.isValidAst = false;
+                try {
+                    SymbolTable.top.put(new SymbolTableNoTypeItem(identifier.getName()));
+                } catch(ItemAlreadyExistsException e) {}
                 identifier.setType(new NoType());
             }
         }

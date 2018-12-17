@@ -65,7 +65,11 @@ public class SymbolTable {
 			try {
 				return this.get("m_" + name);
 			} catch (ItemNotFoundException e2) {
-				return this.get("c_" + name);
+				try {
+					return this.get("c_" + name);
+				} catch(ItemNotFoundException e3) {
+					return this.get("nt_" + name);
+				}
 			}
 		}
 	}
