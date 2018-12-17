@@ -7,11 +7,13 @@ public class MethodCallIdentifier extends Expression {
 
     public MethodCallIdentifier(String name) {
         this.name = name;
+        this.islValue = true;
     }
 
     public MethodCallIdentifier(String name, int lineNumber) {
         this.name = name;
         this.lineNumber = lineNumber;
+        this.islValue = true;
     }
 
     public String getName() {

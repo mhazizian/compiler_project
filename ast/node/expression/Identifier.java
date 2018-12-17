@@ -13,6 +13,7 @@ public class Identifier extends Expression {
     public Identifier(String name, int lineNumber) {
         this.name = name;
         this.lineNumber = lineNumber;
+        this.islValue = true;
     }
 
     public String getName() {
