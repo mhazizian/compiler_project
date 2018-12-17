@@ -371,7 +371,6 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         createNewSymbolTable();
-        System.out.println("##### : classDec: " + classDeclaration.getName().getName());
         VisitorImpl.thisObjectType = new UserDefinedType(classDeclaration.getName());
 
         try {
