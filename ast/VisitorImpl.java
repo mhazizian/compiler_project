@@ -371,6 +371,7 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         createNewSymbolTable();
+        System.out.println("##### : classDec: " + classDeclaration.getName().getName());
         VisitorImpl.thisObjectType = new UserDefinedType(classDeclaration.getName());
 
         try {
@@ -384,19 +385,7 @@ public class VisitorImpl implements Visitor {
                 ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
     
             // add subItems to SymbolTableItem and ClassSymbolTable:
-            for (int i = 0; i < vars.size(); i++) {
-                SymbolTableItem item = currentClass.get("v_" + vars.get(i).getIdentifier().getName());
-                try {
-                    SymbolTable.top.put(item);
-                } catch (ItemAlreadyExistsException error) {}
-            }
-    
-            for (int i = 0; i < methods.size(); i++) {
-                SymbolTableItem item = currentClass.get("m_" + methods.get(i).getName().getName());
-                try {
-                    SymbolTable.top.put(item);
-                } catch (ItemAlreadyExistsException error) {}
-            }
+            currentClass.addSubItemsToSymbolTable();
 
             // visit subItems:
             for (int i = 0; i < vars.size(); i++)

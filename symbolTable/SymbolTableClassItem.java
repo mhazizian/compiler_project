@@ -63,6 +63,22 @@ public class SymbolTableClassItem extends SymbolTableItem {
         return this.parent.hasParent(parentName);
     }
 
+    public void addSubItemsToSymbolTable() {
+        if (this.parent != null)
+            this.parent.addSubItemsToSymbolTable();
+
+        Iterator it = this.items.entrySet().iterator();    
+        while (it.hasNext()) {
+
+            Map.Entry pair = (Map.Entry)it.next();
+            try {
+                SymbolTable.top.put((SymbolTableItem)pair.getValue());
+            } catch (ItemAlreadyExistsException e) {
+            }
+            // it.remove();
+        }
+    }
+    
 
     @Override
     public String getKey() {
