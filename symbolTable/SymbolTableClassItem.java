@@ -55,6 +55,14 @@ public class SymbolTableClassItem extends SymbolTableItem {
         this.parent = newParent;
     }
 
+    public boolean hasParent(String parentName) {
+        if (this.name.equals(parentName))
+            return true;
+        if (this.parent == null)
+            return false;
+        return this.parent.hasParent(parentName);
+    }
+
 
     @Override
     public String getKey() {

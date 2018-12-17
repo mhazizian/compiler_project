@@ -217,6 +217,21 @@ public class VisitorImpl implements Visitor {
         }
     }
 
+    boolean isCastAble(String baseClassName, String subClassName) {
+        try {
+            if (baseClassName == subClassName)
+                return true;
+
+            SymbolTableClassItem baseClassItem = (SymbolTableClassItem)SymbolTable.top.get("c_" + baseClassName);
+            SymbolTableClassItem subClassItem = (SymbolTableClassItem)SymbolTable.top.get("c_" + subClassName);
+
+            return subClassItem.hasParent(baseClassName);
+
+        } catch(ItemNotFoundException error) {
+            return false;
+        }
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -623,6 +638,18 @@ public class VisitorImpl implements Visitor {
         Expression rValue = assign.getrValue();
         lValue.accept(new VisitorImpl());
         rValue.accept(new VisitorImpl());
+
+        if (lValue.getType().getType() == rValue.getType().getType()) {
+
+            if (!this.isCastAble(lValue.getType().toString(), rValue.getType().toString())) {
+                System.out.println("Line:" + assign.getLineNumber() + ":unsupported operand type for assign");
+                SymbolTable.isValidAst = false;
+            }
+
+        } else {            
+            System.out.println("Line:" + assign.getLineNumber() + ":unsupported operand type for assign");
+            SymbolTable.isValidAst = false;
+        }
 
         // @TODO Is it the only case of right-hand-side value?
         if (!lValue.islValue) {
