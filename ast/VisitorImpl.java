@@ -397,7 +397,7 @@ public class VisitorImpl implements Visitor {
 
         if (!returnValue.getType().toString().equals(methodDeclaration.getReturnType().toString()))
         {
-            System.out.println("Line:" + methodDeclaration.getLineNumber() + ":"
+            System.out.println("Line:" + returnValue.getLineNumber() + ":"
                 + methodDeclaration.getName().getName() + " return type must be "
                 + methodDeclaration.getReturnType()
             );

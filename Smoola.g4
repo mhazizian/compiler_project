@@ -139,8 +139,11 @@ grammar Smoola;
               addLocalVar($varDeclaration.synVariableDeclaration); } )*
               ( statement { $synMethodDeclaration.addStatement(
                     $statement.synStatement); } )*
-              'return' expression
-                  { $synMethodDeclaration.setReturnValue($expression.synFinalResult); }
+              ret='return' expression
+                    {
+                        $expression.synFinalResult.setLineNumber($ret.line);
+                        $synMethodDeclaration.setReturnValue($expression.synFinalResult);
+                    }
               ';'
         '}'
     ;
