@@ -25,22 +25,22 @@ grammar Smoola;
         }
     }
 
-    program:
-        { Program program = new Program(); }
-        mainClass { program.setMainClass($mainClass.synClassDeclaration); }
-        ( classDeclaration { program.addClass(
+    program returns [Program p]:
+        { $p = new Program(); }
+        mainClass { $p.setMainClass($mainClass.synClassDeclaration); }
+        ( classDeclaration { $p.addClass(
               $classDeclaration.synClassDeclaration); } )*
         EOF
-        {
-            try {
-            program.accept(new VisitorImpl());
-            if (SymbolTable.isValidAst)
-              program.accept(new VisitorImplIter());
-            }
-            catch (Exception exception) {
-              // Parse Error
-            }
-        }
+        // {
+        //     try {
+        //     program.accept(new VisitorImpl());
+        //     if (SymbolTable.isValidAst)
+        //       program.accept(new VisitorImplIter());
+        //     }
+        //     catch (Exception exception) {
+        //       // Parse Error
+        //     }
+        // }
     ;
 
     mainClass returns [ClassDeclaration synClassDeclaration]:

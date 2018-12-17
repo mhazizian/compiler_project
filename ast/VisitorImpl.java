@@ -494,7 +494,8 @@ public class VisitorImpl implements Visitor {
         // only array of int is valid:
         arrayCall.setType(new IntType());
 
-        if (index.getType().getType() != TypeName.intType) {
+        if (index.getType().getType() != TypeName.intType &&
+                index.getType().getType() != TypeName.noType) {
             System.out.println("Line:" + arrayCall.getLineNumber() + ":array index must be int");
             SymbolTable.isValidAst = false;
         }
@@ -533,7 +534,7 @@ public class VisitorImpl implements Visitor {
                 
         } catch (ItemNotFoundException error) {
             if (!identifier.getName().equals("")) {
-                System.out.println("#Line:" + identifier.getLineNumber() + ":variable "
+                System.out.println("Line:" + identifier.getLineNumber() + ":variable "
                     + identifier.getName() + " is not declared"
                 );
                 SymbolTable.isValidAst = false;

@@ -92,7 +92,6 @@ public class SymbolTable {
         while (it.hasNext()) {
 
 			Map.Entry pair = (Map.Entry)it.next();
-			System.out.println("### STI:" + (String)pair.getKey());
         }
 	}
 }
