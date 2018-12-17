@@ -28,6 +28,7 @@ import symbolTable.*;
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
     public static String objectClassName = "Object";
+    public static Type thisObjectType = new NoType();
 
     public static void createNewSymbolTable() {
         SymbolTable.push(new SymbolTable(SymbolTable.top));
@@ -370,6 +371,8 @@ public class VisitorImpl implements Visitor {
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         createNewSymbolTable();
+        VisitorImpl.thisObjectType = new UserDefinedType(classDeclaration.getName());
+
         try {
             SymbolTableClassItem currentClass =
                 ((SymbolTableClassItem) SymbolTable.top.get(
@@ -385,7 +388,6 @@ public class VisitorImpl implements Visitor {
                 SymbolTableItem item = currentClass.get("v_" + vars.get(i).getIdentifier().getName());
                 try {
                     SymbolTable.top.put(item);
-                    // currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {}
             }
     
@@ -393,7 +395,6 @@ public class VisitorImpl implements Visitor {
                 SymbolTableItem item = currentClass.get("m_" + methods.get(i).getName().getName());
                 try {
                     SymbolTable.top.put(item);
-                    // currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {}
             }
 
@@ -533,7 +534,6 @@ public class VisitorImpl implements Visitor {
 
             if (item.getItemType() == SymbolTableItemType.variableType) 
                 identifier.setType(((SymbolTableVariableItem)item).getType());
-                // identifier.setType(new UserDefinedType(new Identifier(item.getName())));
             
         } catch (ItemNotFoundException error) {
             if (!identifier.getName().equals("")) {
@@ -602,11 +602,9 @@ public class VisitorImpl implements Visitor {
                 if (varType.getType() == TypeName.userDefinedType)
                     findTheClass(methodCall, methodName.getName(), varType.toString());
                 else {
-                    // @TODO : Which kind of error?
                 }
             }
         } catch (ItemNotFoundException error) {
-            // @TODO : Which kind of error?
             System.out.println("Line:" + methodName.getLineNumber() + ":primitive types are not callable.");
             SymbolTable.isValidAst = false;
         }
@@ -634,6 +632,7 @@ public class VisitorImpl implements Visitor {
 
     @Override
     public void visit(This instance) {
+        instance.setType(VisitorImpl.thisObjectType);
     }
 
     @Override
