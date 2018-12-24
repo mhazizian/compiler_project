@@ -31,16 +31,6 @@ grammar Smoola;
         ( classDeclaration { $p.addClass(
               $classDeclaration.synClassDeclaration); } )*
         EOF
-        // {
-        //     try {
-        //     program.accept(new VisitorImpl());
-        //     if (SymbolTable.isValidAst)
-        //       program.accept(new VisitorImplIter());
-        //     }
-        //     catch (Exception exception) {
-        //       // Parse Error
-        //     }
-        // }
     ;
 
     mainClass returns [ClassDeclaration synClassDeclaration]:
