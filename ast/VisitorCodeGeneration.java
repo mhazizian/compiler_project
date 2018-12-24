@@ -614,11 +614,7 @@ public class VisitorImpl implements Visitor {
     public void visit(NewArray newArray) {
         Expression expression = newArray.getExpression();
         IntValue arraySize = ((IntValue) newArray.getExpression());
-        if (arraySize.getConstant() <= 0) {
-            System.out.println("Line:" + newArray.getLineNumber()
-                    + ":Array length should not be zero or negative");
-            SymbolTable.isValidAst = false;
-        }
+        
         expression.accept(new VisitorImpl());
     }
 
@@ -627,44 +623,30 @@ public class VisitorImpl implements Visitor {
         Identifier className = newClass.getClassName();
         className.accept(new VisitorImpl());
         // className is an Identifier not a primitive type (It's been checked in parser)
-        newClass.setType(new UserDefinedType(className));
+        // newClass.setType(new UserDefinedType(className));
     }
 
     @Override
     public void visit(This instance) {
-        instance.setType(VisitorImpl.thisObjectType);
+        // instance.setType(VisitorImpl.thisObjectType);
     }
 
     @Override
     public void visit(UnaryExpression unaryExpression) {
         Expression value = unaryExpression.getValue();
         value.accept(new VisitorImpl());
-        
-        String type = getType(value);
-        if (isValidType(type, "bool"))
-            unaryExpression.setType(new BooleanType());
-        else {
-            System.out.println("Line:" + unaryExpression.getLineNumber() + ":unsupported operand type for " +
-                    unaryExpression.getUnaryOperator());
-
-            // NoType class has been used for invalid types
-            unaryExpression.setType(new NoType());
-        }
     }
 
     @Override
     public void visit(BooleanValue value) {
-        // Type checked in Parser
     }
 
     @Override
     public void visit(IntValue value) {
-        // Type checked in Parser
     }
 
     @Override
     public void visit(StringValue value) {
-        // Type checked in Parser
     }
 
     @Override
@@ -673,20 +655,6 @@ public class VisitorImpl implements Visitor {
         Expression rValue = assign.getrValue();
         lValue.accept(new VisitorImpl());
         rValue.accept(new VisitorImpl());
-
-        if (!canAssign(lValue.getType(), rValue.getType())) {
-            System.out.println("Line:" + assign.getLineNumber() + ":unsupported operand type for assign");
-            SymbolTable.isValidAst = false;
-        }
-
-        // @TODO Is it the only case of right-hand-side value?
-        if (!lValue.islValue) {
-            System.out.println("Line:" + assign.getLineNumber() + ":left side of assignment must be a valid lvalue");
-            
-            // It should be ignored to continue the process
-            lValue.islValue = true;
-            SymbolTable.isValidAst = false;
-        }
     }
 
     @Override
@@ -720,11 +688,6 @@ public class VisitorImpl implements Visitor {
             SymbolTable.pop();
         }
 
-
-        String type = getType(expression);
-        if (!isValidType(type, "bool"))
-            System.out.println("Line:" + conditional.getLineNumber() + ":condition type must be boolean");
-        // Nothing to do in the else statement
     }
 
     @Override
