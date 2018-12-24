@@ -50,6 +50,25 @@ public class VisitorCodeGeneration implements Visitor {
         }
     }
 
+    public void setReturnType(Type returnType)
+    {    
+        switch (returnType.getType()) {
+            case intType:
+                currentWriter.println("ireturn");
+                break;
+
+            case stringType:
+            case userDefinedType:
+            case arrayType:
+                currentWriter.println("areturn");
+                break;
+        
+            case booleanType:
+                currentWriter.println("ireturn");
+                break;
+        }
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -79,8 +98,6 @@ public class VisitorCodeGeneration implements Visitor {
 
         currentWriter.println(".class public static " + className);
         currentWriter.println(".super " + classDeclaration.getParentName().getName());
-    
-
 
         ArrayList<VarDeclaration> vars =
             ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
@@ -132,22 +149,7 @@ public class VisitorCodeGeneration implements Visitor {
 
         returnValue.accept(new VisitorCodeGeneration());
 
-        
-        switch (returnType.getType()) {
-            case intType:
-                currentWriter.println("ireturn");
-                break;
-
-            case stringType:
-            case userDefinedType:
-            case arrayType:
-                currentWriter.println("areturn");
-                break;
-        
-            case booleanType:
-                currentWriter.println("ireturn");
-                break;
-        }
+        setReturnType(returnType);
         currentWriter.println(".end method");
     }
 
