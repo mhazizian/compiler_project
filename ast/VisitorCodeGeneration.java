@@ -1,6 +1,8 @@
 package ast;
 
+import java.io.PrintWriter;
 import java.util.*;
+import java.io.IOException;
 // import java.util.ArrayList;
 // import java.util.Arrays;
 // import java.util.Collection;
@@ -19,6 +21,7 @@ import ast.node.expression.Value.IntValue;
 import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 
+import ast.*;
 import ast.Type.*;
 import ast.Type.PrimitiveType.BooleanType;
 import ast.Type.PrimitiveType.IntType;
@@ -26,6 +29,26 @@ import ast.Type.UserDefinedType.UserDefinedType;
 import ast.Type.NoType.NoType;
 import symbolTable.*;
 public class VisitorCodeGeneration implements Visitor {
+    public static PrintWriter currentWriter;
+
+    public String getJasminType(Type type) {
+        switch (type.getType()) {
+            case intType:
+                return "I";
+            case booleanType:
+                return "Z";
+            case arrayType:
+                return "[I";
+            case stringType:
+                return "Ljava/lang/String;";
+            case userDefinedType:
+                String className = ((UserDefinedType)type).getName().getName();
+                return "L" + className + ";";
+            default:
+                System.out.println("Invalid given Type to convert to Jasmin.");
+                return "";
+        }
+    }
 
 // ##############################################################################
 // ##############################################################################
@@ -40,15 +63,25 @@ public class VisitorCodeGeneration implements Visitor {
         ArrayList<ClassDeclaration> classes =
             ((ArrayList<ClassDeclaration>)program.getClasses());
         ClassDeclaration mainClass = program.getMainClass();
-
         for (int j = 0; j < classes.size(); j++)
             classes.get(j).accept(new VisitorCodeGeneration());
 
         mainClass.accept(new VisitorCodeGeneration());
+
     }
 
     @Override
     public void visit(ClassDeclaration classDeclaration) {
+        String className = classDeclaration.getName().getName();
+        try {
+            currentWriter = new PrintWriter(className + ".j", "UTF-8");
+        } catch (IOException e) {}
+
+        currentWriter.println(".class public static " + className);
+        currentWriter.println(".super " + classDeclaration.getParentName().getName());
+    
+
+
         ArrayList<VarDeclaration> vars =
             ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
         ArrayList<MethodDeclaration> methods =
@@ -60,18 +93,32 @@ public class VisitorCodeGeneration implements Visitor {
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorCodeGeneration());
+
+        currentWriter.close();
     }
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
         Expression returnValue = methodDeclaration.getReturnValue();
+        Type returnType = methodDeclaration.getReturnType();
         Identifier name = methodDeclaration.getName();
         ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
         ArrayList<VarDeclaration> localVars =
             methodDeclaration.getLocalVars();
         ArrayList<Statement> body = methodDeclaration.getBody();
 
-        name.accept(new VisitorCodeGeneration());
+
+        String methodArgs = "";
+        for(int i = 0; i < args.size(); i++)
+            methodArgs += getJasminType(args.get(i).getType());
+        String methodReturnType = getJasminType(returnType);
+
+        currentWriter.println(".method public static " + name.getName() +
+                "(" + methodArgs + ")" + methodReturnType);
+
+        currentWriter.println(".limit stack 32");
+        currentWriter.println(".limit locals 32");
+
 
         for (int i = 0; i < args.size(); i++)
             args.get(i).accept(new VisitorCodeGeneration());
@@ -84,6 +131,24 @@ public class VisitorCodeGeneration implements Visitor {
             body.get(i).accept(new VisitorCodeGeneration());
 
         returnValue.accept(new VisitorCodeGeneration());
+
+        
+        switch (returnType.getType()) {
+            case intType:
+                currentWriter.println("ireturn");
+                break;
+
+            case stringType:
+            case userDefinedType:
+            case arrayType:
+                currentWriter.println("areturn");
+                break;
+        
+            case booleanType:
+                currentWriter.println("ireturn");
+                break;
+        }
+        currentWriter.println(".end method");
     }
 
     @Override
@@ -168,6 +233,7 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(IntValue value) {
+        currentWriter.println("bipush " + value.getConstant());
     }
 
     @Override

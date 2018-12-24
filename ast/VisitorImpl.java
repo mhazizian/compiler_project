@@ -27,7 +27,7 @@ import ast.Type.NoType.NoType;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 0;
-    public static String objectClassName = "Object";
+    public static String objectClassName = "java/lang/Object";
     public static Type thisObjectType = new NoType();
 
     public static void createNewSymbolTable() {
@@ -297,6 +297,7 @@ public class VisitorImpl implements Visitor {
         // create SymbolTableItem for each classDec
         putToSymbolTable(this.createClassDecSymbolTableItem(mainClass));
         completeClassSymbolTableBody(mainClass);
+        mainClass.setParentName(new Identifier(objectClassName));
 
         ArrayList<Boolean> classDecIsValid = new ArrayList<Boolean>();
         for (int i = 0; i < classes.size(); i++) {
@@ -316,8 +317,10 @@ public class VisitorImpl implements Visitor {
         // add parentClass for each ClassDecSymbolTableItem
         for (int i = 0; i < classes.size(); i++) {
             String parentClassName = classes.get(i).getParentName().getName();
-            if (parentClassName.equals(""))
+            if (parentClassName.equals("")) {
                 parentClassName = objectClassName;
+                classes.get(i).setParentName(new Identifier(parentClassName));
+            }
 
             if (parentClassName.equals(classes.get(i).getName().getName())) {
                 System.out.println("Line:" + classes.get(i).getLineNumber() +
