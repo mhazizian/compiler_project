@@ -18,6 +18,7 @@ import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 
 import ast.Type.*;
+import ast.Type.ArrayType.ArrayType;
 import ast.Type.PrimitiveType.BooleanType;
 import ast.Type.PrimitiveType.IntType;
 import ast.Type.UserDefinedType.UserDefinedType;
@@ -690,6 +691,10 @@ public class VisitorImpl implements Visitor {
             // It should be ignored to continue the process
             lValue.islValue = true;
             SymbolTable.isValidAst = false;
+        }
+
+        if (lValue.getType().getType() == TypeName.arrayType) {
+            ((ArrayType)lValue.getType()).setSize(((IntValue)((NewArray)rValue).getExpression()).getConstant());
         }
     }
 

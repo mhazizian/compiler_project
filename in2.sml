@@ -2,8 +2,9 @@ class Main
 {
         def main(): int
         {
-                writeln(2);
-                writeln("salam");
+                var arr : int[];
+                arr = new int[13];
+                writeln(arr.length);
                 return 0;
         }
 }
