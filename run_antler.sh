@@ -11,6 +11,6 @@ java -jar /usr/local/lib/antlr-4.7.1-complete.jar $1.g4
 
 javac *.java
 java mySmoola in2.sml
-java –jar jasmin.jar *.j
+java -jar jasmin.jar *.j
 
 ./clean.sh $1
