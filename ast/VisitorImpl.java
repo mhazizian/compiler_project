@@ -165,7 +165,8 @@ public class VisitorImpl implements Visitor {
         BinaryOperator operator = binaryExpression.getBinaryOperator();
      
         if (!(isValidType(leftType, base) && isValidType(rightType, base))) {
-            System.out.println("Line:" + binaryExpression.getLineNumber() + ":unsupported operand type for " + operator);
+            System.out.println("Line:" + binaryExpression.getLineNumber() +
+                    ":unsupported operand type for " + operator);
             
             // NoType class has been used for invalid types
             binaryExpression.setType(new NoType());
@@ -187,7 +188,8 @@ public class VisitorImpl implements Visitor {
                     (SymbolTableClassItem)instanceItem).get("m_" + methodName);
             
             if (args.size() != methodItem.getArgs().size()) {
-                System.out.println("Line:" + methodCall.getLineNumber() + ": invalid number of args passed to method " +
+                System.out.println("Line:" + methodCall.getLineNumber() +
+                        ": invalid number of args passed to method " +
                 methodName + " in class " + className);
 
                 SymbolTable.isValidAst = false;
@@ -208,8 +210,8 @@ public class VisitorImpl implements Visitor {
             methodCall.setType(methodItem.getReturnType());
 
         } catch (ItemNotFoundException error) {
-            System.out.println("Line:" + methodCall.getLineNumber() + ": there is no method named " +
-                methodName + " in class " + className);
+            System.out.println("Line:" + methodCall.getLineNumber() +
+                    ": there is no method named " + methodName + " in class " + className);
 
             SymbolTable.isValidAst = false;
             // NoType class has been used for invalid types
@@ -222,7 +224,8 @@ public class VisitorImpl implements Visitor {
         SymbolTableItem instanceClassItem = SymbolTable.top.get("c_" + className);
         findTheMethodInClass(methodCall, instanceClassItem, methodName, className);
         } catch (ItemNotFoundException error) {
-            System.out.println("Line:" + methodCall.getLineNumber() + ":class " + className + " is not declared");
+            System.out.println("Line:" + methodCall.getLineNumber() +
+                    ":class " + className + " is not declared");
             
             SymbolTable.isValidAst = false;
             // NoType class has been used for invalid types
@@ -235,8 +238,10 @@ public class VisitorImpl implements Visitor {
             if (baseClassName == subClassName)
                 return true;
 
-            SymbolTableClassItem baseClassItem = (SymbolTableClassItem)SymbolTable.top.get("c_" + baseClassName);
-            SymbolTableClassItem subClassItem = (SymbolTableClassItem)SymbolTable.top.get("c_" + subClassName);
+            SymbolTableClassItem baseClassItem = (SymbolTableClassItem)SymbolTable.top.get(
+                    "c_" + baseClassName);
+            SymbolTableClassItem subClassItem = (SymbolTableClassItem)SymbolTable.top.get(
+                    "c_" + subClassName);
 
             return subClassItem.hasParent(baseClassName);
 
@@ -569,7 +574,8 @@ public class VisitorImpl implements Visitor {
             length.setType(new IntType());
         else {
             // This error message doesn't exist in project description
-            System.out.println("Line:" + length.getLineNumber() + ": unsupported type for length");
+            System.out.println("Line:" + length.getLineNumber() +
+                    ": unsupported type for length");
             length.setType(new NoType());
         }
     }
@@ -605,7 +611,8 @@ public class VisitorImpl implements Visitor {
                 }
             }
         } catch (ItemNotFoundException error) {
-            System.out.println("Line:" + methodName.getLineNumber() + ":primitive types are not callable.");
+            System.out.println("Line:" + methodName.getLineNumber() +
+                    ":primitive types are not callable.");
             SymbolTable.isValidAst = false;
         }
     }
@@ -644,8 +651,8 @@ public class VisitorImpl implements Visitor {
         if (isValidType(type, "bool"))
             unaryExpression.setType(new BooleanType());
         else {
-            System.out.println("Line:" + unaryExpression.getLineNumber() + ":unsupported operand type for " +
-                    unaryExpression.getUnaryOperator());
+            System.out.println("Line:" + unaryExpression.getLineNumber() +
+                    ":unsupported operand type for " + unaryExpression.getUnaryOperator());
 
             // NoType class has been used for invalid types
             unaryExpression.setType(new NoType());
@@ -675,13 +682,15 @@ public class VisitorImpl implements Visitor {
         rValue.accept(new VisitorImpl());
 
         if (!canAssign(lValue.getType(), rValue.getType())) {
-            System.out.println("Line:" + assign.getLineNumber() + ":unsupported operand type for assign");
+            System.out.println("Line:" + assign.getLineNumber() +
+                    ":unsupported operand type for assign");
             SymbolTable.isValidAst = false;
         }
 
         // @TODO Is it the only case of right-hand-side value?
         if (!lValue.islValue) {
-            System.out.println("Line:" + assign.getLineNumber() + ":left side of assignment must be a valid lvalue");
+            System.out.println("Line:" + assign.getLineNumber() +
+                    ":left side of assignment must be a valid lvalue");
             
             // It should be ignored to continue the process
             lValue.islValue = true;
@@ -689,7 +698,8 @@ public class VisitorImpl implements Visitor {
         }
 
         if (lValue.getType().getType() == TypeName.arrayType) {
-            ((ArrayType)lValue.getType()).setSize(((IntValue)((NewArray)rValue).getExpression()).getConstant());
+            ((ArrayType)lValue.getType()).setSize(((IntValue)((NewArray)rValue).
+                    getExpression()).getConstant());
         }
     }
 

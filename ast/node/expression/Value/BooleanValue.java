@@ -19,6 +19,12 @@ public class BooleanValue extends Value {
         this.constant = constant;
     }
 
+    public int getConstant() {
+        if (this.constant)
+            return 1;
+        return 0;
+    }
+
     @Override
     public String toString() {
         return "BooleanValue " + constant;

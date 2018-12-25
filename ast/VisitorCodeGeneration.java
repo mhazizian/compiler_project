@@ -4,8 +4,6 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.io.IOException;
 
-import javax.sound.midi.SysexMessage;
-
 import ast.node.Program;
 import ast.node.declaration.*;
 import ast.node.expression.*;
@@ -15,13 +13,8 @@ import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 import ast.Type.ArrayType.*;
 
-import ast.*;
 import ast.Type.*;
-import ast.Type.PrimitiveType.BooleanType;
-import ast.Type.PrimitiveType.IntType;
 import ast.Type.UserDefinedType.UserDefinedType;
-import ast.Type.NoType.NoType;
-import symbolTable.*;
 public class VisitorCodeGeneration implements Visitor {
     public static PrintWriter currentWriter;
 
@@ -130,10 +123,7 @@ public class VisitorCodeGeneration implements Visitor {
         Type returnType = methodDeclaration.getReturnType();
         Identifier name = methodDeclaration.getName();
         ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
-        ArrayList<VarDeclaration> localVars =
-            methodDeclaration.getLocalVars();
         ArrayList<Statement> body = methodDeclaration.getBody();
-
 
         String methodArgs = "";
         for(int i = 0; i < args.size(); i++)
@@ -192,11 +182,10 @@ public class VisitorCodeGeneration implements Visitor {
         currentWriter.println(".end method");
     }
 
-
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        Identifier identifier = varDeclaration.getIdentifier();
-        
+        // @TODO Why these are comment?
+        // Identifier identifier = varDeclaration.getIdentifier();
         // identifier.accept(new VisitorCodeGeneration());
     }
 
@@ -285,6 +274,8 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(BooleanValue value) {
+        // Assume boolean is integer (getConstant returns integer)
+        // currentWriter.println("iload " + value.getConstant());        
     }
 
     @Override
