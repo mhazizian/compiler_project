@@ -181,7 +181,7 @@ public class VisitorCodeGeneration implements Visitor {
 
         returnValue.accept(new VisitorCodeGeneration());
 
-        currentWriter.println("pop");
+        // currentWriter.println("pop");
         currentWriter.println("return");
         currentWriter.println(".end method");
     }
@@ -222,7 +222,7 @@ public class VisitorCodeGeneration implements Visitor {
                 break;
             
             default:
-                currentWriter.println("aload " + identifier.getIndex());
+                // currentWriter.println("aload " + identifier.getIndex());
                 break;
         }
     }
@@ -282,7 +282,7 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(IntValue value) {
-        currentWriter.println("bipush " + value.getConstant());
+        // currentWriter.println("bipush " + value.getConstant());
     }
 
     @Override
