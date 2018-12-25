@@ -103,8 +103,8 @@ public class VisitorCodeGeneration implements Visitor {
 
         // visit subItems:
         for (int i = 0; i < vars.size(); i++) {
-            vars.get(i).accept(new VisitorCodeGeneration());
-            currentWriter.println("putfield " + className + "/" +
+            // vars.get(i).accept(new VisitorCodeGeneration());
+            currentWriter.println(".field public " +
                     vars.get(i).getIdentifier().getName() + " " +
                     getJasminType(vars.get(i).getType()));
         }
@@ -189,7 +189,8 @@ public class VisitorCodeGeneration implements Visitor {
     @Override
     public void visit(VarDeclaration varDeclaration) {
         Identifier identifier = varDeclaration.getIdentifier();
-        identifier.accept(new VisitorCodeGeneration());
+        
+        // identifier.accept(new VisitorCodeGeneration());
     }
 
      @Override
