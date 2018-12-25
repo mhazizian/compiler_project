@@ -63,6 +63,19 @@ public class VisitorCodeGeneration implements Visitor {
         }
     }
 
+
+    void visitLocalVariables(ArrayList<VarDeclaration> localVars, String name)
+    {
+        for (int i = 0; i < localVars.size(); i++) {
+            localVars.get(i).accept(new VisitorCodeGeneration());
+            // @TODO Is it correct to set the identifier index as a variable number
+            currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
+                    " is " + localVars.get(i).getIdentifier().getName() + " " +
+                    getJasminType(localVars.get(i).getType()) + " from " +
+                    "begin_" + name + " to " + "end_" + name);
+        }
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -133,13 +146,10 @@ public class VisitorCodeGeneration implements Visitor {
         currentWriter.println(".limit stack 32");
         currentWriter.println(".limit locals 32");
 
-
-        for (int i = 0; i < args.size(); i++)
-            args.get(i).accept(new VisitorCodeGeneration());
-
-        // visit method members
-        for (int i = 0; i < localVars.size(); i++)
-            localVars.get(i).accept(new VisitorCodeGeneration());
+        // Arguments
+        visitLocalVariables(methodDeclaration.getArgs(), name.getName());
+        // Local Variables
+        visitLocalVariables(methodDeclaration.getLocalVars(), name.getName());
 
         currentWriter.println("begin_" + name.getName() + ":");
 
@@ -158,28 +168,16 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(MainMethodDeclaration methodDeclaration) {
         Expression returnValue = methodDeclaration.getReturnValue();
         Identifier name = methodDeclaration.getName();
-        ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
-        ArrayList<VarDeclaration> localVars =
-            methodDeclaration.getLocalVars();
         ArrayList<Statement> body = methodDeclaration.getBody();
 
         currentWriter.println(".method public static main([Ljava/lang/String;)V");
         currentWriter.println(".limit stack 32");
         currentWriter.println(".limit locals 32");
 
-
-        for (int i = 0; i < args.size(); i++)
-            args.get(i).accept(new VisitorCodeGeneration());
-
-        // visit method members
-        for (int i = 0; i < localVars.size(); i++) {
-            localVars.get(i).accept(new VisitorCodeGeneration());
-            // @TODO Is it correct to set index as a variable number
-            currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
-                    " is " + localVars.get(i).getIdentifier().getName() + " " +
-                    getJasminType(localVars.get(i).getType()) + " from " +
-                    "begin_" + name.getName() + " to " + "end_" + name.getName());
-        }
+        // Arguments
+        visitLocalVariables(methodDeclaration.getArgs(), name.getName());
+        // Local Variables
+        visitLocalVariables(methodDeclaration.getLocalVars(), name.getName());
 
         currentWriter.println("begin_" + name.getName() + ":");
 

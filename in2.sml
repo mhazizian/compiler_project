@@ -15,3 +15,12 @@ class Main
                 return 0;
         }
 }
+
+class SubClass extends Main {
+        var firstField : int;
+
+        def subClassMethod(flag : boolean): boolean {
+                var methodVar : boolean;
+                return methodVar;
+        }
+}
