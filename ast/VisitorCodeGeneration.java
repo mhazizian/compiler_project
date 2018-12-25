@@ -141,12 +141,16 @@ public class VisitorCodeGeneration implements Visitor {
         for (int i = 0; i < localVars.size(); i++)
             localVars.get(i).accept(new VisitorCodeGeneration());
 
+        currentWriter.println("begin_" + name.getName() + ":");
+
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorCodeGeneration());
 
         returnValue.accept(new VisitorCodeGeneration());
 
         setReturnType(returnType);
+
+        currentWriter.println("end_" + name.getName() + ":");
         currentWriter.println(".end method");
     }
 
@@ -171,6 +175,10 @@ public class VisitorCodeGeneration implements Visitor {
         for (int i = 0; i < localVars.size(); i++)
             localVars.get(i).accept(new VisitorCodeGeneration());
 
+
+        currentWriter.println("begin_" + name.getName() + ":");
+
+
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorCodeGeneration());
 
@@ -178,6 +186,9 @@ public class VisitorCodeGeneration implements Visitor {
 
         // currentWriter.println("pop");
         currentWriter.println("return");
+
+        currentWriter.println("end_" + name.getName() + ":");
+
         currentWriter.println(".end method");
     }
 
@@ -320,10 +331,6 @@ public class VisitorCodeGeneration implements Visitor {
         Statement alternativeBody = conditional.getAlternativeBody();
 
         expression.accept(new VisitorCodeGeneration());
-
-        // @TODO Is here valid place to write the bytecode?
-        // System.out.println("");
-
         consequenceBody.accept(new VisitorCodeGeneration());
 
         if (alternativeBody != null) {

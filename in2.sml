@@ -6,10 +6,10 @@ class Main
                 var arr : int[];
                 arr = new int[13];
 
-                if(flag) then
+                if(flag == true) then
                         writeln(arr.length);
 
-                if(true) then
+                if(true <> false) then
                         writeln("Salam");                        
 
                 return 0;
