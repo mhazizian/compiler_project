@@ -8,5 +8,5 @@ public abstract class Declaration extends Node {
     public void accept(Visitor visitor) {}
 
     // @Override
-    public void accept_parent(Visitor visitor) {}g
+    public void accept_parent(Visitor visitor) {}
 }

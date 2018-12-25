@@ -24,7 +24,7 @@ import ast.Type.UserDefinedType.UserDefinedType;
 import ast.Type.NoType.NoType;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
-    private static int ItemDecIndex = 0;
+    private static int ItemDecIndex = 1;
     public static String objectClassName = "java/lang/Object";
     public static Type thisObjectType = new NoType();
 
@@ -34,10 +34,8 @@ public class VisitorImpl implements Visitor {
 
     public SymbolTableItem createVarDecSymbolItem(VarDeclaration varDecleration) {
         SymbolTableVariableItem varDec = new SymbolTableVariableItem(
-            varDecleration.getIdentifier().getName(),
-            varDecleration.getType(),
-            VisitorImpl.ItemDecIndex
-        );
+            varDecleration.getIdentifier().getName(), varDecleration.getType(),
+            VisitorImpl.ItemDecIndex);
         VisitorImpl.ItemDecIndex += 1;
 
         return ((SymbolTableItem) varDec);
@@ -80,7 +78,6 @@ public class VisitorImpl implements Visitor {
             for (int i = 0; i < vars.size(); i++) {
                 SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
                 try {
-                    // SymbolTable.top.put(item);
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
                     System.out.println("Line:" + vars.get(i).getLineNumber() +
@@ -94,7 +91,6 @@ public class VisitorImpl implements Visitor {
                 SymbolTableItem item = this.createMethodDecSymbolTableItem(
                     methods.get(i), currentClass);
                 try {
-                    // SymbolTable.top.put(item);
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
                     System.out.println("Line:" + methods.get(i).getLineNumber() +
@@ -532,9 +528,11 @@ public class VisitorImpl implements Visitor {
         try {
             SymbolTableItem item = SymbolTable.top.getItem(identifier.getName());
 
-            if (item.getItemType() == SymbolTableItemType.variableType) 
+            if (item.getItemType() == SymbolTableItemType.variableType) {
                 identifier.setType(((SymbolTableVariableItem)item).getType());
-            
+                identifier.setIndex(((SymbolTableVariableItem)item).getIndex());
+            }
+
             if (item.getItemType() == SymbolTableItemType.NoType) 
                 identifier.setType(new NoType());
                 

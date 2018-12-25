@@ -4,6 +4,7 @@ import ast.Visitor;
 
 public class Identifier extends Expression {
     private String name;
+    private int index;
 
     public Identifier(String name) {
         this.name = name;
@@ -22,6 +23,14 @@ public class Identifier extends Expression {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return this.index;
     }
 
     @Override
