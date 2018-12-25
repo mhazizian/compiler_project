@@ -269,6 +269,7 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(StringValue value) {
+        currentWriter.println("ldc " + value.getConstant());
     }
 
     @Override
@@ -315,5 +316,28 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorCodeGeneration());
+
+        switch (arg.getType().getType()) {
+            case intType:
+            case stringType:
+            case booleanType:
+                currentWriter.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
+                currentWriter.println("swap");
+                currentWriter.println("invokevirtual java/io/PrintStream/println(" + getJasminType(arg.getType()) + ")V");
+                break;
+
+            case userDefinedType:
+            case arrayType:
+                currentWriter.println("pop");
+                currentWriter.println("ldc " + arg.toString());
+                currentWriter.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
+                currentWriter.println("swap");
+                currentWriter.println("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+                break;
+                
+        
+            default:
+                break;
+        }
     }
 }
