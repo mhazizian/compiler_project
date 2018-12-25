@@ -263,6 +263,7 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(This instance) {
+        // indexed as 0 in variables.
     }
 
     @Override
@@ -339,8 +340,10 @@ public class VisitorCodeGeneration implements Visitor {
                 currentWriter.println("invokevirtual java/io/PrintStream/println(" + getJasminType(arg.getType()) + ")V");
                 break;
 
-            case userDefinedType:
             case arrayType:
+                currentWriter.println("pop");
+                currentWriter.println("pop");
+            case userDefinedType:
                 currentWriter.println("pop");
                 currentWriter.println("ldc " + arg.toString());
                 currentWriter.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
