@@ -103,8 +103,12 @@ public class VisitorCodeGeneration implements Visitor {
             ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
         // visit subItems:
-        for (int i = 0; i < vars.size(); i++)
-            vars.get(i).accept(new VisitorCodeGeneration());
+        for (int i = 0; i < vars.size(); i++) {
+            // vars.get(i).accept(new VisitorCodeGeneration());
+            currentWriter.println(".field public " +
+                    vars.get(i).getIdentifier().getName() + " " +
+                    getJasminType(vars.get(i).getType()));
+        }
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorCodeGeneration());
@@ -186,7 +190,8 @@ public class VisitorCodeGeneration implements Visitor {
     @Override
     public void visit(VarDeclaration varDeclaration) {
         Identifier identifier = varDeclaration.getIdentifier();
-        identifier.accept(new VisitorCodeGeneration());
+        
+        // identifier.accept(new VisitorCodeGeneration());
     }
 
      @Override
@@ -211,6 +216,15 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(Identifier identifier) {
+        switch (identifier.getType().getType()) {
+            case intType:
+                currentWriter.println("iload " + identifier.getIndex());
+                break;
+            
+            default:
+                currentWriter.println("aload " + identifier.getIndex());
+                break;
+        }
     }
 
     @Override
@@ -253,6 +267,7 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(This instance) {
+        // indexed as 0 in variables.
     }
 
     @Override
@@ -329,8 +344,10 @@ public class VisitorCodeGeneration implements Visitor {
                 currentWriter.println("invokevirtual java/io/PrintStream/println(" + getJasminType(arg.getType()) + ")V");
                 break;
 
-            case userDefinedType:
             case arrayType:
+                currentWriter.println("pop");
+                currentWriter.println("pop");
+            case userDefinedType:
                 currentWriter.println("pop");
                 currentWriter.println("ldc " + arg.toString());
                 currentWriter.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
