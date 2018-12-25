@@ -12,9 +12,7 @@ import javax.sound.midi.SysexMessage;
 // import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ast.node.Program;
-import ast.node.declaration.ClassDeclaration;
-import ast.node.declaration.MethodDeclaration;
-import ast.node.declaration.VarDeclaration;
+import ast.node.declaration.*;
 import ast.node.expression.*;
 import ast.node.expression.Value.BooleanValue;
 import ast.node.expression.Value.IntValue;
@@ -86,7 +84,6 @@ public class VisitorCodeGeneration implements Visitor {
             classes.get(j).accept(new VisitorCodeGeneration());
 
         mainClass.accept(new VisitorCodeGeneration());
-
     }
 
     @Override
@@ -152,6 +149,38 @@ public class VisitorCodeGeneration implements Visitor {
         setReturnType(returnType);
         currentWriter.println(".end method");
     }
+
+    @Override
+    public void visit(MainMethodDeclaration methodDeclaration) {
+        Expression returnValue = methodDeclaration.getReturnValue();
+        Identifier name = methodDeclaration.getName();
+        ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
+        ArrayList<VarDeclaration> localVars =
+            methodDeclaration.getLocalVars();
+        ArrayList<Statement> body = methodDeclaration.getBody();
+
+        currentWriter.println(".method public static main([Ljava/lang/String;)V");
+        currentWriter.println(".limit stack 32");
+        currentWriter.println(".limit locals 32");
+
+
+        for (int i = 0; i < args.size(); i++)
+            args.get(i).accept(new VisitorCodeGeneration());
+
+        // visit method members
+        for (int i = 0; i < localVars.size(); i++)
+            localVars.get(i).accept(new VisitorCodeGeneration());
+
+        for (int i = 0; i < body.size(); i++)
+            body.get(i).accept(new VisitorCodeGeneration());
+
+        returnValue.accept(new VisitorCodeGeneration());
+
+        currentWriter.println("pop");
+        currentWriter.println("return");
+        currentWriter.println(".end method");
+    }
+
 
     @Override
     public void visit(VarDeclaration varDeclaration) {

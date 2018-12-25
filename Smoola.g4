@@ -43,7 +43,7 @@ grammar Smoola;
                 ClassDeclaration mainClass = new ClassDeclaration(
                     self, new Identifier(""), $self.line
                 );
-                MethodDeclaration mainMethod = new MethodDeclaration(
+                MainMethodDeclaration mainMethod = new MainMethodDeclaration(
                     methodName, $methodName.line);
 
                 mainClass.addMethodDeclaration(mainMethod);

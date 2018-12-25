@@ -3,9 +3,7 @@ package ast;
 import java.util.ArrayList;
 
 import ast.node.Program;
-import ast.node.declaration.ClassDeclaration;
-import ast.node.declaration.MethodDeclaration;
-import ast.node.declaration.VarDeclaration;
+import ast.node.declaration.*;
 import ast.node.expression.*;
 import ast.node.expression.Value.BooleanValue;
 import ast.node.expression.Value.IntValue;
@@ -79,6 +77,12 @@ public class VisitorImplIter implements Visitor {
 
         returnValue.accept(new VisitorImplIter());
     }
+
+    @Override
+    public void visit(MainMethodDeclaration methodDeclaration) {
+        methodDeclaration.accept_parent(new VisitorImpl());
+    }
+
 
     @Override
     public void visit(VarDeclaration varDeclaration) {

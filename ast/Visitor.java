@@ -11,9 +11,10 @@ public interface Visitor {
     void visit (Program program);
 
     //Declarations
-    void visit (ClassDeclaration classDeclaration);
-    void visit (MethodDeclaration methodDeclaration);
-    void visit (VarDeclaration varDeclaration);
+    void visit(ClassDeclaration classDeclaration);
+    void visit(MethodDeclaration methodDeclaration);
+    void visit(MainMethodDeclaration methodDeclaration);
+    void visit(VarDeclaration varDeclaration);
 
     //Expressions
     void visit(ArrayCall arrayCall);

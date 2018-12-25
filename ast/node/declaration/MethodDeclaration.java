@@ -22,6 +22,8 @@ public class MethodDeclaration extends Declaration {
         this.lineNumber = lineNumber;
     }
 
+    public MethodDeclaration() {}
+
     public Expression getReturnValue() {
         return returnValue;
     }
@@ -76,6 +78,11 @@ public class MethodDeclaration extends Declaration {
     }
     @Override
     public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void accept_parent(Visitor visitor) {
         visitor.visit(this);
     }
 }

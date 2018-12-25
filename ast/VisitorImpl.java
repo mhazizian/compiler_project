@@ -10,9 +10,7 @@ import javax.sound.midi.SysexMessage;
 // import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ast.node.Program;
-import ast.node.declaration.ClassDeclaration;
-import ast.node.declaration.MethodDeclaration;
-import ast.node.declaration.VarDeclaration;
+import ast.node.declaration.*;
 import ast.node.expression.*;
 import ast.node.expression.Value.BooleanValue;
 import ast.node.expression.Value.IntValue;
@@ -464,6 +462,11 @@ public class VisitorImpl implements Visitor {
         }
 
         SymbolTable.pop();
+    }
+
+    @Override
+    public void visit(MainMethodDeclaration methodDeclaration) {
+        methodDeclaration.accept_parent(new VisitorImpl());
     }
 
     @Override
