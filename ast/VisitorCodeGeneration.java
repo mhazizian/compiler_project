@@ -214,6 +214,15 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(Identifier identifier) {
+        switch (identifier.getType().getType()) {
+            case intType:
+                currentWriter.println("iload " + identifier.getIndex());
+                break;
+            
+            default:
+                currentWriter.println("aload " + identifier.getIndex());
+                break;
+        }
     }
 
     @Override
