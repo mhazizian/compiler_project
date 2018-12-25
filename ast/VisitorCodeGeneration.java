@@ -18,6 +18,7 @@ import ast.node.expression.Value.BooleanValue;
 import ast.node.expression.Value.IntValue;
 import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
+import ast.Type.ArrayType.*;
 
 import ast.*;
 import ast.Type.*;
@@ -220,6 +221,8 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(Length length) {
         Expression expression = length.getExpression();
         expression.accept(new VisitorCodeGeneration());
+
+        currentWriter.println("bipush " + ((ArrayType)length.getExpression().getType()).getSize());
     }
 
     @Override

@@ -422,6 +422,7 @@ grammar Smoola;
                 temp.setLineNumber($num2.line);
                 temp.setExpression(new IntValue(Integer.parseInt($num2.text),
                     new IntType()));
+                temp.setType(new ArrayType());
                 $synFinalResult = temp;
             }
         |   'new ' newClassId=ID '(' ')'
