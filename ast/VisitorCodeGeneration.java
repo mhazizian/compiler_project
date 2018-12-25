@@ -3,13 +3,8 @@ package ast;
 import java.io.PrintWriter;
 import java.util.*;
 import java.io.IOException;
-// import java.util.ArrayList;
-// import java.util.Arrays;
-// import java.util.Collection;
 
 import javax.sound.midi.SysexMessage;
-
-// import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ast.node.Program;
 import ast.node.declaration.*;
@@ -196,8 +191,6 @@ public class VisitorCodeGeneration implements Visitor {
 
      @Override
     public void visit(ArrayCall arrayCall) {
-        // Nothing to type check in 'ArrayCall'
-
         Expression instance = arrayCall.getInstance();
         Expression index = arrayCall.getIndex();
 
@@ -236,7 +229,8 @@ public class VisitorCodeGeneration implements Visitor {
         Expression expression = length.getExpression();
         expression.accept(new VisitorCodeGeneration());
 
-        currentWriter.println("bipush " + ((ArrayType)length.getExpression().getType()).getSize());
+        currentWriter.println("bipush " + ((ArrayType)length.
+                getExpression().getType()).getSize());
     }
 
     @Override
@@ -257,6 +251,8 @@ public class VisitorCodeGeneration implements Visitor {
         IntValue arraySize = ((IntValue) newArray.getExpression());
         
         expression.accept(new VisitorCodeGeneration());
+
+        currentWriter.println("bipush " + arraySize.getConstant());
     }
 
     @Override
@@ -296,6 +292,17 @@ public class VisitorCodeGeneration implements Visitor {
         Expression rValue = assign.getrValue();
         lValue.accept(new VisitorCodeGeneration());
         rValue.accept(new VisitorCodeGeneration());
+
+        switch (lValue.getType().getType()) {
+            case arrayType:
+                currentWriter.println("istore " + ((Identifier)lValue).getIndex());
+                // @TODO Check the appropriate function in VisitorImpl.java
+                break;
+        
+            default:
+                break;
+        }
+        // currentWriter.println(";" + ((VarDeclaration)lValue).getIdentifier().getIndex());
     }
 
     @Override
@@ -313,6 +320,10 @@ public class VisitorCodeGeneration implements Visitor {
         Statement alternativeBody = conditional.getAlternativeBody();
 
         expression.accept(new VisitorCodeGeneration());
+
+        // @TODO Is here valid place to write the bytecode?
+        // System.out.println("");
+
         consequenceBody.accept(new VisitorCodeGeneration());
 
         if (alternativeBody != null) {

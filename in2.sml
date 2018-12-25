@@ -2,19 +2,16 @@ class Main
 {
         def main(): int
         {
+                var flag : boolean;
                 var arr : int[];
                 arr = new int[13];
-                writeln(arr.length);
+
+                if(flag) then
+                        writeln(arr.length);
+
+                if(true) then
+                        writeln("Salam");                        
+
                 return 0;
         }
-}
-
-class ClassTest {
-        var arr : int[];
-
-        def methodTest(): int {
-                arr = new int[13];
-                writeln(arr.length);
-                return 0;
-        } 
 }

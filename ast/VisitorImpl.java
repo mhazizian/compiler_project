@@ -1,13 +1,8 @@
 package ast;
 
 import java.util.*;
-// import java.util.ArrayList;
-// import java.util.Arrays;
-// import java.util.Collection;
 
 import javax.sound.midi.SysexMessage;
-
-// import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import ast.node.Program;
 import ast.node.declaration.*;
