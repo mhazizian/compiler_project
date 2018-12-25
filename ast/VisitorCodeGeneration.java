@@ -102,8 +102,12 @@ public class VisitorCodeGeneration implements Visitor {
             ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
         // visit subItems:
-        for (int i = 0; i < vars.size(); i++)
+        for (int i = 0; i < vars.size(); i++) {
             vars.get(i).accept(new VisitorCodeGeneration());
+            currentWriter.println("putfield " + className + "/" +
+                    vars.get(i).getIdentifier().getName() + " " +
+                    getJasminType(vars.get(i).getType()));
+        }
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorCodeGeneration());
