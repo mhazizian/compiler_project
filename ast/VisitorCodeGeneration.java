@@ -172,12 +172,16 @@ public class VisitorCodeGeneration implements Visitor {
             args.get(i).accept(new VisitorCodeGeneration());
 
         // visit method members
-        for (int i = 0; i < localVars.size(); i++)
+        for (int i = 0; i < localVars.size(); i++) {
             localVars.get(i).accept(new VisitorCodeGeneration());
-
+            // @TODO Is it correct to set index as a variable number
+            currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
+                    " is " + localVars.get(i).getIdentifier().getName() + " " +
+                    getJasminType(localVars.get(i).getType()) + " from " +
+                    "begin_" + name.getName() + " to " + "end_" + name.getName());
+        }
 
         currentWriter.println("begin_" + name.getName() + ":");
-
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorCodeGeneration());
@@ -186,9 +190,7 @@ public class VisitorCodeGeneration implements Visitor {
 
         // currentWriter.println("pop");
         currentWriter.println("return");
-
         currentWriter.println("end_" + name.getName() + ":");
-
         currentWriter.println(".end method");
     }
 
