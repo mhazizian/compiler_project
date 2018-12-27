@@ -185,7 +185,7 @@ public class VisitorCodeGeneration implements Visitor {
 
         // currentWriter.println("pop");
         currentWriter.println("return");
-        gcurrentWriter.println(scopeEnd + ":");
+        currentWriter.println(scopeEnd + ":");
         currentWriter.println(".end method");
     }
 
@@ -236,6 +236,8 @@ public class VisitorCodeGeneration implements Visitor {
         Expression expression = length.getExpression();
         expression.accept(new VisitorCodeGeneration());
 
+        currentWriter.println("pop");
+        // should pop even more?
         currentWriter.println("bipush " + ((ArrayType)length.
                 getExpression().getType()).getSize());
     }
@@ -287,7 +289,7 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(IntValue value) {
-        // currentWriter.println("bipush " + value.getConstant());
+        currentWriter.println("bipush " + value.getConstant());
     }
 
     @Override
@@ -299,7 +301,7 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(Assign assign) {
         Expression lValue = assign.getlValue();
         Expression rValue = assign.getrValue();
-        lValue.accept(new VisitorCodeGeneration());
+        // lValue.accept(new VisitorCodeGeneration());
         rValue.accept(new VisitorCodeGeneration());
 
         switch (lValue.getType().getType()) {
