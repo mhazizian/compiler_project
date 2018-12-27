@@ -281,6 +281,16 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(UnaryExpression unaryExpression) {
         Expression value = unaryExpression.getValue();
         value.accept(new VisitorCodeGeneration());
+        switch (unaryExpression.getUnaryOperator()) {
+            case not:
+                // @TODO : find appropriate command for not.
+                currentWriter.println("ineg");
+                break;
+        
+            case minus:
+                currentWriter.println("ineg");
+                break;
+        }
     }
 
     @Override
