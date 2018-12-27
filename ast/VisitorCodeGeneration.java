@@ -1,6 +1,7 @@
 package ast;
 
 import java.io.PrintWriter;
+import java.rmi.UnexpectedException;
 import java.util.*;
 import java.io.IOException;
 
@@ -219,6 +220,7 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(Identifier identifier) {
         switch (identifier.getType().getType()) {
             case intType:
+            case booleanType:
                 currentWriter.println("iload " + identifier.getIndex());
                 break;
             
@@ -284,7 +286,7 @@ public class VisitorCodeGeneration implements Visitor {
     @Override
     public void visit(BooleanValue value) {
         // Assume boolean is integer (getConstant returns integer)
-        // currentWriter.println("iload " + value.getConstant());        
+        currentWriter.println("iconst_" + value.getConstant());
     }
 
     @Override
@@ -310,15 +312,15 @@ public class VisitorCodeGeneration implements Visitor {
         // @TODO : check given example:
         // var a : int[];
         // a[2] = 3
-        // what is type of lValue in above example is setted IntType.
+        // type of lValue in above example is setted to IntType.
         switch (lValue.getType().getType()) {
             case arrayType:
-                System.out.println("here");
                 // @TODO Check the appropriate function in VisitorImpl.java
                 // currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
 
             case intType:
+            case booleanType:
                 currentWriter.println("istore " + ((Identifier)lValue).getIndex());
                 break;
 
