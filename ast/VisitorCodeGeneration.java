@@ -15,6 +15,7 @@ import ast.Type.ArrayType.*;
 
 import ast.Type.*;
 import ast.Type.UserDefinedType.UserDefinedType;
+import ast.*;
 public class VisitorCodeGeneration implements Visitor {
     public static PrintWriter currentWriter;
 
@@ -57,7 +58,7 @@ public class VisitorCodeGeneration implements Visitor {
     }
 
 
-    void visitLocalVariables(ArrayList<VarDeclaration> localVars, String name)
+    void visitLocalVariables(ArrayList<VarDeclaration> localVars, String scopeBegin, String scopeEnd)
     {
         for (int i = 0; i < localVars.size(); i++) {
             localVars.get(i).accept(new VisitorCodeGeneration());
@@ -65,7 +66,7 @@ public class VisitorCodeGeneration implements Visitor {
             currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
                     " is " + localVars.get(i).getIdentifier().getName() + " " +
                     getJasminType(localVars.get(i).getType()) + " from " +
-                    "begin_" + name + " to " + "end_" + name);
+                    scopeBegin + " to " + scopeEnd);
         }
     }
 
@@ -125,6 +126,9 @@ public class VisitorCodeGeneration implements Visitor {
         ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
         ArrayList<Statement> body = methodDeclaration.getBody();
 
+        String scopeBegin = "begin_" + name.getName();
+        String scopeEnd = "end_" + name.getName();
+
         String methodArgs = "";
         for(int i = 0; i < args.size(); i++)
             methodArgs += getJasminType(args.get(i).getType());
@@ -137,11 +141,11 @@ public class VisitorCodeGeneration implements Visitor {
         currentWriter.println(".limit locals 32");
 
         // Arguments
-        visitLocalVariables(methodDeclaration.getArgs(), name.getName());
+        visitLocalVariables(methodDeclaration.getArgs(), scopeBegin, scopeEnd);
         // Local Variables
-        visitLocalVariables(methodDeclaration.getLocalVars(), name.getName());
+        visitLocalVariables(methodDeclaration.getLocalVars(), scopeBegin, scopeEnd);
 
-        currentWriter.println("begin_" + name.getName() + ":");
+        currentWriter.println(scopeBegin + ":");
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorCodeGeneration());
@@ -150,7 +154,7 @@ public class VisitorCodeGeneration implements Visitor {
 
         setReturnType(returnType);
 
-        currentWriter.println("end_" + name.getName() + ":");
+        currentWriter.println(scopeEnd + ":");
         currentWriter.println(".end method");
     }
 
@@ -160,16 +164,19 @@ public class VisitorCodeGeneration implements Visitor {
         Identifier name = methodDeclaration.getName();
         ArrayList<Statement> body = methodDeclaration.getBody();
 
+        String scopeBegin = "begin_" + name.getName();
+        String scopeEnd = "end_" + name.getName();
+
         currentWriter.println(".method public static main([Ljava/lang/String;)V");
         currentWriter.println(".limit stack 32");
         currentWriter.println(".limit locals 32");
 
         // Arguments
-        visitLocalVariables(methodDeclaration.getArgs(), name.getName());
+        visitLocalVariables(methodDeclaration.getArgs(), scopeBegin, scopeEnd);
         // Local Variables
-        visitLocalVariables(methodDeclaration.getLocalVars(), name.getName());
+        visitLocalVariables(methodDeclaration.getLocalVars(), scopeBegin, scopeEnd);
 
-        currentWriter.println("begin_" + name.getName() + ":");
+        currentWriter.println(scopeBegin + ":");
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorCodeGeneration());
@@ -178,7 +185,7 @@ public class VisitorCodeGeneration implements Visitor {
 
         // currentWriter.println("pop");
         currentWriter.println("return");
-        currentWriter.println("end_" + name.getName() + ":");
+        gcurrentWriter.println(scopeEnd + ":");
         currentWriter.println(".end method");
     }
 
