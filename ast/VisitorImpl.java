@@ -648,11 +648,14 @@ public class VisitorImpl implements Visitor {
         value.accept(new VisitorImpl());
         
         String type = getType(value);
-        if (isValidType(type, "bool"))
+
+        if (unaryExpression.getUnaryOperator() == UnaryOperator.not && isValidType(type, "bool")) {
             unaryExpression.setType(new BooleanType());
-        else {
+        } else if (unaryExpression.getUnaryOperator() == UnaryOperator.minus && isValidType(type, "int")) {
+            unaryExpression.setType(new IntType());
+        } else {
             System.out.println("Line:" + unaryExpression.getLineNumber() +
-                    ":unsupported operand type for " + unaryExpression.getUnaryOperator());
+            ":unsupported operand type for " + unaryExpression.getUnaryOperator());
 
             // NoType class has been used for invalid types
             unaryExpression.setType(new NoType());
