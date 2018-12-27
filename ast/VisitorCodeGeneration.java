@@ -309,7 +309,15 @@ public class VisitorCodeGeneration implements Visitor {
                 currentWriter.println("istore " + ((Identifier)lValue).getIndex());
                 // @TODO Check the appropriate function in VisitorImpl.java
                 break;
-        
+
+            case intType:
+                currentWriter.println("istore " + ((Identifier)lValue).getIndex());
+                break;
+
+            case userDefinedType:
+                currentWriter.println("astore " + ((Identifier)lValue).getIndex());
+                break;
+                
             default:
                 break;
         }
