@@ -260,14 +260,14 @@ public class VisitorCodeGeneration implements Visitor {
         IntValue arraySize = ((IntValue) newArray.getExpression());
         
         expression.accept(new VisitorCodeGeneration());
+        currentWriter.println("anewarray I");
 
-        currentWriter.println("bipush " + arraySize.getConstant());
     }
 
     @Override
     public void visit(NewClass newClass) {
         Identifier className = newClass.getClassName();
-        className.accept(new VisitorCodeGeneration());
+        
     }
 
     @Override
