@@ -201,8 +201,9 @@ public class VisitorCodeGeneration implements Visitor {
         Expression instance = arrayCall.getInstance();
         Expression index = arrayCall.getIndex();
 
-        instance.accept(new VisitorCodeGeneration());
-        index.accept(new VisitorCodeGeneration());
+        instance.accept(new VisitorCodeGeneration()); // put arrayRef to stack
+        index.accept(new VisitorCodeGeneration()); // put index value to stack
+        currentWriter.println("iaload"); // put requested value to stack
     }
 
     @Override
@@ -261,7 +262,6 @@ public class VisitorCodeGeneration implements Visitor {
         
         expression.accept(new VisitorCodeGeneration());
         currentWriter.println("anewarray java/lang/Integer");
-
     }
 
     @Override
