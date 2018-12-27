@@ -301,13 +301,21 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(Assign assign) {
         Expression lValue = assign.getlValue();
         Expression rValue = assign.getrValue();
+
+        // lValue associated value shoul not be pushed to stack:
         // lValue.accept(new VisitorCodeGeneration());
+
         rValue.accept(new VisitorCodeGeneration());
 
+        // @TODO : check given example:
+        // var a : int[];
+        // a[2] = 3
+        // what is type of lValue in above example is setted IntType.
         switch (lValue.getType().getType()) {
             case arrayType:
-                currentWriter.println("istore " + ((Identifier)lValue).getIndex());
+                System.out.println("here");
                 // @TODO Check the appropriate function in VisitorImpl.java
+                // currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
 
             case intType:
@@ -317,7 +325,7 @@ public class VisitorCodeGeneration implements Visitor {
             case userDefinedType:
                 currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
-                
+
             default:
                 break;
         }
