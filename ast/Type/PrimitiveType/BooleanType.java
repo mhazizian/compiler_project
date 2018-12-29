@@ -10,6 +10,12 @@ public class BooleanType extends Type {
         return "bool";
     }
 
+
+    @Override
+    public String getByteCodeRep() {
+        return this.toString();
+    }
+
     @Override
     public TypeName getType() {
         return TypeName.booleanType;

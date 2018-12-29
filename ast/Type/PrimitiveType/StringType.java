@@ -9,6 +9,12 @@ public class StringType extends Type {
     public String toString() {
         return "string";
     }
+
+    @Override
+    public String getByteCodeRep() {
+        return this.toString();
+    }
+    
     @Override
     public TypeName getType() {
         return TypeName.stringType;

@@ -38,6 +38,12 @@ public class UserDefinedType extends Type {
         // return classDeclaration.getName().getName();
     }
 
+
+    @Override
+    public String getByteCodeRep() {
+        return this.toString();
+    }
+
     @Override
     public TypeName getType() {
         return TypeName.userDefinedType;

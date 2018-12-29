@@ -380,7 +380,6 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorCodeGeneration());
-
         switch (arg.getType().getType()) {
             case intType:
             case stringType:
@@ -391,11 +390,9 @@ public class VisitorCodeGeneration implements Visitor {
                 break;
 
             case arrayType:
-                currentWriter.println("pop");
-                currentWriter.println("pop");
             case userDefinedType:
                 currentWriter.println("pop");
-                currentWriter.println("ldc " + arg.toString());
+                currentWriter.println("ldc \"" + arg.getType().getByteCodeRep() + "\"");
                 currentWriter.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
                 currentWriter.println("swap");
                 currentWriter.println("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");

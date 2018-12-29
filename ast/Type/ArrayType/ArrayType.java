@@ -10,6 +10,11 @@ public class ArrayType extends Type {
         return "int[]";
     }
 
+    @Override
+    public String getByteCodeRep() {
+        return "int[" + this.size + "]";
+    }
+
     public int getSize() {
         return size;
     }

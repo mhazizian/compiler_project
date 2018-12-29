@@ -10,6 +10,12 @@ public class NoType extends Type {
         return "NoType";
     }
 
+
+    @Override
+    public String getByteCodeRep() {
+        return this.toString();
+    }
+
     @Override
     public TypeName getType() {
         return TypeName.noType;
