@@ -224,6 +224,23 @@ public class VisitorCodeGeneration implements Visitor {
 
         left.accept(new VisitorCodeGeneration());
         right.accept(new VisitorCodeGeneration());
+        switch (binaryExpression.getBinaryOperator()) {
+            case add:
+                currentWriter.println("iadd");
+                break;
+            case sub:
+                currentWriter.println("isub");
+                break;
+            case mult:
+                currentWriter.println("imul");
+                break;
+            case div:
+                currentWriter.println("idiv");
+                break;
+                
+            default:
+                break;
+        }
     }
 
     @Override
@@ -240,7 +257,6 @@ public class VisitorCodeGeneration implements Visitor {
                 break;
                 
             default:
-                // currentWriter.println("aload " + identifier.getIndex());
                 break;
         }
     }
@@ -255,7 +271,7 @@ public class VisitorCodeGeneration implements Visitor {
         expression.accept(new VisitorCodeGeneration());
 
         currentWriter.println("pop");
-        // should pop even more?
+        // @TODO : should pop even more?
         currentWriter.println("bipush " + ((ArrayType)length.
                 getExpression().getType()).getSize());
     }
@@ -332,14 +348,10 @@ public class VisitorCodeGeneration implements Visitor {
         // lValue associated value shoul not be pushed to stack:
         // lValue.accept(new VisitorCodeGeneration());
 
-        // @TODO : check given example:
-        // var a : int[];
-        // a[2] = 3
-        // type of lValue in above example is setted to IntType.
         switch (lValue.getType().getType()) {
             case arrayType:
-            // @TODO Check the appropriate function in VisitorImpl.java
                 rValue.accept(new VisitorCodeGeneration());
+                // @TODO Check the appropriate function in VisitorImpl.java
                 currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
 
