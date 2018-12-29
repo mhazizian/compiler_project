@@ -55,6 +55,8 @@ public class VisitorCodeGeneration implements Visitor {
             case booleanType:
                 currentWriter.println("ireturn");
                 break;
+            default:
+                break;
         }
     }
 
@@ -207,6 +209,14 @@ public class VisitorCodeGeneration implements Visitor {
         currentWriter.println("iaload"); // put requested value to stack
     }
 
+    public void visitArrayCallByRefrence(ArrayCall arrayCall) {
+        Expression instance = arrayCall.getInstance();
+        Expression index = arrayCall.getIndex();
+
+        instance.accept(new VisitorCodeGeneration()); // put arrayRef to stack
+        index.accept(new VisitorCodeGeneration()); // put index value to stack
+    }
+
     @Override
     public void visit(BinaryExpression binaryExpression) {
         Expression left = binaryExpression.getLeft();
@@ -224,6 +234,11 @@ public class VisitorCodeGeneration implements Visitor {
                 currentWriter.println("iload " + identifier.getIndex());
                 break;
             
+            // case userDefinedType:
+            case arrayType:
+                currentWriter.println("aload " + identifier.getIndex());
+                break;
+                
             default:
                 // currentWriter.println("aload " + identifier.getIndex());
                 break;
@@ -263,7 +278,7 @@ public class VisitorCodeGeneration implements Visitor {
         IntValue arraySize = ((IntValue) newArray.getExpression());
         
         expression.accept(new VisitorCodeGeneration());
-        currentWriter.println("anewarray java/lang/Integer");
+        currentWriter.println("newarray int");
     }
 
     @Override
@@ -317,24 +332,31 @@ public class VisitorCodeGeneration implements Visitor {
         // lValue associated value shoul not be pushed to stack:
         // lValue.accept(new VisitorCodeGeneration());
 
-        rValue.accept(new VisitorCodeGeneration());
-
         // @TODO : check given example:
         // var a : int[];
         // a[2] = 3
         // type of lValue in above example is setted to IntType.
         switch (lValue.getType().getType()) {
             case arrayType:
-                // @TODO Check the appropriate function in VisitorImpl.java
-                // currentWriter.println("astore " + ((Identifier)lValue).getIndex());
+            // @TODO Check the appropriate function in VisitorImpl.java
+                rValue.accept(new VisitorCodeGeneration());
+                currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
 
             case intType:
+                if (lValue instanceof ArrayCall) {
+                    visitArrayCallByRefrence((ArrayCall)lValue);
+                    rValue.accept(new VisitorCodeGeneration());
+                    currentWriter.println("iastore");
+                    break;
+                }
             case booleanType:
+                rValue.accept(new VisitorCodeGeneration());
                 currentWriter.println("istore " + ((Identifier)lValue).getIndex());
                 break;
 
             case userDefinedType:
+                rValue.accept(new VisitorCodeGeneration());
                 currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
 
