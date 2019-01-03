@@ -225,6 +225,7 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         left.accept(new VisitorImplCodeGeneration());
         right.accept(new VisitorImplCodeGeneration());
+
         switch (binaryExpression.getBinaryOperator()) {
             case add:
                 currentWriter.println("iadd");
@@ -238,7 +239,21 @@ public class VisitorImplCodeGeneration implements Visitor {
             case div:
                 currentWriter.println("idiv");
                 break;
-                
+
+            // @TODO Is there better approach to implement it?
+            case eq:
+                String eqBegin = "eq_" + Integer.toString(statementCounter);
+                String eqEnd = "qe_" + Integer.toString(statementCounter);
+                String scopeEnd = "end_" + Integer.toString(statementCounter++);
+
+                currentWriter.println("if_icmpne " + eqEnd);
+                currentWriter.println(eqBegin + ":");
+                currentWriter.println("iconst_1");
+                currentWriter.println("goto " + scopeEnd);
+                currentWriter.println(eqEnd + ":");
+                currentWriter.println("iconst_0");
+                currentWriter.println(scopeEnd + ":");
+
             default:
                 break;
         }
@@ -373,6 +388,8 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
 
+            // @TODO What about the strtingType
+
             default:
                 break;
         }
@@ -392,11 +409,13 @@ public class VisitorImplCodeGeneration implements Visitor {
         Expression expression = conditional.getExpression();
         Statement consequenceBody = conditional.getConsequenceBody();
         Statement alternativeBody = conditional.getAlternativeBody();
+        String scopeBegin = "if_" + Integer.toString(statementCounter);
+        String scopeEnd = "fi_" + Integer.toString(statementCounter++);
 
         expression.accept(new VisitorImplCodeGeneration());
 
-        String scopeBegin = "if_" + Integer.toString(statementCounter);
-        String scopeEnd = "fi_" + Integer.toString(statementCounter++);
+        // 'ifeq' has been used which means equal to zero is false
+        currentWriter.println("ifeq " + scopeEnd);
 
         currentWriter.println(scopeBegin + ":");
 

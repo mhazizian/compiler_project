@@ -9,8 +9,10 @@ class Main
                 # if(flag == true) then
                 #         writeln(arr.length);
 
-                if(true == false) then
-                        writeln("Salam");                        
+                if(false == true) then
+                        writeln("Salam");   
+                else
+                        writeln("else");                     
 
                 return 0;
         }
