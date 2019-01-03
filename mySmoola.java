@@ -1,6 +1,6 @@
 import ast.VisitorImpl;
 import ast.VisitorImplIter;
-import ast.VisitorCodeGeneration;
+import ast.VisitorImplCodeGeneration;
 import symbolTable.*;
 import ast.node.Program;
 import org.antlr.v4.runtime.*;
@@ -18,7 +18,7 @@ public class mySmoola {
         try {
           program.accept(new VisitorImpl());
           if (SymbolTable.isValidAst)
-            program.accept(new VisitorCodeGeneration());
+            program.accept(new VisitorImplCodeGeneration());
         }
         catch (Exception exception) {
           // Parse Error

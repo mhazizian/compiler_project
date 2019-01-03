@@ -17,8 +17,9 @@ import ast.Type.ArrayType.*;
 import ast.Type.*;
 import ast.Type.UserDefinedType.UserDefinedType;
 import ast.*;
-public class VisitorCodeGeneration implements Visitor {
+public class VisitorImplCodeGeneration implements Visitor {
     public static PrintWriter currentWriter;
+    public static int statementCounter = 0;
 
     public String getJasminType(Type type) {
         switch (type.getType()) {
@@ -64,7 +65,7 @@ public class VisitorCodeGeneration implements Visitor {
     void visitLocalVariables(ArrayList<VarDeclaration> localVars, String scopeBegin, String scopeEnd)
     {
         for (int i = 0; i < localVars.size(); i++) {
-            localVars.get(i).accept(new VisitorCodeGeneration());
+            localVars.get(i).accept(new VisitorImplCodeGeneration());
             // @TODO Is it correct to set the identifier index as a variable number
             currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
                     " is " + localVars.get(i).getIdentifier().getName() + " " +
@@ -87,9 +88,9 @@ public class VisitorCodeGeneration implements Visitor {
             ((ArrayList<ClassDeclaration>)program.getClasses());
         ClassDeclaration mainClass = program.getMainClass();
         for (int j = 0; j < classes.size(); j++)
-            classes.get(j).accept(new VisitorCodeGeneration());
+            classes.get(j).accept(new VisitorImplCodeGeneration());
 
-        mainClass.accept(new VisitorCodeGeneration());
+        mainClass.accept(new VisitorImplCodeGeneration());
     }
 
     @Override
@@ -109,14 +110,14 @@ public class VisitorCodeGeneration implements Visitor {
 
         // visit subItems:
         for (int i = 0; i < vars.size(); i++) {
-            // vars.get(i).accept(new VisitorCodeGeneration());
+            // vars.get(i).accept(new VisitorImplCodeGeneration());
             currentWriter.println(".field public " +
                     vars.get(i).getIdentifier().getName() + " " +
                     getJasminType(vars.get(i).getType()));
         }
 
         for (int i = 0; i < methods.size(); i++)
-            methods.get(i).accept(new VisitorCodeGeneration());
+            methods.get(i).accept(new VisitorImplCodeGeneration());
 
         currentWriter.close();
     }
@@ -151,9 +152,9 @@ public class VisitorCodeGeneration implements Visitor {
         currentWriter.println(scopeBegin + ":");
 
         for (int i = 0; i < body.size(); i++)
-            body.get(i).accept(new VisitorCodeGeneration());
+            body.get(i).accept(new VisitorImplCodeGeneration());
 
-        returnValue.accept(new VisitorCodeGeneration());
+        returnValue.accept(new VisitorImplCodeGeneration());
 
         setReturnType(returnType);
 
@@ -182,9 +183,9 @@ public class VisitorCodeGeneration implements Visitor {
         currentWriter.println(scopeBegin + ":");
 
         for (int i = 0; i < body.size(); i++)
-            body.get(i).accept(new VisitorCodeGeneration());
+            body.get(i).accept(new VisitorImplCodeGeneration());
 
-        returnValue.accept(new VisitorCodeGeneration());
+        returnValue.accept(new VisitorImplCodeGeneration());
 
         // currentWriter.println("pop");
         currentWriter.println("return");
@@ -196,7 +197,7 @@ public class VisitorCodeGeneration implements Visitor {
     public void visit(VarDeclaration varDeclaration) {
         // @TODO Why these are comment?
         // Identifier identifier = varDeclaration.getIdentifier();
-        // identifier.accept(new VisitorCodeGeneration());
+        // identifier.accept(new VisitorImplCodeGeneration());
     }
 
      @Override
@@ -204,8 +205,8 @@ public class VisitorCodeGeneration implements Visitor {
         Expression instance = arrayCall.getInstance();
         Expression index = arrayCall.getIndex();
 
-        instance.accept(new VisitorCodeGeneration()); // put arrayRef to stack
-        index.accept(new VisitorCodeGeneration()); // put index value to stack
+        instance.accept(new VisitorImplCodeGeneration()); // put arrayRef to stack
+        index.accept(new VisitorImplCodeGeneration()); // put index value to stack
         currentWriter.println("iaload"); // put requested value to stack
     }
 
@@ -213,8 +214,8 @@ public class VisitorCodeGeneration implements Visitor {
         Expression instance = arrayCall.getInstance();
         Expression index = arrayCall.getIndex();
 
-        instance.accept(new VisitorCodeGeneration()); // put arrayRef to stack
-        index.accept(new VisitorCodeGeneration()); // put index value to stack
+        instance.accept(new VisitorImplCodeGeneration()); // put arrayRef to stack
+        index.accept(new VisitorImplCodeGeneration()); // put index value to stack
     }
 
     @Override
@@ -222,8 +223,8 @@ public class VisitorCodeGeneration implements Visitor {
         Expression left = binaryExpression.getLeft();
         Expression right = binaryExpression.getRight();
 
-        left.accept(new VisitorCodeGeneration());
-        right.accept(new VisitorCodeGeneration());
+        left.accept(new VisitorImplCodeGeneration());
+        right.accept(new VisitorImplCodeGeneration());
         switch (binaryExpression.getBinaryOperator()) {
             case add:
                 currentWriter.println("iadd");
@@ -268,7 +269,7 @@ public class VisitorCodeGeneration implements Visitor {
     @Override
     public void visit(Length length) {
         Expression expression = length.getExpression();
-        expression.accept(new VisitorCodeGeneration());
+        expression.accept(new VisitorImplCodeGeneration());
 
         currentWriter.println("pop");
         // @TODO : should pop even more?
@@ -282,10 +283,10 @@ public class VisitorCodeGeneration implements Visitor {
         MethodCallIdentifier methodName = methodCall.getMethodName();
         ArrayList<Expression> args = methodCall.getArgs();
 
-        instance.accept(new VisitorCodeGeneration());
-        methodName.accept(new VisitorCodeGeneration());
+        instance.accept(new VisitorImplCodeGeneration());
+        methodName.accept(new VisitorImplCodeGeneration());
         for (int i = 0; i < args.size(); i++)
-            args.get(i).accept(new VisitorCodeGeneration());
+            args.get(i).accept(new VisitorImplCodeGeneration());
     }
 
     @Override
@@ -293,7 +294,7 @@ public class VisitorCodeGeneration implements Visitor {
         Expression expression = newArray.getExpression();
         IntValue arraySize = ((IntValue) newArray.getExpression());
         
-        expression.accept(new VisitorCodeGeneration());
+        expression.accept(new VisitorImplCodeGeneration());
         currentWriter.println("newarray int");
     }
 
@@ -311,7 +312,7 @@ public class VisitorCodeGeneration implements Visitor {
     @Override
     public void visit(UnaryExpression unaryExpression) {
         Expression value = unaryExpression.getValue();
-        value.accept(new VisitorCodeGeneration());
+        value.accept(new VisitorImplCodeGeneration());
         switch (unaryExpression.getUnaryOperator()) {
             case not:
                 // @TODO : find appropriate command for not.
@@ -326,7 +327,7 @@ public class VisitorCodeGeneration implements Visitor {
 
     @Override
     public void visit(BooleanValue value) {
-        // Assume boolean is integer (getConstant returns integer)
+        // Assume boolean is an integer (getConstant returns integer)
         currentWriter.println("iconst_" + value.getConstant());
     }
 
@@ -346,11 +347,11 @@ public class VisitorCodeGeneration implements Visitor {
         Expression rValue = assign.getrValue();
 
         // lValue associated value shoul not be pushed to stack:
-        // lValue.accept(new VisitorCodeGeneration());
+        // lValue.accept(new VisitorImplCodeGeneration());
 
         switch (lValue.getType().getType()) {
             case arrayType:
-                rValue.accept(new VisitorCodeGeneration());
+                rValue.accept(new VisitorImplCodeGeneration());
                 // @TODO Check the appropriate function in VisitorImpl.java
                 currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
@@ -358,17 +359,17 @@ public class VisitorCodeGeneration implements Visitor {
             case intType:
                 if (lValue instanceof ArrayCall) {
                     visitArrayCallByRefrence((ArrayCall)lValue);
-                    rValue.accept(new VisitorCodeGeneration());
+                    rValue.accept(new VisitorImplCodeGeneration());
                     currentWriter.println("iastore");
                     break;
                 }
             case booleanType:
-                rValue.accept(new VisitorCodeGeneration());
+                rValue.accept(new VisitorImplCodeGeneration());
                 currentWriter.println("istore " + ((Identifier)lValue).getIndex());
                 break;
 
             case userDefinedType:
-                rValue.accept(new VisitorCodeGeneration());
+                rValue.accept(new VisitorImplCodeGeneration());
                 currentWriter.println("astore " + ((Identifier)lValue).getIndex());
                 break;
 
@@ -383,7 +384,7 @@ public class VisitorCodeGeneration implements Visitor {
         ArrayList<Statement> body = block.getBody();
 
         for (int i = 0; i < body.size(); ++i)
-            body.get(i).accept(new VisitorCodeGeneration());
+            body.get(i).accept(new VisitorImplCodeGeneration());
     }
 
     @Override
@@ -392,11 +393,19 @@ public class VisitorCodeGeneration implements Visitor {
         Statement consequenceBody = conditional.getConsequenceBody();
         Statement alternativeBody = conditional.getAlternativeBody();
 
-        expression.accept(new VisitorCodeGeneration());
-        consequenceBody.accept(new VisitorCodeGeneration());
+        expression.accept(new VisitorImplCodeGeneration());
+
+        String scopeBegin = "if_" + Integer.toString(statementCounter);
+        String scopeEnd = "fi_" + Integer.toString(statementCounter++);
+
+        currentWriter.println(scopeBegin + ":");
+
+        consequenceBody.accept(new VisitorImplCodeGeneration());
+
+        currentWriter.println(scopeEnd + ":");
 
         if (alternativeBody != null) {
-            alternativeBody.accept(new VisitorCodeGeneration());
+            alternativeBody.accept(new VisitorImplCodeGeneration());
         }
 
     }
@@ -406,14 +415,22 @@ public class VisitorCodeGeneration implements Visitor {
         Expression condition = loop.getCondition();
         Statement body = loop.getBody();
 
-        condition.accept(new VisitorCodeGeneration());
-        body.accept(new VisitorCodeGeneration());
+        condition.accept(new VisitorImplCodeGeneration());
+
+        String scopeBegin = "loop_" + Integer.toString(statementCounter);
+        String scopeEnd = "pool_" + Integer.toString(statementCounter++);
+
+        currentWriter.println(scopeBegin + ":");
+
+        body.accept(new VisitorImplCodeGeneration());
+
+        currentWriter.println(scopeEnd + ":");
     }
 
     @Override
     public void visit(Write write) {
         Expression arg = write.getArg();
-        arg.accept(new VisitorCodeGeneration());
+        arg.accept(new VisitorImplCodeGeneration());
         switch (arg.getType().getType()) {
             case intType:
             case stringType:
