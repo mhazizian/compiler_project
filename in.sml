@@ -9,10 +9,28 @@ class Main
                 # if(flag == true) then
                 #         writeln(arr.length);
 
-                if(false == true) then
-                        writeln("Salam");   
+                # if(false == true) then
+                #         writeln("first if");   
+                # else
+                #         writeln("else: eqtest: neq");               
+                        
+                # if(true == true) then
+                #         writeln("if: eqtest: eq");  
+                # else
+                #         writeln("second else");        
+
+                writeln("Between statements");
+
+                if(false <> true) then
+                        writeln("if: neqtest: neq");   
                 else
-                        writeln("else");                     
+                        writeln("first else");               
+                        
+                if(true <> true) then
+                        writeln("second if");   
+                else
+                        writeln("else: neqtest: eq");       
+
 
                 return 0;
         }

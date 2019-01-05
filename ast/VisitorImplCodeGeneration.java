@@ -61,7 +61,6 @@ public class VisitorImplCodeGeneration implements Visitor {
         }
     }
 
-
     void visitLocalVariables(ArrayList<VarDeclaration> localVars, String scopeBegin, String scopeEnd)
     {
         for (int i = 0; i < localVars.size(); i++) {
@@ -72,6 +71,22 @@ public class VisitorImplCodeGeneration implements Visitor {
                     getJasminType(localVars.get(i).getType()) + " from " +
                     scopeBegin + " to " + scopeEnd);
         }
+    }
+
+    void compareStatements(String operator, String condition)      
+    {
+        String operatorBegin = operator + "_" + Integer.toString(statementCounter);
+        String operatorEnd = (new StringBuilder(operator).reverse().toString()) +
+                "_" + Integer.toString(statementCounter);
+        String scopeEnd = "end_" + Integer.toString(statementCounter++);
+
+        currentWriter.println("if_icmp" + condition + operatorEnd);
+        currentWriter.println(operatorBegin + ":");
+        currentWriter.println("iconst_1");
+        currentWriter.println("goto " + scopeEnd);
+        currentWriter.println(operatorEnd + ":");
+        currentWriter.println("iconst_0");
+        currentWriter.println(scopeEnd + ":");
     }
 
 // ##############################################################################
@@ -242,17 +257,11 @@ public class VisitorImplCodeGeneration implements Visitor {
 
             // @TODO Is there better approach to implement it?
             case eq:
-                String eqBegin = "eq_" + Integer.toString(statementCounter);
-                String eqEnd = "qe_" + Integer.toString(statementCounter);
-                String scopeEnd = "end_" + Integer.toString(statementCounter++);
+                compareStatements("eq", "ne ");
 
-                currentWriter.println("if_icmpne " + eqEnd);
-                currentWriter.println(eqBegin + ":");
-                currentWriter.println("iconst_1");
-                currentWriter.println("goto " + scopeEnd);
-                currentWriter.println(eqEnd + ":");
-                currentWriter.println("iconst_0");
-                currentWriter.println(scopeEnd + ":");
+            case neq:
+                compareStatements("neq", "eq ");
+
 
             default:
                 break;
@@ -410,7 +419,8 @@ public class VisitorImplCodeGeneration implements Visitor {
         Statement consequenceBody = conditional.getConsequenceBody();
         Statement alternativeBody = conditional.getAlternativeBody();
         String scopeBegin = "if_" + Integer.toString(statementCounter);
-        String scopeEnd = "fi_" + Integer.toString(statementCounter++);
+        String scopeEnd = "fi_" + Integer.toString(statementCounter);
+        String statementEnd = "else_" + Integer.toString(statementCounter++);
 
         expression.accept(new VisitorImplCodeGeneration());
 
@@ -418,14 +428,15 @@ public class VisitorImplCodeGeneration implements Visitor {
         currentWriter.println("ifeq " + scopeEnd);
 
         currentWriter.println(scopeBegin + ":");
-
         consequenceBody.accept(new VisitorImplCodeGeneration());
+        currentWriter.println("goto " + statementEnd);
 
         currentWriter.println(scopeEnd + ":");
 
-        if (alternativeBody != null) {
+        if (alternativeBody != null)
             alternativeBody.accept(new VisitorImplCodeGeneration());
-        }
+
+        currentWriter.println(statementEnd + ":");
 
     }
 
