@@ -258,10 +258,18 @@ public class VisitorImplCodeGeneration implements Visitor {
             // @TODO Is there better approach to implement it?
             case eq:
                 compareStatements("eq", "ne ");
+                break;
 
             case neq:
                 compareStatements("neq", "eq ");
+                break;
 
+            case lt:
+                compareStatements("lt", "gt ");
+                break;
+            
+            // case gt:
+            //     compareStatements("gt", "lt ");
 
             default:
                 break;

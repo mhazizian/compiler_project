@@ -14,8 +14,7 @@ import ast.node.statement.*;
 
 import ast.Type.*;
 import ast.Type.ArrayType.ArrayType;
-import ast.Type.PrimitiveType.BooleanType;
-import ast.Type.PrimitiveType.IntType;
+import ast.Type.PrimitiveType.*;
 import ast.Type.UserDefinedType.UserDefinedType;
 import ast.Type.NoType.NoType;
 import symbolTable.*;
@@ -131,6 +130,28 @@ public class VisitorImpl implements Visitor {
         return type;
     }
 
+    Type getTypeObject(TypeName type) {
+        switch(type) {
+            case arrayType:
+                return new ArrayType();    
+            
+            case booleanType:
+                return new BooleanType();
+
+            case intType:
+                return new IntType();
+
+            case stringType:
+                return new StringType();
+
+            case userDefinedType:
+                return new UserDefinedType();
+
+            default:
+                return new NoType();
+        }
+    }
+
     boolean isValidType(String type, String base) {
         // @TODO Is it correct to check the NoType here?
         if (!type.equals(base) && !type.equals("NoType")) {
@@ -138,6 +159,16 @@ public class VisitorImpl implements Visitor {
             return false;
         }
         return true;
+    }
+
+    boolean isLogical(BinaryOperator operator) {
+        switch (operator) {
+            case and:
+            case or:
+                return true;
+            default:
+                return false;
+        }
     }
 
     boolean isArithmetic(BinaryOperator operator) {
@@ -153,29 +184,37 @@ public class VisitorImpl implements Visitor {
         }
     }
 
+    boolean isComperative(BinaryOperator operator) {
+        switch (operator) {
+            case lt:
+            case gt:
+                return true;
+            
+            default:
+                return false;
+        }
+    }
+
     boolean isWritable(String type) {
         // @TODO Is it correct to check the NoType here?
         return (type.equals("int[]") || type.equals("int") 
                 || type.equals("string") || type.equals("NoType"));
     }
 
-    void checkOperandsValidity(String leftType, String rightType,
-            BinaryExpression binaryExpression, String base)
+    // @TODO Check castability
+    void checkOperandsValidity(String leftType, String rightType, String base,
+            BinaryExpression binaryExpression, TypeName typeName)
     {
         BinaryOperator operator = binaryExpression.getBinaryOperator();
      
         if (!(isValidType(leftType, base) && isValidType(rightType, base))) {
             System.out.println("Line:" + binaryExpression.getLineNumber() +
                     ":unsupported operand type for " + operator);
-            
-            // NoType class has been used for invalid types
+
             binaryExpression.setType(new NoType());
         }
         else
-            if (base.equals("int"))
-                binaryExpression.setType(new IntType());
-            else
-                binaryExpression.setType(new BooleanType());
+            binaryExpression.setType(getTypeObject(typeName));
     }
 
     void findTheMethodInClass(MethodCall methodCall, SymbolTableItem instanceItem,
@@ -519,9 +558,17 @@ public class VisitorImpl implements Visitor {
 
         // Both the operands should be valid
         if (isArithmetic(operator))
-            checkOperandsValidity(leftType, rightType, binaryExpression, "int");
-        else 
-            checkOperandsValidity(leftType, rightType, binaryExpression, "bool");
+            checkOperandsValidity(leftType, rightType, "int",
+                    binaryExpression, TypeName.intType);
+        else if (isComperative(operator))
+            checkOperandsValidity(leftType, rightType, "int",
+                    binaryExpression, TypeName.booleanType);
+        else if (isLogical(operator))
+            checkOperandsValidity(leftType, rightType, "bool",
+                    binaryExpression, TypeName.booleanType);
+        else
+            checkOperandsValidity(leftType, rightType, left.getType().toString(),
+                    binaryExpression, TypeName.booleanType);
     }
 
     @Override
@@ -649,11 +696,13 @@ public class VisitorImpl implements Visitor {
         
         String type = getType(value);
 
-        if (unaryExpression.getUnaryOperator() == UnaryOperator.not && isValidType(type, "bool")) {
+        if (unaryExpression.getUnaryOperator() == UnaryOperator.not && isValidType(type, "bool"))
             unaryExpression.setType(new BooleanType());
-        } else if (unaryExpression.getUnaryOperator() == UnaryOperator.minus && isValidType(type, "int")) {
+
+        else if (unaryExpression.getUnaryOperator() == UnaryOperator.minus && isValidType(type, "int"))
             unaryExpression.setType(new IntType());
-        } else {
+
+        else {
             System.out.println("Line:" + unaryExpression.getLineNumber() +
             ":unsupported operand type for " + unaryExpression.getUnaryOperator());
 

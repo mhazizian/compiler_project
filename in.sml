@@ -2,35 +2,31 @@ class Main
 {
         def main(): int
         {
-                # var flag : boolean;
-                # var arr : int[];
-                # arr = new int[13];
-
-                # if(flag == true) then
-                #         writeln(arr.length);
-
-                # if(false == true) then
-                #         writeln("first if");   
-                # else
-                #         writeln("else: eqtest: neq");               
-                        
-                # if(true == true) then
-                #         writeln("if: eqtest: eq");  
-                # else
-                #         writeln("second else");        
+                if(true == true) then
+                        writeln("if: eqtest: eq");
+                else
+                        writeln("Nothing!");  
 
                 writeln("Between statements");
 
-                if(false <> true) then
-                        writeln("if: neqtest: neq");   
+                if(true <> false) then
+                        writeln("if: neqtest: neq");
                 else
-                        writeln("first else");               
-                        
-                if(true <> true) then
-                        writeln("second if");   
-                else
-                        writeln("else: neqtest: eq");       
+                        writeln("Nothing!");
 
+                writeln("Between statements");
+
+                if(0 < 1) then
+                        writeln("if: lttest: lt");
+                else
+                        writeln("Nothing!");
+
+                writeln("Between statements");
+
+                if(1 < 0) then
+                        writeln("Nothing!");
+                else
+                        writeln("else: lttest: gt");
 
                 return 0;
         }
