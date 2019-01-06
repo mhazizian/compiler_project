@@ -268,8 +268,9 @@ public class VisitorImplCodeGeneration implements Visitor {
                 compareStatements("lt", "gt ");
                 break;
             
-            // case gt:
-            //     compareStatements("gt", "lt ");
+            case gt:
+                compareStatements("gt", "lt ");
+                break;
 
             default:
                 break;
@@ -452,15 +453,18 @@ public class VisitorImplCodeGeneration implements Visitor {
     public void visit(While loop) {
         Expression condition = loop.getCondition();
         Statement body = loop.getBody();
+        String scopeBegin = "loop_" + Integer.toString(statementCounter);
+        String scopeEnd = "pool_" + Integer.toString(statementCounter++);
+        
+        currentWriter.println(scopeBegin + ":");
 
         condition.accept(new VisitorImplCodeGeneration());
 
-        String scopeBegin = "loop_" + Integer.toString(statementCounter);
-        String scopeEnd = "pool_" + Integer.toString(statementCounter++);
-
-        currentWriter.println(scopeBegin + ":");
+        currentWriter.println("ifeq " + scopeEnd);
 
         body.accept(new VisitorImplCodeGeneration());
+
+        currentWriter.println("goto " + scopeBegin);        
 
         currentWriter.println(scopeEnd + ":");
     }

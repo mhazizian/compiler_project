@@ -28,6 +28,23 @@ class Main
                 else
                         writeln("else: lttest: gt");
 
+                writeln("Between statements");
+
+                if(1 > 0) then
+                        writeln("if: gttest: gt");
+                else
+                        writeln("Nothing!");
+
+                writeln("Between statements");
+
+                if(0 > 1) then
+                        writeln("Nothing!");
+                else
+                        writeln("else: gttest: lt");
+
+                while (1 > 0)
+                        writeln("Indefinite Loop!");                        
+
                 return 0;
         }
 }
