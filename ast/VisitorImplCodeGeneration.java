@@ -44,17 +44,17 @@ public class VisitorImplCodeGeneration implements Visitor {
     {    
         switch (returnType.getType()) {
             case intType:
-                currentWriter.println("ireturn");
+                currentWriter.println("\tireturn");
                 break;
 
             case stringType:
             case userDefinedType:
             case arrayType:
-                currentWriter.println("areturn");
+                currentWriter.println("\tareturn");
                 break;
         
             case booleanType:
-                currentWriter.println("ireturn");
+                currentWriter.println("\tireturn");
                 break;
             default:
                 break;
@@ -80,12 +80,12 @@ public class VisitorImplCodeGeneration implements Visitor {
                 "_" + Integer.toString(statementCounter);
         String scopeEnd = "end_" + Integer.toString(statementCounter++);
 
-        currentWriter.println("if_icmp" + condition + operatorEnd);
+        currentWriter.println("\tif_icmp" + condition + operatorEnd);
         currentWriter.println(operatorBegin + ":");
-        currentWriter.println("iconst_1");
-        currentWriter.println("goto " + scopeEnd);
+        currentWriter.println("\ticonst_1");
+        currentWriter.println("\tgoto " + scopeEnd);
         currentWriter.println(operatorEnd + ":");
-        currentWriter.println("iconst_0");
+        currentWriter.println("\ticonst_0");
         currentWriter.println(scopeEnd + ":");
     }
 
@@ -243,16 +243,16 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         switch (binaryExpression.getBinaryOperator()) {
             case add:
-                currentWriter.println("iadd");
+                currentWriter.println("\tiadd");
                 break;
             case sub:
-                currentWriter.println("isub");
+                currentWriter.println("\tisub");
                 break;
             case mult:
-                currentWriter.println("imul");
+                currentWriter.println("\timul");
                 break;
             case div:
-                currentWriter.println("idiv");
+                currentWriter.println("\tidiv");
                 break;
 
             // @TODO Is there better approach to implement it?
@@ -282,12 +282,12 @@ public class VisitorImplCodeGeneration implements Visitor {
         switch (identifier.getType().getType()) {
             case intType:
             case booleanType:
-                currentWriter.println("iload " + identifier.getIndex());
+                currentWriter.println("\tiload " + identifier.getIndex());
                 break;
             
             // case userDefinedType:
             case arrayType:
-                currentWriter.println("aload " + identifier.getIndex());
+                currentWriter.println("\taload " + identifier.getIndex());
                 break;
                 
             default:
@@ -304,9 +304,9 @@ public class VisitorImplCodeGeneration implements Visitor {
         Expression expression = length.getExpression();
         expression.accept(new VisitorImplCodeGeneration());
 
-        currentWriter.println("pop");
+        currentWriter.println("\tpop");
         // @TODO : should pop even more?
-        currentWriter.println("bipush " + ((ArrayType)length.
+        currentWriter.println("\tbipush " + ((ArrayType)length.
                 getExpression().getType()).getSize());
     }
 
@@ -328,7 +328,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         IntValue arraySize = ((IntValue) newArray.getExpression());
         
         expression.accept(new VisitorImplCodeGeneration());
-        currentWriter.println("newarray int");
+        currentWriter.println("\tnewarray int");
     }
 
     @Override
@@ -349,11 +349,11 @@ public class VisitorImplCodeGeneration implements Visitor {
         switch (unaryExpression.getUnaryOperator()) {
             case not:
                 // @TODO : find appropriate command for not.
-                currentWriter.println("ineg");
+                currentWriter.println("\tineg");
                 break;
         
             case minus:
-                currentWriter.println("ineg");
+                currentWriter.println("\tineg");
                 break;
         }
     }
@@ -361,17 +361,17 @@ public class VisitorImplCodeGeneration implements Visitor {
     @Override
     public void visit(BooleanValue value) {
         // Assume boolean is an integer (getConstant returns integer)
-        currentWriter.println("iconst_" + value.getConstant());
+        currentWriter.println("\ticonst_" + value.getConstant());
     }
 
     @Override
     public void visit(IntValue value) {
-        currentWriter.println("bipush " + value.getConstant());
+        currentWriter.println("\tbipush " + value.getConstant());
     }
 
     @Override
     public void visit(StringValue value) {
-        currentWriter.println("ldc " + value.getConstant());
+        currentWriter.println("\tldc " + value.getConstant());
     }
 
     @Override
@@ -386,24 +386,24 @@ public class VisitorImplCodeGeneration implements Visitor {
             case arrayType:
                 rValue.accept(new VisitorImplCodeGeneration());
                 // @TODO Check the appropriate function in VisitorImpl.java
-                currentWriter.println("astore " + ((Identifier)lValue).getIndex());
+                currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
                 break;
 
             case intType:
                 if (lValue instanceof ArrayCall) {
                     visitArrayCallByRefrence((ArrayCall)lValue);
                     rValue.accept(new VisitorImplCodeGeneration());
-                    currentWriter.println("iastore");
+                    currentWriter.println("\tiastore");
                     break;
                 }
             case booleanType:
                 rValue.accept(new VisitorImplCodeGeneration());
-                currentWriter.println("istore " + ((Identifier)lValue).getIndex());
+                currentWriter.println("\tistore " + ((Identifier)lValue).getIndex());
                 break;
 
             case userDefinedType:
                 rValue.accept(new VisitorImplCodeGeneration());
-                currentWriter.println("astore " + ((Identifier)lValue).getIndex());
+                currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
                 break;
 
             // @TODO What about the strtingType
@@ -434,11 +434,11 @@ public class VisitorImplCodeGeneration implements Visitor {
         expression.accept(new VisitorImplCodeGeneration());
 
         // 'ifeq' has been used which means equal to zero is false
-        currentWriter.println("ifeq " + scopeEnd);
+        currentWriter.println("\tifeq " + scopeEnd);
 
         currentWriter.println(scopeBegin + ":");
         consequenceBody.accept(new VisitorImplCodeGeneration());
-        currentWriter.println("goto " + statementEnd);
+        currentWriter.println("\tgoto " + statementEnd);
 
         currentWriter.println(scopeEnd + ":");
 
@@ -460,11 +460,11 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         condition.accept(new VisitorImplCodeGeneration());
 
-        currentWriter.println("ifeq " + scopeEnd);
+        currentWriter.println("\tifeq " + scopeEnd);
 
         body.accept(new VisitorImplCodeGeneration());
 
-        currentWriter.println("goto " + scopeBegin);        
+        currentWriter.println("\tgoto " + scopeBegin);        
 
         currentWriter.println(scopeEnd + ":");
     }
@@ -477,18 +477,18 @@ public class VisitorImplCodeGeneration implements Visitor {
             case intType:
             case stringType:
             case booleanType:
-                currentWriter.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
-                currentWriter.println("swap");
-                currentWriter.println("invokevirtual java/io/PrintStream/println(" + getJasminType(arg.getType()) + ")V");
+                currentWriter.println("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
+                currentWriter.println("\tswap");
+                currentWriter.println("\tinvokevirtual java/io/PrintStream/println(" + getJasminType(arg.getType()) + ")V");
                 break;
 
             case arrayType:
             case userDefinedType:
-                currentWriter.println("pop");
-                currentWriter.println("ldc \"" + arg.getType().getByteCodeRep() + "\"");
-                currentWriter.println("getstatic java/lang/System/out Ljava/io/PrintStream;");
-                currentWriter.println("swap");
-                currentWriter.println("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+                currentWriter.println("\tpop");
+                currentWriter.println("\tldc \"" + arg.getType().getByteCodeRep() + "\"");
+                currentWriter.println("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
+                currentWriter.println("\tswap");
+                currentWriter.println("\tinvokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
                 break;
                 
         
