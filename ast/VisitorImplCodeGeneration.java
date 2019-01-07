@@ -417,12 +417,9 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
                 break;
 
-            // @TODO: What about the strtingType
-
             default:
                 break;
         }
-        // currentWriter.println(";" + ((VarDeclaration)lValue).getIdentifier().getIndex());
     }
 
     @Override

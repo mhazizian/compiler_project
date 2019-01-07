@@ -217,6 +217,25 @@ public class VisitorImpl implements Visitor {
             binaryExpression.setType(getTypeObject(typeName));
     }
 
+    
+    void checkOperandsValidityLogical(String leftType, String rightType,
+            BinaryExpression binaryExpression, TypeName typeName)
+    {
+        BinaryOperator operator = binaryExpression.getBinaryOperator();
+        if ((!leftType.equals("int") && !leftType.equals("bool")) || (!rightType.equals("int") && !rightType.equals("bool")))
+        {
+            System.out.println("Line:" + binaryExpression.getLineNumber() +
+                    ":unsupported operand type for " + operator);
+
+            SymbolTable.isValidAst = false;
+            binaryExpression.setType(new NoType());
+        }
+        else
+            binaryExpression.setType(getTypeObject(typeName));
+    }
+
+    
+
     void findTheMethodInClass(MethodCall methodCall, SymbolTableItem instanceItem,
             String methodName, String className) {
 
@@ -564,7 +583,7 @@ public class VisitorImpl implements Visitor {
             checkOperandsValidity(leftType, rightType, "int",
                     binaryExpression, TypeName.booleanType);
         else if (isLogical(operator))
-            checkOperandsValidity(leftType, rightType, "bool",
+            checkOperandsValidityLogical(leftType, rightType,
                     binaryExpression, TypeName.booleanType);
         else
             checkOperandsValidity(leftType, rightType, left.getType().toString(),

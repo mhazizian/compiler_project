@@ -7,6 +7,7 @@ class Main
                 var stringT : string;
                 var arrayT : int[];
                 var intT : int;
+                var boolT : boolean;
 
                 writeln("#### Equality Test ####");
 
