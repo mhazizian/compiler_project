@@ -1,7 +1,21 @@
 class Main
+
 {
         def main(): int
         {
+                var i : int;
+                var stringT : string;
+                var intT : int;
+
+                writeln("### assignTest");
+                stringT = "salam";
+                writeln(stringT);
+
+                intT = 2;
+                writeln(intT);
+
+                writeln("### if Teset");
+
                 if(true == true) then
                         writeln("if: eqtest: eq");
                 else
@@ -42,8 +56,12 @@ class Main
                 else
                         writeln("else: gttest: lt");
 
-                while (1 > 0)
-                        writeln("Indefinite Loop!");                        
+
+                # i = 0;
+                # writeln("### while Teset");
+                # while (i < 20)
+                #         writeln(i);  
+                #         i = i + 1;                      
 
                 return 0;
         }

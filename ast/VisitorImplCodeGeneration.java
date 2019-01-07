@@ -287,6 +287,7 @@ public class VisitorImplCodeGeneration implements Visitor {
             
             // case userDefinedType:
             case arrayType:
+            case stringType:
                 currentWriter.println("\taload " + identifier.getIndex());
                 break;
                 
@@ -402,8 +403,10 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case userDefinedType:
+            case stringType:
                 rValue.accept(new VisitorImplCodeGeneration());
                 currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
+                System.out.println("here");
                 break;
 
             // @TODO What about the strtingType
