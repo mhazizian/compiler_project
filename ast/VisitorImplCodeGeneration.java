@@ -65,7 +65,7 @@ public class VisitorImplCodeGeneration implements Visitor {
     {
         for (int i = 0; i < localVars.size(); i++) {
             localVars.get(i).accept(new VisitorImplCodeGeneration());
-            // @TODO Is it correct to set the identifier index as a variable number
+            // @TODO: Is it correct to set the identifier index as a variable number
             currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
                     " is " + localVars.get(i).getIdentifier().getName() + " " +
                     getJasminType(localVars.get(i).getType()) + " from " +
@@ -210,7 +210,7 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        // @TODO Why these are comment?
+        // @TODO: Why these are comment?
         // Identifier identifier = varDeclaration.getIdentifier();
         // identifier.accept(new VisitorImplCodeGeneration());
     }
@@ -255,7 +255,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tidiv");
                 break;
 
-            // @TODO Is there better approach to implement it?
+            // @TODO: Is there better approach to implement it?
             case eq:
                 compareStatements("eq", "eq");
                 break;
@@ -306,7 +306,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         expression.accept(new VisitorImplCodeGeneration());
 
         currentWriter.println("\tpop");
-        // @TODO : should pop even more?
+        // @TODO: should pop even more?
         currentWriter.println("\tbipush " + ((ArrayType)length.
                 getExpression().getType()).getSize());
     }
@@ -349,7 +349,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         value.accept(new VisitorImplCodeGeneration());
         switch (unaryExpression.getUnaryOperator()) {
             case not:
-                // @TODO : find appropriate command for not.
+                // @TODO: find appropriate command for not.
                 currentWriter.println("\tineg");
                 break;
         
@@ -403,7 +403,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
                 break;
 
-            // @TODO What about the strtingType
+            // @TODO: What about the strtingType
 
             default:
                 break;
