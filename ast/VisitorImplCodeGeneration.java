@@ -89,6 +89,36 @@ public class VisitorImplCodeGeneration implements Visitor {
         currentWriter.println(scopeEnd + ":");
     }
 
+    void print(String type) {
+        currentWriter.println("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
+        currentWriter.println("\tswap");
+        currentWriter.println("\tinvokevirtual java/io/PrintStream/print(" + type + ")V");
+    }
+
+    void printArray(Identifier array) {        
+        int arraySize = ((ArrayType)(array.getType())).getSize();
+        currentWriter.println("\tpop");
+
+        currentWriter.println("\tldc \"[\"");
+        print("Ljava/lang/String;");
+
+        for (int i = 0; i < arraySize; ++i) {
+            currentWriter.println("\taload " + array.getIndex());
+            currentWriter.println("\tbipush " + Integer.toString(i));
+            currentWriter.println("iaload");
+            print("I");
+            if (i != (arraySize - 1))
+                currentWriter.println("\tldc \", \"");
+            else
+                currentWriter.println("\tldc \"]\"");
+
+            print("Ljava/lang/String;");
+        }
+
+        currentWriter.println("\tldc \"\n\"");
+        print("Ljava/lang/String;");
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -501,11 +531,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 
             case arrayType:
                 // @TODO: We should print all the array as Python does
-                currentWriter.println("\tpop");
-                currentWriter.println("\tldc " + ((ArrayType)(arg.getType())).getSize());
-                currentWriter.println("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
-                currentWriter.println("\tswap");
-                currentWriter.println("\tinvokevirtual java/io/PrintStream/println(I)V");
+                printArray((Identifier)arg);
                 
             break;
         
