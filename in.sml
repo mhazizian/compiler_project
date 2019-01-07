@@ -108,7 +108,7 @@ class Main
                 writeln("### Method Call Test");
 
                 classT = new SecClass();
-                writeln(classT.subClassMethod());
+                writeln(classT.subClassMethod(1, "salam"));
 
                 classThird = new ThirdClass();
                 intT = classThird.thirdClassMethod(classT.subClassMethod() * 2);
@@ -120,8 +120,10 @@ class Main
 class SecClass {
         # var firstField : int;
 
-        def subClassMethod(): int {
+        def subClassMethod(a : int, b : string): int {
                 # var methodVar : boolean;
+                writeln(a);
+                writeln(b);
                 writeln("inside method :D");
                 # methodVar = true;
                 return 13;
