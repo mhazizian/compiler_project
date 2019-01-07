@@ -197,7 +197,7 @@ public class VisitorImpl implements Visitor {
 
     boolean isWritable(String type) {
         // @TODO Is it correct to check the NoType here?
-        return (type.equals("int[]") || type.equals("int") 
+        return (type.equals("int[]") || type.equals("int") || type.equals("bool")
                 || type.equals("string") || type.equals("NoType"));
     }
 
