@@ -108,10 +108,10 @@ class Main
                 writeln("### Method Call Test");
 
                 classT = new SecClass();
-                writeln(classT.subClassMethod(1, "salam"));
+                writeln(classT.subClassMethod("1"));
 
                 classThird = new ThirdClass();
-                intT = classThird.thirdClassMethod(classT.subClassMethod() * 2);
+                intT = classThird.thirdClassMethod();
 
                 return 0;
         }
@@ -120,10 +120,10 @@ class Main
 class SecClass {
         # var firstField : int;
 
-        def subClassMethod(a : int, b : string): int {
+        def subClassMethod(a : string): int {
                 # var methodVar : boolean;
-                writeln(a);
-                writeln(b);
+                # writeln(a);
+                # writeln(b);
                 writeln("inside method :D");
                 # methodVar = true;
                 return 13;
@@ -132,11 +132,13 @@ class SecClass {
 
 class ThirdClass extends SecClass{
 
-        def thirdClassMethod(size : int) : int {
+        def thirdClassMethod() : int {
                 var index : int;
+                var size : int;
 
-                # index = this.subClassMethod();
-                index = 20;
+                size = 24;
+                index = this.subClassMethod("1");
+                # index = 20;
 
                 writeln("### Inside the thridClassMethod ###");
 

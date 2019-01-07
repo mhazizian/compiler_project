@@ -402,7 +402,7 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(This instance) {
-        // indexed as 0 in variables.
+        currentWriter.println("\taload 0");    
     }
 
     @Override
