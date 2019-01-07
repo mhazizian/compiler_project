@@ -14,7 +14,12 @@ export CLASSPATH=".:/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH"
 java -jar /usr/local/lib/antlr-4.7.1-complete.jar $1.g4
 
 javac *.java
-java mySmoola in.sml
+
+if [ "$2" = "Mohammad" ]; then
+	java mySmoola in2.sml
+else
+	java mySmoola in.sml
+fi
 
 ./clean.sh $1
 
