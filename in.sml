@@ -10,7 +10,11 @@ class Main
                 var boolT : boolean;
                 var classT : SecClass;
 
+                intT = 3;
+                writeln(intT);
+                
                 classT = new SecClass();
+                # boolT = classT.subClassMethod(intT);
 
                 writeln("#### Equality Test ####");
 
@@ -112,8 +116,9 @@ class Main
 class SecClass {
         var firstField : int;
 
-        def subClassMethod(flag : boolean): boolean {
+        def subClassMethod(flag : int): boolean {
                 var methodVar : boolean;
+                writeln("inside method :D");
                 methodVar = true;
                 return methodVar;
         }

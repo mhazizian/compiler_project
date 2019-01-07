@@ -335,8 +335,14 @@ public class VisitorImplCodeGeneration implements Visitor {
         for (int i = args.size() - 1; i >= 0; i--)
             args.get(i).accept(new VisitorImplCodeGeneration());
 
+        String methodArgs = "";
+        for (int i = args.size() - 1; i >= 0; i--)
+            methodArgs += getJasminType(args.get(i).getType());
+
         // System.out.println(instance.getType().toString());
-        currentWriter.println("\tinvokevirtual " + instance.getType().toString() + "/" + methodName.getName() + "(" + "I" + ")" + "I");
+        currentWriter.println("\tinvokevirtual " + instance.getType().toString() +
+                "/" + methodName.getName() + "(" + methodArgs + ")" +
+                getJasminType(methodCall.getType()));
     }
 
     @Override
