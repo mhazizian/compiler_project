@@ -245,23 +245,19 @@ public class VisitorImplCodeGeneration implements Visitor {
             case add:
                 currentWriter.println("\tiadd");
                 break;
+
             case sub:
                 currentWriter.println("\tisub");
                 break;
+
             case mult:
                 currentWriter.println("\timul");
                 break;
+
             case div:
                 currentWriter.println("\tidiv");
                 break;
-            case and:
-                currentWriter.println("\tiand");
-                break;
-            case or:
-                currentWriter.println("\tior");
-                break;
 
-            // @TODO: Is there better approach to implement it?
             case eq:
                 compareStatements("eq", "eq");
                 break;
@@ -276,6 +272,18 @@ public class VisitorImplCodeGeneration implements Visitor {
             
             case gt:
                 compareStatements("gt", "gt");
+                break;
+
+            case and:
+                currentWriter.println("\tiand");
+                break;
+                
+            case or:
+                currentWriter.println("\tior");
+                break;
+
+            case assign:
+                // @TODO Complete assign part
                 break;
 
             default:
@@ -473,6 +481,7 @@ public class VisitorImplCodeGeneration implements Visitor {
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorImplCodeGeneration());
+
         switch (arg.getType().getType()) {
             case intType:
             case stringType:
@@ -482,7 +491,6 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tinvokevirtual java/io/PrintStream/println(" + getJasminType(arg.getType()) + ")V");
                 break;
 
-            case arrayType:
             case userDefinedType:
                 currentWriter.println("\tpop");
                 currentWriter.println("\tldc \"" + arg.getType().getByteCodeRep() + "\"");
@@ -491,6 +499,15 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tinvokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
                 break;
                 
+            case arrayType:
+                // @TODO We should print all the array as Python does
+                currentWriter.println("\tpop");
+                currentWriter.println("\tldc " + ((ArrayType)(arg.getType())).getSize());
+                currentWriter.println("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
+                currentWriter.println("\tswap");
+                currentWriter.println("\tinvokevirtual java/io/PrintStream/println(I)V");
+                
+            break;
         
             default:
                 break;

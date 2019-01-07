@@ -12,65 +12,87 @@ class Main
 
                 classT = new SecClass();
 
-                writeln("### assignTest");
-                stringT = "salam";
-                writeln(stringT);
-
-                intT = 2;
-                writeln(intT);
-
-                writeln("### if Teset");
+                writeln("#### Equality Test ####");
 
                 if(true == true) then
                         writeln("if: eqtest: eq");
                 else
                         writeln("Nothing!");  
 
-                writeln("Between statements");
+                writeln("#### Non-equality Test ####");
 
                 if(true <> false) then
                         writeln("if: neqtest: neq");
                 else
                         writeln("Nothing!");
 
-                writeln("Between statements");
+                writeln("#### Less than Test ####");
 
                 if(0 < 1) then
                         writeln("if: lttest: lt");
                 else
                         writeln("Nothing!");
 
-                writeln("Between statements");
-
                 if(1 < 0) then
                         writeln("Nothing!");
                 else
                         writeln("else: lttest: gt");
 
-                writeln("Between statements");
+                writeln("#### Greater than Test ####");
 
                 if(1 > 0) then
                         writeln("if: gttest: gt");
                 else
                         writeln("Nothing!");
 
-                writeln("Between statements");
-
                 if(0 > 1) then
                         writeln("Nothing!");
                 else
                         writeln("else: gttest: lt");
 
-                if(0 || 1) then
-                        writeln("if: orTest");
+                writeln("#### OR Test ####");
+
+                if(false || true) then
+                        writeln("if: ortest: true");
                 else
                         writeln("Nothing!");
-                if(0 && 1) then
+
+                if(false || false) then
                         writeln("Nothing!");
                 else
-                        writeln("else: andTest");
-                        
-                writeln("### while  and ArrayCall testTest");
+                        writeln("else: ortest: false");
+
+                writeln("#### AND Test ####");
+
+                if(false && true) then
+                        writeln("Nothing!");
+                else
+                        writeln("else: andtest: false");
+
+                if(true && true) then
+                        writeln("if: andtest: true");
+                else
+                        writeln("Nothing!");
+
+                #### Indefinite loop Test ####
+
+                # while (1 > 0)
+                #         writeln("Indefinite Loop!");                        
+
+                writeln("#### Fake loop Test ####");
+
+                while (0 == 1)
+                        writeln("Fake Loop!");                        
+
+
+                writeln("### Mohammad Hosein is Here!");
+                stringT = "salam";
+                writeln(stringT);
+
+                intT = 2;
+                writeln(intT);
+    
+                writeln("### while  and ArrayCall test");
                 i = 0;
                 arrayT = new int[20];
                 while (i < 20) {
@@ -79,6 +101,9 @@ class Main
                         i = i + 1;                      
                 }
 
+                writeln("### Write array test");
+
+                writeln(arrayT);
 
                 return 0;
         }
