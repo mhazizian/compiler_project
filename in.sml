@@ -8,6 +8,7 @@ class Main
                 var intT : int;
                 var boolT : boolean;
                 var classT : SecClass;
+                var classThird : ThirdClass;
 
                 intT = 3;
                 writeln(intT);
@@ -84,8 +85,7 @@ class Main
                 while (0 == 1)
                         writeln("Fake Loop!");                        
 
-
-                writeln("### Mohammad Hosein is Here!");
+                writeln("### Mohammad Hosein is Here :D");
                 stringT = "salam";
                 writeln(stringT);
 
@@ -110,6 +110,9 @@ class Main
                 classT = new SecClass();
                 writeln(classT.subClassMethod());
 
+                classThird = new ThirdClass();
+                intT = classThird.thirdClassMethod(classT.subClassMethod() * 2);
+
                 return 0;
         }
 }
@@ -122,5 +125,26 @@ class SecClass {
                 writeln("inside method :D");
                 # methodVar = true;
                 return 13;
+        }
+}
+
+class ThirdClass extends SecClass{
+
+        def thirdClassMethod(size : int) : int {
+                var index : int;
+
+                # index = this.subClassMethod();
+                index = 20;
+
+                writeln("### Inside the thridClassMethod ###");
+
+                while (index < size) {
+                        writeln(index);
+                        index = index + 1;        
+                }
+
+                writeln("$$$ End of the thridClassMethod $$$");
+
+                return 0;
         }
 }
