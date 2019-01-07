@@ -153,7 +153,7 @@ public class VisitorImplCodeGeneration implements Visitor {
             methodArgs += getJasminType(args.get(i).getType());
         String methodReturnType = getJasminType(returnType);
 
-        currentWriter.println(".method public static " + name.getName() +
+        currentWriter.println(".method public " + name.getName() +
                 "(" + methodArgs + ")" + methodReturnType);
 
         currentWriter.println(".limit stack 32");
@@ -299,7 +299,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tiload " + identifier.getIndex());
                 break;
             
-            // case userDefinedType:
+            case userDefinedType:
             case arrayType:
             case stringType:
                 currentWriter.println("\taload " + identifier.getIndex());
@@ -330,11 +330,13 @@ public class VisitorImplCodeGeneration implements Visitor {
         Expression instance = methodCall.getInstance();
         MethodCallIdentifier methodName = methodCall.getMethodName();
         ArrayList<Expression> args = methodCall.getArgs();
-
+        
         instance.accept(new VisitorImplCodeGeneration());
-        methodName.accept(new VisitorImplCodeGeneration());
-        for (int i = 0; i < args.size(); i++)
+        for (int i = args.size() - 1; i >= 0; i--)
             args.get(i).accept(new VisitorImplCodeGeneration());
+
+        // System.out.println(instance.getType().toString());
+        currentWriter.println("\tinvokevirtual " + instance.getType().toString() + "/" + methodName.getName() + "(" + "I" + ")" + "I");
     }
 
     @Override
