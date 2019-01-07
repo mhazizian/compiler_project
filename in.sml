@@ -57,11 +57,13 @@ class Main
                         writeln("else: gttest: lt");
 
 
-                # i = 0;
-                # writeln("### while Teset");
-                # while (i < 20)
-                #         writeln(i);  
-                #         i = i + 1;                      
+                i = 0;
+                writeln("### while Teset");
+                while (i < 20) {
+                        writeln(i);  
+                        i = i + 1;                      
+                }
+
 
                 return 0;
         }
