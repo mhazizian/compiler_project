@@ -65,7 +65,7 @@ public class VisitorImplCodeGeneration implements Visitor {
     {
         for (int i = 0; i < localVars.size(); i++) {
             localVars.get(i).accept(new VisitorImplCodeGeneration());
-            // @TODO Is it correct to set the identifier index as a variable number
+            // @TODO: Is it correct to set the identifier index as a variable number
             currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
                     " is " + localVars.get(i).getIdentifier().getName() + " " +
                     getJasminType(localVars.get(i).getType()) + " from " +
@@ -80,12 +80,12 @@ public class VisitorImplCodeGeneration implements Visitor {
                 "_" + Integer.toString(statementCounter);
         String scopeEnd = "end_" + Integer.toString(statementCounter++);
 
-        currentWriter.println("\tif_icmp" + condition + operatorEnd);
+        currentWriter.println("\tif_icmp" + condition + " " + operatorEnd);
         currentWriter.println(operatorBegin + ":");
-        currentWriter.println("\ticonst_1");
+        currentWriter.println("\ticonst_0");
         currentWriter.println("\tgoto " + scopeEnd);
         currentWriter.println(operatorEnd + ":");
-        currentWriter.println("\ticonst_0");
+        currentWriter.println("\ticonst_1");
         currentWriter.println(scopeEnd + ":");
     }
 
@@ -210,7 +210,7 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        // @TODO Why these are comment?
+        // @TODO: Why these are comment?
         // Identifier identifier = varDeclaration.getIdentifier();
         // identifier.accept(new VisitorImplCodeGeneration());
     }
@@ -245,30 +245,33 @@ public class VisitorImplCodeGeneration implements Visitor {
             case add:
                 currentWriter.println("\tiadd");
                 break;
+
             case sub:
                 currentWriter.println("\tisub");
                 break;
+
             case mult:
                 currentWriter.println("\timul");
                 break;
+
             case div:
                 currentWriter.println("\tidiv");
                 break;
 
             case eq:
-                compareStatements("eq", "ne ");
+                compareStatements("eq", "eq");
                 break;
 
             case neq:
-                compareStatements("neq", "eq ");
+                compareStatements("neq", "ne");
                 break;
 
             case lt:
-                compareStatements("lt", "gt ");
+                compareStatements("lt", "lt");
                 break;
             
             case gt:
-                compareStatements("gt", "lt ");
+                compareStatements("gt", "gt");
                 break;
 
             case and:
@@ -298,6 +301,7 @@ public class VisitorImplCodeGeneration implements Visitor {
             
             // case userDefinedType:
             case arrayType:
+            case stringType:
                 currentWriter.println("\taload " + identifier.getIndex());
                 break;
                 
@@ -316,7 +320,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         expression.accept(new VisitorImplCodeGeneration());
 
         currentWriter.println("\tpop");
-        // @TODO : should pop even more?
+        // @TODO: should pop even more?
         currentWriter.println("\tbipush " + ((ArrayType)length.
                 getExpression().getType()).getSize());
     }
@@ -359,7 +363,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         value.accept(new VisitorImplCodeGeneration());
         switch (unaryExpression.getUnaryOperator()) {
             case not:
-                // @TODO : find appropriate command for not.
+                // @TODO: find appropriate command for not.
                 currentWriter.println("\tineg");
                 break;
         
@@ -394,12 +398,6 @@ public class VisitorImplCodeGeneration implements Visitor {
         // lValue.accept(new VisitorImplCodeGeneration());
 
         switch (lValue.getType().getType()) {
-            case arrayType:
-                rValue.accept(new VisitorImplCodeGeneration());
-                // @TODO Check the appropriate function in VisitorImpl.java
-                currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
-                break;
-
             case intType:
                 if (lValue instanceof ArrayCall) {
                     visitArrayCallByRefrence((ArrayCall)lValue);
@@ -413,11 +411,13 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case userDefinedType:
+            case arrayType:
+            case stringType:
                 rValue.accept(new VisitorImplCodeGeneration());
                 currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
                 break;
 
-            // @TODO What about the strtingType
+            // @TODO: What about the strtingType
 
             default:
                 break;
@@ -484,6 +484,7 @@ public class VisitorImplCodeGeneration implements Visitor {
     public void visit(Write write) {
         Expression arg = write.getArg();
         arg.accept(new VisitorImplCodeGeneration());
+
         switch (arg.getType().getType()) {
             case intType:
             case stringType:
@@ -493,7 +494,6 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tinvokevirtual java/io/PrintStream/println(" + getJasminType(arg.getType()) + ")V");
                 break;
 
-            case arrayType:
             case userDefinedType:
                 currentWriter.println("\tpop");
                 currentWriter.println("\tldc \"" + arg.getType().getByteCodeRep() + "\"");
@@ -502,6 +502,15 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tinvokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
                 break;
                 
+            case arrayType:
+                // @TODO We should print all the array as Python does
+                currentWriter.println("\tpop");
+                currentWriter.println("\tldc " + ((ArrayType)(arg.getType())).getSize());
+                currentWriter.println("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
+                currentWriter.println("\tswap");
+                currentWriter.println("\tinvokevirtual java/io/PrintStream/println(I)V");
+                
+            break;
         
             default:
                 break;

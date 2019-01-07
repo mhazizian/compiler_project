@@ -1,22 +1,28 @@
 class Main
+
 {
         def main(): int
         {
-                #### Equality Test ####
+                var i : int;
+                var stringT : string;
+                var arrayT : int[];
+                var intT : int;
+
+                writeln("#### Equality Test ####");
 
                 if(true == true) then
                         writeln("if: eqtest: eq");
                 else
                         writeln("Nothing!");  
 
-                #### Non-equality Test ####
+                writeln("#### Non-equality Test ####");
 
                 if(true <> false) then
                         writeln("if: neqtest: neq");
                 else
                         writeln("Nothing!");
 
-                #### Less than Test ####
+                writeln("#### Less than Test ####");
 
                 if(0 < 1) then
                         writeln("if: lttest: lt");
@@ -28,7 +34,7 @@ class Main
                 else
                         writeln("else: lttest: gt");
 
-                #### Greater than Test ####
+                writeln("#### Greater than Test ####");
 
                 if(1 > 0) then
                         writeln("if: gttest: gt");
@@ -40,7 +46,7 @@ class Main
                 else
                         writeln("else: gttest: lt");
 
-                #### OR Test ####
+                writeln("#### OR Test ####");
 
                 if(false || true) then
                         writeln("if: ortest: true");
@@ -52,7 +58,7 @@ class Main
                 else
                         writeln("else: ortest: false");
 
-                #### AND Test ####
+                writeln("#### AND Test ####");
 
                 if(false && true) then
                         writeln("Nothing!");
@@ -69,10 +75,31 @@ class Main
                 # while (1 > 0)
                 #         writeln("Indefinite Loop!");                        
 
-                #### Fake loop Test ####
+                writeln("#### Fake loop Test ####");
 
                 while (0 == 1)
                         writeln("Fake Loop!");                        
+
+
+                writeln("### Mohammad Hosein is Here!");
+                stringT = "salam";
+                writeln(stringT);
+
+                intT = 2;
+                writeln(intT);
+    
+                writeln("### while  and ArrayCall test");
+                i = 0;
+                arrayT = new int[20];
+                while (i < 20) {
+                        arrayT[i] = 2 * i;
+                        writeln(arrayT[i]);  
+                        i = i + 1;                      
+                }
+
+                writeln("### Write array test");
+
+                writeln(arrayT);
 
                 return 0;
         }
