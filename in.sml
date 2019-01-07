@@ -8,6 +8,9 @@ class Main
                 var arrayT : int[];
                 var intT : int;
                 var boolT : boolean;
+                var classT : SecClass;
+
+                classT = new SecClass();
 
                 writeln("### assignTest");
                 stringT = "salam";
@@ -81,11 +84,12 @@ class Main
         }
 }
 
-class SubClass extends Main {
+class SecClass {
         var firstField : int;
 
         def subClassMethod(flag : boolean): boolean {
                 var methodVar : boolean;
+                methodVar = true;
                 return methodVar;
         }
 }

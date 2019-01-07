@@ -341,7 +341,7 @@ public class VisitorImplCodeGeneration implements Visitor {
     @Override
     public void visit(NewClass newClass) {
         Identifier className = newClass.getClassName();
-        
+        currentWriter.println("\tnew " + className.getName());
     }
 
     @Override
