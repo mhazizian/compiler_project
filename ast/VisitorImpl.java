@@ -153,7 +153,7 @@ public class VisitorImpl implements Visitor {
     }
 
     boolean isValidType(String type, String base) {
-        // @TODO Is it correct to check the NoType here?
+        // @TODO: Is it correct to check the NoType here?
         if (!type.equals(base) && !type.equals("NoType")) {
             SymbolTable.isValidAst = false;
             return false;
@@ -201,7 +201,7 @@ public class VisitorImpl implements Visitor {
                 || type.equals("string") || type.equals("NoType"));
     }
 
-    // @TODO Check castability
+    // @TODO: Check castability
     void checkOperandsValidity(String leftType, String rightType, String base,
             BinaryExpression binaryExpression, TypeName typeName)
     {
@@ -758,7 +758,7 @@ public class VisitorImpl implements Visitor {
             SymbolTable.isValidAst = false;
         }
 
-        // @TODO Is it the only case of right-hand-side value?
+        // @TODO: Is it the only case of right-hand-side value?
         if (!lValue.islValue) {
             System.out.println("Line:" + assign.getLineNumber() +
                     ":left side of assignment must be a valid lvalue");
