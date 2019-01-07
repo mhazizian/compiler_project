@@ -371,11 +371,11 @@ public class VisitorImplCodeGeneration implements Visitor {
         ArrayList<Expression> args = methodCall.getArgs();
         
         instance.accept(new VisitorImplCodeGeneration());
-        for (int i = args.size() - 1; i >= 0; i--)
+        for (int i = 0; i < args.size(); i++)
             args.get(i).accept(new VisitorImplCodeGeneration());
 
         String methodArgs = "";
-        for (int i = args.size() - 1; i >= 0; i--)
+        for (int i = 0; i < args.size(); i++)
             methodArgs += getJasminType(args.get(i).getType());
 
         // System.out.println(instance.getType().toString());
