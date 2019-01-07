@@ -80,12 +80,12 @@ public class VisitorImplCodeGeneration implements Visitor {
                 "_" + Integer.toString(statementCounter);
         String scopeEnd = "end_" + Integer.toString(statementCounter++);
 
-        currentWriter.println("\tif_icmp" + condition + operatorEnd);
+        currentWriter.println("\tif_icmp" + condition + " " + operatorEnd);
         currentWriter.println(operatorBegin + ":");
-        currentWriter.println("\ticonst_1");
+        currentWriter.println("\ticonst_0");
         currentWriter.println("\tgoto " + scopeEnd);
         currentWriter.println(operatorEnd + ":");
-        currentWriter.println("\ticonst_0");
+        currentWriter.println("\ticonst_1");
         currentWriter.println(scopeEnd + ":");
     }
 
@@ -257,19 +257,19 @@ public class VisitorImplCodeGeneration implements Visitor {
 
             // @TODO Is there better approach to implement it?
             case eq:
-                compareStatements("eq", "ne ");
+                compareStatements("eq", "eq");
                 break;
 
             case neq:
-                compareStatements("neq", "eq ");
+                compareStatements("neq", "ne");
                 break;
 
             case lt:
-                compareStatements("lt", "gt ");
+                compareStatements("lt", "lt");
                 break;
             
             case gt:
-                compareStatements("gt", "lt ");
+                compareStatements("gt", "gt");
                 break;
 
             default:
@@ -384,12 +384,6 @@ public class VisitorImplCodeGeneration implements Visitor {
         // lValue.accept(new VisitorImplCodeGeneration());
 
         switch (lValue.getType().getType()) {
-            case arrayType:
-                rValue.accept(new VisitorImplCodeGeneration());
-                // @TODO Check the appropriate function in VisitorImpl.java
-                currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
-                break;
-
             case intType:
                 if (lValue instanceof ArrayCall) {
                     visitArrayCallByRefrence((ArrayCall)lValue);
@@ -403,10 +397,10 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case userDefinedType:
+            case arrayType:
             case stringType:
                 rValue.accept(new VisitorImplCodeGeneration());
                 currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
-                System.out.println("here");
                 break;
 
             // @TODO What about the strtingType

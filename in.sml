@@ -5,6 +5,7 @@ class Main
         {
                 var i : int;
                 var stringT : string;
+                var arrayT : int[];
                 var intT : int;
 
                 writeln("### assignTest");
@@ -57,10 +58,12 @@ class Main
                         writeln("else: gttest: lt");
 
 
+                writeln("### while  and ArrayCall testTest");
                 i = 0;
-                writeln("### while Teset");
+                arrayT = new int[20];
                 while (i < 20) {
-                        writeln(i);  
+                        arrayT[i] = 2 * i;
+                        writeln(arrayT[i]);  
                         i = i + 1;                      
                 }
 
