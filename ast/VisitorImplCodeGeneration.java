@@ -255,7 +255,6 @@ public class VisitorImplCodeGeneration implements Visitor {
                 currentWriter.println("\tidiv");
                 break;
 
-            // @TODO Is there better approach to implement it?
             case eq:
                 compareStatements("eq", "ne ");
                 break;
@@ -270,6 +269,18 @@ public class VisitorImplCodeGeneration implements Visitor {
             
             case gt:
                 compareStatements("gt", "lt ");
+                break;
+
+            case and:
+                currentWriter.println("\tiand");
+                break;
+                
+            case or:
+                currentWriter.println("\tior");
+                break;
+
+            case assign:
+                // @TODO Complete assign part
                 break;
 
             default:

@@ -2,48 +2,77 @@ class Main
 {
         def main(): int
         {
+                #### Equality Test ####
+
                 if(true == true) then
                         writeln("if: eqtest: eq");
                 else
                         writeln("Nothing!");  
 
-                writeln("Between statements");
+                #### Non-equality Test ####
 
                 if(true <> false) then
                         writeln("if: neqtest: neq");
                 else
                         writeln("Nothing!");
 
-                writeln("Between statements");
+                #### Less than Test ####
 
                 if(0 < 1) then
                         writeln("if: lttest: lt");
                 else
                         writeln("Nothing!");
 
-                writeln("Between statements");
-
                 if(1 < 0) then
                         writeln("Nothing!");
                 else
                         writeln("else: lttest: gt");
 
-                writeln("Between statements");
+                #### Greater than Test ####
 
                 if(1 > 0) then
                         writeln("if: gttest: gt");
                 else
                         writeln("Nothing!");
 
-                writeln("Between statements");
-
                 if(0 > 1) then
                         writeln("Nothing!");
                 else
                         writeln("else: gttest: lt");
 
-                while (1 > 0)
-                        writeln("Indefinite Loop!");                        
+                #### OR Test ####
+
+                if(false || true) then
+                        writeln("if: ortest: true");
+                else
+                        writeln("Nothing!");
+
+                if(false || false) then
+                        writeln("Nothing!");
+                else
+                        writeln("else: ortest: false");
+
+                #### AND Test ####
+
+                if(false && true) then
+                        writeln("Nothing!");
+                else
+                        writeln("else: andtest: false");
+
+                if(true && true) then
+                        writeln("if: andtest: true");
+                else
+                        writeln("Nothing!");
+
+                #### Indefinite loop Test ####
+
+                # while (1 > 0)
+                #         writeln("Indefinite Loop!");                        
+
+                #### Fake loop Test ####
+
+                while (0 == 1)
+                        writeln("Fake Loop!");                        
 
                 return 0;
         }
