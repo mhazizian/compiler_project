@@ -768,6 +768,7 @@ public class VisitorImpl implements Visitor {
             SymbolTable.isValidAst = false;
         }
 
+        // @TODO: Shouldn't we handle it in Code Generation? => Get length
         if (lValue.getType().getType() == TypeName.arrayType) {
             ((ArrayType)lValue.getType()).setSize(((IntValue)((NewArray)rValue).
                     getExpression()).getConstant());

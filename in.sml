@@ -1,5 +1,4 @@
 class Main
-
 {
         def main(): int
         {
@@ -12,9 +11,6 @@ class Main
 
                 intT = 3;
                 writeln(intT);
-                
-                classT = new SecClass();
-                # boolT = classT.subClassMethod(intT);
 
                 writeln("#### Equality Test ####");
 
@@ -109,17 +105,22 @@ class Main
 
                 writeln(arrayT);
 
+                writeln("### Method Call Test");
+
+                classT = new SecClass();
+                writeln(classT.subClassMethod());
+
                 return 0;
         }
 }
 
 class SecClass {
-        var firstField : int;
+        # var firstField : int;
 
-        def subClassMethod(flag : int): boolean {
-                var methodVar : boolean;
+        def subClassMethod(): int {
+                # var methodVar : boolean;
                 writeln("inside method :D");
-                methodVar = true;
-                return methodVar;
+                # methodVar = true;
+                return 13;
         }
 }

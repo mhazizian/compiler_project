@@ -110,12 +110,12 @@ public class VisitorImplCodeGeneration implements Visitor {
             if (i != (arraySize - 1))
                 currentWriter.println("\tldc \", \"");
             else
-                currentWriter.println("\tldc \"]\"");
+                break;
 
             print("Ljava/lang/String;");
         }
+        currentWriter.println("\tldc \"]\n\"");
 
-        currentWriter.println("\tldc \"\n\"");
         print("Ljava/lang/String;");
     }
 
@@ -141,15 +141,24 @@ public class VisitorImplCodeGeneration implements Visitor {
     @Override
     public void visit(ClassDeclaration classDeclaration) {
         String className = classDeclaration.getName().getName();
+        String parentName = classDeclaration.getParentName().getName();
+
         try {
             currentWriter = new PrintWriter(className + ".j", "UTF-8");
         } catch (IOException e) {}
 
         currentWriter.println(".class public static " + className);
-        currentWriter.println(".super " + classDeclaration.getParentName().getName());
+        currentWriter.println(".super " + parentName);
 
         ArrayList<VarDeclaration> vars =
             ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
+
+        currentWriter.println(".method public <init>()V\n" +
+                "\taload_0\n" + 
+                "\tinvokespecial " + parentName + "/<init>()V\n" + 
+                "\treturn\n" + 
+            ".end method\n");
+
         ArrayList<MethodDeclaration> methods =
             ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
@@ -378,7 +387,6 @@ public class VisitorImplCodeGeneration implements Visitor {
     @Override
     public void visit(NewArray newArray) {
         Expression expression = newArray.getExpression();
-        IntValue arraySize = ((IntValue) newArray.getExpression());
         
         expression.accept(new VisitorImplCodeGeneration());
         currentWriter.println("\tnewarray int");
@@ -388,6 +396,8 @@ public class VisitorImplCodeGeneration implements Visitor {
     public void visit(NewClass newClass) {
         Identifier className = newClass.getClassName();
         currentWriter.println("\tnew " + className.getName());
+        currentWriter.println("\tdup");
+        currentWriter.println("\tinvokespecial " + className.getName() + "/<init>()V");
     }
 
     @Override
