@@ -283,7 +283,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case assign:
-                // @TODO Complete assign part
+                // @TODO: Complete assign part
                 break;
 
             default:
@@ -500,7 +500,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
                 
             case arrayType:
-                // @TODO We should print all the array as Python does
+                // @TODO: We should print all the array as Python does
                 currentWriter.println("\tpop");
                 currentWriter.println("\tldc " + ((ArrayType)(arg.getType())).getSize());
                 currentWriter.println("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
