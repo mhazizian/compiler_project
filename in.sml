@@ -7,6 +7,7 @@ class Main
                 var stringT : string;
                 var arrayT : int[];
                 var intT : int;
+                var boolT : boolean;
 
                 writeln("### assignTest");
                 stringT = "salam";
@@ -57,7 +58,15 @@ class Main
                 else
                         writeln("else: gttest: lt");
 
-
+                if(0 || 1) then
+                        writeln("if: orTest");
+                else
+                        writeln("Nothing!");
+                if(0 && 1) then
+                        writeln("Nothing!");
+                else
+                        writeln("else: andTest");
+                        
                 writeln("### while  and ArrayCall testTest");
                 i = 0;
                 arrayT = new int[20];

@@ -254,6 +254,12 @@ public class VisitorImplCodeGeneration implements Visitor {
             case div:
                 currentWriter.println("\tidiv");
                 break;
+            case and:
+                currentWriter.println("\tiand");
+                break;
+            case or:
+                currentWriter.println("\tior");
+                break;
 
             // @TODO: Is there better approach to implement it?
             case eq:
