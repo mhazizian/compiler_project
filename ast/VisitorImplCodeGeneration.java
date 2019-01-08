@@ -332,20 +332,28 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(Identifier identifier) {
-        switch (identifier.getType().getType()) {
-            case intType:
-            case booleanType:
-                currentWriter.println("\tiload " + identifier.getIndex());
-                break;
-            
-            case userDefinedType:
-            case arrayType:
-            case stringType:
-                currentWriter.println("\taload " + identifier.getIndex());
-                break;
+        if (identifier.isField) {
+            // assumption: all fields are private
+            currentWriter.println("\taload_0");
+            currentWriter.println("\tgetfield " + identifier.getClassName() +
+                    "/" + identifier.getName() + " "
+                    + getJasminType(identifier.getType()));
+        } else {
+            switch (identifier.getType().getType()) {
+                case intType:
+                case booleanType:
+                    currentWriter.println("\tiload " + identifier.getIndex());
+                    break;
                 
-            default:
-                break;
+                case userDefinedType:
+                case arrayType:
+                case stringType:
+                    currentWriter.println("\taload " + identifier.getIndex());
+                    break;
+                    
+                default:
+                    break;
+            }
         }
     }
 
