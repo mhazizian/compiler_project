@@ -109,9 +109,10 @@ class Main
 
                 classT = new SecClass();
                 writeln(classT.subClassMethod("1"));
-                intT = classT.inc_temp();
-                intT = classT.inc_temp();
-                intT = classT.inc_temp();
+                intT = classT.inc_array_call();
+                intT = classT.inc_array_call();
+                intT = classT.inc_array_call();
+                intT = classT.inc_array_call();
 
                 classThird = new ThirdClass();
                 intT = classThird.thirdClassMethod();
@@ -121,18 +122,18 @@ class Main
 }
 
 class SecClass {
-        var temp : int[];
+        var arrayInc : int[];
 
-        def inc_temp() : int {
-                temp[3] = temp[3] + 1;
-                writeln("## set_temp function ##");
-                writeln(temp[3]);
+        def inc_array_call() : int {
+                arrayInc[3] = arrayInc[3] + 1;
+                writeln("## inc_array_call function ##");
+                writeln(arrayInc[3]);
                 return 1;       
         }
 
         def subClassMethod(a : string): int {
-                temp = new int[10];
-                temp[3] = 17;
+                arrayInc = new int[10];
+                arrayInc[3] = 0;
                 # var methodVar : boolean;
 
                 # temp = 17;
