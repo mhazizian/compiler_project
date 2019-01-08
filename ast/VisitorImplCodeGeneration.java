@@ -153,12 +153,6 @@ public class VisitorImplCodeGeneration implements Visitor {
         ArrayList<VarDeclaration> vars =
             ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
 
-        currentWriter.println(".method public <init>()V\n" +
-                "\taload_0\n" + 
-                "\tinvokespecial " + parentName + "/<init>()V\n" + 
-                "\treturn\n" + 
-            ".end method\n");
-
         ArrayList<MethodDeclaration> methods =
             ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
@@ -169,6 +163,12 @@ public class VisitorImplCodeGeneration implements Visitor {
                     vars.get(i).getIdentifier().getName() + " " +
                     getJasminType(vars.get(i).getType()));
         }
+
+        currentWriter.println(".method public <init>()V\n" +
+                "\taload_0\n" + 
+                "\tinvokespecial " + parentName + "/<init>()V\n" + 
+                "\treturn\n" + 
+                ".end method\n");
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorImplCodeGeneration());

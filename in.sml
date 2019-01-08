@@ -118,7 +118,7 @@ class Main
 }
 
 class SecClass {
-        # var firstField : int;
+        var firstField : int;
 
         def subClassMethod(a : string): int {
                 # var methodVar : boolean;
