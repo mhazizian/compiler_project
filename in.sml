@@ -113,14 +113,14 @@ class Main
                 intT = classT.inc_array_call();
                 intT = classT.inc_array_call();
 
-                intT = classT.inc_int_field();
-                intT = classT.inc_int_field();
-                intT = classT.inc_int_field();
-
-
 
                 classThird = new ThirdClass();
                 intT = classThird.thirdClassMethod();
+
+                intT = classThird.inc_int_field();
+                intT = classThird.inc_int_field();
+                intT = classThird.inc_int_field();
+
 
                 return 0;
         }
@@ -134,13 +134,6 @@ class SecClass {
                 arrayInc[3] = arrayInc[3] + 1;
                 writeln("## inc_array_call function ##");
                 writeln(arrayInc[3]);
-                return 1;       
-        }
-
-        def inc_int_field() : int {
-                intInc = intInc + 1;
-                writeln("## inc_int_field function ##");
-                writeln(intInc);
                 return 1;       
         }
 
@@ -168,6 +161,8 @@ class ThirdClass extends SecClass{
                 var index : int;
                 var size : int;
 
+                intInc = 17;
+
                 size = 24;
                 index = this.subClassMethod("1");
                 # index = 20;
@@ -183,4 +178,12 @@ class ThirdClass extends SecClass{
 
                 return 0;
         }
+
+        def inc_int_field() : int {
+                intInc = intInc + 1;
+                writeln("## inc_int_field function ##");
+                writeln(intInc);
+                return 1;       
+        }
 }
+
