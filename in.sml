@@ -9,6 +9,7 @@ class Main
                 var boolT : boolean;
                 var classT : SecClass;
                 var classThird : ThirdClass;
+                var classFourh : FourthClass;
 
                 intT = 3;
                 writeln(intT);
@@ -121,6 +122,8 @@ class Main
                 intT = classThird.inc_int_field();
                 intT = classThird.inc_int_field();
 
+                classFourh = new FourthClass();
+                intT = classFourh.f1();
 
                 return 0;
         }
@@ -187,3 +190,21 @@ class ThirdClass extends SecClass{
         }
 }
 
+class FourthClass  {
+        def f1() : int {
+                var a : int;
+                var temp : int;
+                a = 1;
+                writeln(a);
+                temp = this.f2();
+                writeln(a);
+                return 0;
+        }
+
+        def f2() : int {
+                var a : int;
+                a = 17;
+                writeln(a);
+                return 0;
+        }
+}

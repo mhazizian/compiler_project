@@ -74,6 +74,7 @@ public class VisitorImpl implements Visitor {
                 SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
                 ((SymbolTableVariableItem)item).isField = true;
                 ((SymbolTableVariableItem)item).setClassName(classDeclaration.getName().getName());
+                VisitorImpl.ItemDecIndex -= 1;
                 try {
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
@@ -471,6 +472,8 @@ public class VisitorImpl implements Visitor {
         ArrayList<VarDeclaration> localVars =
             methodDeclaration.getLocalVars();
         ArrayList<Statement> body = methodDeclaration.getBody();
+        
+        VisitorImpl.ItemDecIndex = 1;
 
         for (int i = 0; i < args.size(); i++) {
             try {
