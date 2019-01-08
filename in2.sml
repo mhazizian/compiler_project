@@ -1,9 +1,5 @@
 # Defult value for primitives
-# String as an argument
-# Class field declaration
 # new class().method() in argument passing
-# Same name of two local variables in the same class
-# Boolean argument passing failed
 
 class Test
 {
@@ -11,22 +7,26 @@ class Test
         {
                 var expect : Expect;
                 var result : boolean;
+                var tempResult : boolean;
 
                 var babyTest : BabyTest;
                 var babyTestOut : int;
 
-                # var unaryOperatorTest : UnaryOperatorTest; 
+                var unaryOperatorTest : UnaryOperatorTest; 
 
                 expect = new Expect();
                 
                 babyTest = new BabyTest();
                 babyTestOut = babyTest.test();
 
-                writeln("BabyTest (variable) :");
-                result = expect.equalInt(babyTestOut, 0);
+                result = expect.equalInt(babyTestOut, 0, "BabyTest (variable):");
 
-                # writeln("BabyTest (new class) :");
-                # result = expect.equalInt(new BabyTest().test(), 0);
+                result = result && expect.equalInt(new BabyTest().test(), 0, "BabyTest (new class):");
+
+                unaryOperatorTest = new UnaryOperatorTest();
+                tempResult = unaryOperatorTest.test();
+                tempResult = tempResult && expect.equalBool(tempResult, true, "Unary Opeartors Test :");
+                result = tempResult && result;
 
                 return 0;
         }
@@ -34,41 +34,45 @@ class Test
 
 class Expect
 {        
-        def equalInt(output : int, expected : int) : boolean
+        def equalInt(output : int, expected : int, message : string) : boolean
         {
                 var result : boolean;
 
+                writeln(message);
+
                 if (expected == output) then
                 {
-                        writeln("       ###### Passed. ######");
+                        writeln("\t###### Passed. ######");
                         result = true;
                 }
                 else
                 {
-                        writeln("       $$$$$$ Failed! $$$$$$");
+                        writeln("\t$$$$$$ Failed! $$$$$$");
                         result = false;
                 }
                 writeln("");
                 return result;
         }
 
-        # def equalBool(expected : boolean, output : boolean) : boolean
-        # {
-        #         var result : boolean;
+        def equalBool(expected : boolean, output : boolean, message : string) : boolean
+        {
+                var result : boolean;
 
-        #         if (expected == output) then
-        #         {
-        #                 writeln("       ###### Passed. ######");
-        #                 result = true;
-        #         }
-        #         else
-        #         {
-        #                 writeln("       $$$$$$ Failed! $$$$$$");
-        #                 result = false;
-        #         }
-        #         writeln("");
-        #         return result;
-        # }
+                writeln(message);
+
+                if (expected == output) then
+                {
+                        writeln("\t###### Passed. ######");
+                        result = true;
+                }
+                else
+                {
+                        writeln("\t$$$$$$ Failed! $$$$$$");
+                        result = false;
+                }
+                writeln("");
+                return result;
+        }
 }
 
 class BabyTest
@@ -90,13 +94,20 @@ class UnaryOperatorTest
                 var resultInt : int;
 
                 expect = new Expect();
+                
+                writeln("Unary Operator Test :\n");
 
-                # resultBool = this.notTest(true);
-                # expect.equalBool(resultBool, false);
+                resultBool = this.notTest(true);
+                result = expect.equalBool(resultBool, false, "\tNotTest :");
 
                 resultBool = this.notTest(false);
+                result = result && expect.equalBool(resultBool, true, "\tNotTest :");
+
                 resultInt = this.minusTest(1);
+                result = result && expect.equalInt(resultInt, -1, "\tMinusTest :");
+
                 resultInt = this.minusTest(0);
+                result = result && expect.equalInt(resultInt, 0, "\tMinusTest :");
 
                 return result;
         }
