@@ -225,7 +225,7 @@ public class VisitorImpl implements Visitor {
             BinaryExpression binaryExpression, TypeName typeName)
     {
         BinaryOperator operator = binaryExpression.getBinaryOperator();
-        if ((!leftType.equals("int") && !leftType.equals("bool")) || (!rightType.equals("int") && !rightType.equals("bool")))
+        if (((!leftType.equals("int") && !leftType.equals("bool")) || (!rightType.equals("int") && !rightType.equals("bool"))))
         {
             System.out.println("Line:" + binaryExpression.getLineNumber() +
                     ":unsupported operand type for " + operator);
@@ -722,7 +722,7 @@ public class VisitorImpl implements Visitor {
         
         String type = getType(value);
 
-        if (unaryExpression.getUnaryOperator() == UnaryOperator.not && isValidType(type, "bool"))
+        if (unaryExpression.getUnaryOperator() == UnaryOperator.not && (type.equals("bool") || type.equals("int")))
             unaryExpression.setType(new BooleanType());
 
         else if (unaryExpression.getUnaryOperator() == UnaryOperator.minus && isValidType(type, "int"))

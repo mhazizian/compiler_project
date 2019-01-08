@@ -16,6 +16,22 @@ class Main
 
                 writeln("#### Equality Test ####");
 
+                if (!false) then {
+                       writeln("not, test 1 , pass"); 
+                }
+
+                if (!0) then {
+                       writeln("not, test 2 , pass"); 
+                }
+
+                if (!true) then {} else {
+                       writeln("not, test 3 , pass"); 
+                }
+
+                if (!(2 + 3 - 5 + 17)) then {} else {
+                       writeln("not, test 4 , pass"); 
+                }
+
                 if(true == true) then
                         writeln("if: eqtest: eq");
                 else
