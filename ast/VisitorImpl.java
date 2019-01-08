@@ -72,6 +72,8 @@ public class VisitorImpl implements Visitor {
             // add subItems to SymbolTableItem and ClassSymbolTable:
             for (int i = 0; i < vars.size(); i++) {
                 SymbolTableItem item = this.createVarDecSymbolItem(vars.get(i));
+                ((SymbolTableVariableItem)item).isField = true;
+                ((SymbolTableVariableItem)item).setClassName(classDeclaration.getName().getName());
                 try {
                     currentClass.put(item);
                 } catch (ItemAlreadyExistsException error) {
@@ -598,6 +600,8 @@ public class VisitorImpl implements Visitor {
             if (item.getItemType() == SymbolTableItemType.variableType) {
                 identifier.setType(((SymbolTableVariableItem)item).getType());
                 identifier.setIndex(((SymbolTableVariableItem)item).getIndex());
+                identifier.isField = ((SymbolTableVariableItem)item).isField;
+                identifier.setClassName(((SymbolTableVariableItem)item).getClassName());
             }
 
             if (item.getItemType() == SymbolTableItemType.NoType) 

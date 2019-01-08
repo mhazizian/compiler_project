@@ -5,10 +5,13 @@ import ast.Visitor;
 public class Identifier extends Expression {
     private String name;
     private int index;
+    public boolean isField;
+    private String className;
 
     public Identifier(String name) {
         this.name = name;
         this.islValue = true;
+        this.isField = false;
     }
 
     public Identifier(String name, int lineNumber) {
@@ -23,6 +26,14 @@ public class Identifier extends Expression {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String name) {
+        this.className = name;
     }
 
     public void setIndex(int index) {
