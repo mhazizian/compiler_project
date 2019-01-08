@@ -112,7 +112,12 @@ class Main
                 intT = classT.inc_array_call();
                 intT = classT.inc_array_call();
                 intT = classT.inc_array_call();
-                intT = classT.inc_array_call();
+
+                intT = classT.inc_int_field();
+                intT = classT.inc_int_field();
+                intT = classT.inc_int_field();
+
+
 
                 classThird = new ThirdClass();
                 intT = classThird.thirdClassMethod();
@@ -123,6 +128,7 @@ class Main
 
 class SecClass {
         var arrayInc : int[];
+        var intInc : int;
 
         def inc_array_call() : int {
                 arrayInc[3] = arrayInc[3] + 1;
@@ -131,9 +137,18 @@ class SecClass {
                 return 1;       
         }
 
+        def inc_int_field() : int {
+                intInc = intInc + 1;
+                writeln("## inc_int_field function ##");
+                writeln(intInc);
+                return 1;       
+        }
+
         def subClassMethod(a : string): int {
                 arrayInc = new int[10];
                 arrayInc[3] = 0;
+
+                intInc = 17;
                 # var methodVar : boolean;
 
                 # temp = 17;
