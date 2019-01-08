@@ -452,29 +452,38 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         // lValue associated value shoul not be pushed to stack:
         // lValue.accept(new VisitorImplCodeGeneration());
+        if (lValue instanceof ArrayCall) {
 
-        switch (lValue.getType().getType()) {
-            case intType:
-                if (lValue instanceof ArrayCall) {
-                    visitArrayCallByRefrence((ArrayCall)lValue);
+            visitArrayCallByRefrence((ArrayCall)lValue);
+            rValue.accept(new VisitorImplCodeGeneration());
+            currentWriter.println("\tiastore");
+
+        } else if (lValue instanceof Identifier && ((Identifier)lValue).isField) {
+            
+            currentWriter.println("\taload_0");
+            rValue.accept(new VisitorImplCodeGeneration());
+            currentWriter.println("\tputfield " + ((Identifier)lValue).getClassName() +
+                    "/" + ((Identifier)lValue).getName() + " "
+                    + getJasminType(((Identifier)lValue).getType()));
+
+        } else {
+            switch (lValue.getType().getType()) {
+                case intType:
+                case booleanType:
                     rValue.accept(new VisitorImplCodeGeneration());
-                    currentWriter.println("\tiastore");
+                    currentWriter.println("\tistore " + ((Identifier)lValue).getIndex());
                     break;
-                }
-            case booleanType:
-                rValue.accept(new VisitorImplCodeGeneration());
-                currentWriter.println("\tistore " + ((Identifier)lValue).getIndex());
-                break;
-
-            case userDefinedType:
-            case arrayType:
-            case stringType:
-                rValue.accept(new VisitorImplCodeGeneration());
-                currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
-                break;
-
-            default:
-                break;
+    
+                case userDefinedType:
+                case arrayType:
+                case stringType:
+                    rValue.accept(new VisitorImplCodeGeneration());
+                    currentWriter.println("\tastore " + ((Identifier)lValue).getIndex());
+                    break;
+    
+                default:
+                    break;
+            }
         }
     }
 
