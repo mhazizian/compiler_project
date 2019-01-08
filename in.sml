@@ -109,6 +109,9 @@ class Main
 
                 classT = new SecClass();
                 writeln(classT.subClassMethod("1"));
+                intT = classT.inc_temp();
+                intT = classT.inc_temp();
+                intT = classT.inc_temp();
 
                 classThird = new ThirdClass();
                 intT = classThird.thirdClassMethod();
@@ -118,10 +121,23 @@ class Main
 }
 
 class SecClass {
-        var firstField : int;
+        var temp : int[];
+
+        def inc_temp() : int {
+                temp[3] = temp[3] + 1;
+                writeln("## set_temp function ##");
+                writeln(temp[3]);
+                return 1;       
+        }
 
         def subClassMethod(a : string): int {
+                temp = new int[10];
+                temp[3] = 17;
                 # var methodVar : boolean;
+
+                # temp = 17;
+                # writeln(temp);
+
                 # writeln(a);
                 # writeln(b);
                 writeln("inside method :D");
