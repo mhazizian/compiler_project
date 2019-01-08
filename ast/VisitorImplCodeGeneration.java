@@ -419,8 +419,20 @@ public class VisitorImplCodeGeneration implements Visitor {
         value.accept(new VisitorImplCodeGeneration());
         switch (unaryExpression.getUnaryOperator()) {
             case not:
+                String scopeEnd = "begin_notUnary_" + Integer.toString(statementCounter);
+                String statementEnd = "end_notUnary_" + Integer.toString(statementCounter++);
+    
+                currentWriter.println("\tifeq " + scopeEnd);
+                currentWriter.println("\ticonst_0");
+                currentWriter.println("\tgoto " + statementEnd);
+        
+                currentWriter.println(scopeEnd + ":");
+                currentWriter.println("\ticonst_1");
+
+                currentWriter.println(statementEnd + ":");
+    
                 // @TODO: find appropriate command for not.
-                currentWriter.println("\tineg");
+                // currentWriter.println("\tineg");
                 break;
         
             case minus:
@@ -459,7 +471,7 @@ public class VisitorImplCodeGeneration implements Visitor {
             currentWriter.println("\tiastore");
 
         } else if (lValue instanceof Identifier && ((Identifier)lValue).isField) {
-            
+
             currentWriter.println("\taload_0");
             rValue.accept(new VisitorImplCodeGeneration());
             currentWriter.println("\tputfield " + ((Identifier)lValue).getClassName() +
