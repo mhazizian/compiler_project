@@ -12,7 +12,7 @@ import ast.node.expression.Value.IntValue;
 import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 import ast.Type.ArrayType.*;
-
+import ast.Type.PrimitiveType.IntType;
 import ast.Type.*;
 import ast.Type.UserDefinedType.UserDefinedType;
 
@@ -117,6 +117,42 @@ public class VisitorImplCodeGeneration implements Visitor {
         print("Ljava/lang/String;");
     }
 
+    void createDefaultConstructor(ClassDeclaration classDeclaration) {
+        String parentName = classDeclaration.getParentName().getName();
+
+        ArrayList<VarDeclaration> vars =
+                ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
+
+
+        currentWriter.println(".method public <init>()V");
+        currentWriter.println(".limit stack 32");
+        currentWriter.println("\taload_0");
+        currentWriter.println("\tinvokespecial " + parentName + "/<init>()V");
+        for (int i = 0; i < vars.size(); i++) {
+            switch (vars.get(i).getType().getType()) {
+                case intType:
+                case booleanType:
+                    currentWriter.println("\taload_0");
+                    currentWriter.println("\ticonst_0");
+                    currentWriter.println("\tputfield " + vars.get(i).getIdentifier().getClassName() +
+                            "/" + vars.get(i).getIdentifier().getName() + " "
+                            + getJasminType(vars.get(i).getIdentifier().getType()));
+                    break;
+                case stringType:
+                    currentWriter.println("\taload_0");
+                    currentWriter.println("\tldc \"\"");
+                    currentWriter.println("\tputfield " + vars.get(i).getIdentifier().getClassName() +
+                            "/" + vars.get(i).getIdentifier().getName() + " "
+                            + getJasminType(vars.get(i).getIdentifier().getType()));
+
+                default:
+                    break;
+            }
+        }
+        currentWriter.println("\treturn");
+        currentWriter.println(".end method");
+    }
+
     public void wirteConstructor(String parentName) {
         currentWriter.println(".method public <init>()V\n" +
                 "\taload_0\n" + 
@@ -216,8 +252,8 @@ public class VisitorImplCodeGeneration implements Visitor {
                     vars.get(i).getIdentifier().getName() + " " +
                     getJasminType(vars.get(i).getType()));
         }
-
-        wirteConstructor(parentName);
+        
+        createDefaultConstructor(classDeclaration);
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorImplCodeGeneration());
@@ -232,6 +268,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         Identifier name = methodDeclaration.getName();
         ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
         ArrayList<Statement> body = methodDeclaration.getBody();
+        ArrayList<VarDeclaration> localVars = methodDeclaration.getLocalVars();
 
         String scopeBegin = "begin_" + name.getName();
         String scopeEnd = "end_" + name.getName();
@@ -253,6 +290,22 @@ public class VisitorImplCodeGeneration implements Visitor {
         visitLocalVariables(methodDeclaration.getLocalVars(), scopeBegin, scopeEnd);
 
         currentWriter.println(scopeBegin + ":");
+
+        for (int i = 0; i < localVars.size(); i++) {
+            switch (localVars.get(i).getType().getType()) {
+                case intType:
+                case booleanType:
+                    currentWriter.println("iconst_0");
+                    currentWriter.println("istore " + localVars.get(i).getIdentifier().getIndex());
+                    break;
+                case stringType:
+                    currentWriter.println("ldc \"\"");
+                    currentWriter.println("astore " + localVars.get(i).getIdentifier().getIndex());
+
+                default:
+                    break;
+            }
+        }
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorImplCodeGeneration());

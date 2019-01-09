@@ -10,6 +10,13 @@ class Main
                 var classT : SecClass;
                 var classThird : ThirdClass;
                 var classFourh : FourthClass;
+                var initT_s : string;
+                var initT_i : int;
+                var initT_z : boolean;
+
+                writeln(initT_s);
+                writeln(initT_i);
+                writeln(initT_z);
 
                 intT = 3;
                 writeln(intT);
