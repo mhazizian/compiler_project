@@ -79,12 +79,6 @@ public class VisitorImplIter implements Visitor {
     }
 
     @Override
-    public void visit(MainMethodDeclaration methodDeclaration) {
-        methodDeclaration.accept_parent(new VisitorImpl());
-    }
-
-
-    @Override
     public void visit(VarDeclaration varDeclaration) {
         System.out.println(varDeclaration.toString());
 

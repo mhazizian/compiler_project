@@ -1,7 +1,6 @@
 package ast;
 
 import java.io.PrintWriter;
-import java.rmi.UnexpectedException;
 import java.util.*;
 import java.io.IOException;
 
@@ -16,7 +15,7 @@ import ast.Type.ArrayType.*;
 import ast.Type.PrimitiveType.IntType;
 import ast.Type.*;
 import ast.Type.UserDefinedType.UserDefinedType;
-import ast.*;
+
 public class VisitorImplCodeGeneration implements Visitor {
     public static PrintWriter currentWriter;
     public static int statementCounter = 0;
@@ -154,6 +153,57 @@ public class VisitorImplCodeGeneration implements Visitor {
         currentWriter.println(".end method");
     }
 
+    public void wirteConstructor(String parentName) {
+        currentWriter.println(".method public <init>()V\n" +
+                "\taload_0\n" + 
+                "\tinvokespecial " + parentName + "/<init>()V\n" + 
+                "\treturn\n" + 
+                ".end method\n");
+    }
+
+    public void createJavaMain(String mainClassName) {
+        try {
+            currentWriter = new PrintWriter("JavaMain.j", "UTF-8");
+        } catch (IOException e) {}
+
+        currentWriter.println(".class public JavaMain\n" + 
+                ".super java/lang/Object\n\n");
+                
+        wirteConstructor("java/lang/Object");
+
+        currentWriter.println(".method public static main([Ljava/lang/String;)V\n" +
+                ".limit stack 32\n" +
+                ".limit locals 32\n" + 
+                "new " + mainClassName + "\n" +
+                "dup\n" +
+                "invokespecial " + mainClassName + "/<init>()V\n" +
+                "\tinvokevirtual " + mainClassName + "/main()I\n" +
+                "\treturn\n" +
+                ".end method\n");
+
+        currentWriter.close();
+    }
+
+    public void createObjectClass() {
+        try {
+            currentWriter = new PrintWriter("Object.j", "UTF-8");
+        } catch (IOException e) {}
+
+        currentWriter.println(".class public Object\n" + 
+                ".super java/lang/Object\n");
+                
+                wirteConstructor("java/lang/Object");
+        
+                currentWriter.println(".method public toString()Ljava/lang/String;\n" + 
+                        ".limit locals 32\n" + 
+                        ".limit stack 32\n" + 
+                        "\tldc \"Object\"\n" + 
+                        "\tareturn\n" + 
+                        ".end method\n");
+
+        currentWriter.close();
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -164,13 +214,18 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(Program program) {
-        ArrayList<ClassDeclaration> classes =
-            ((ArrayList<ClassDeclaration>)program.getClasses());
+       
+        ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)program.getClasses());
         ClassDeclaration mainClass = program.getMainClass();
+        
+        createObjectClass();
+        
         for (int j = 0; j < classes.size(); j++)
             classes.get(j).accept(new VisitorImplCodeGeneration());
 
         mainClass.accept(new VisitorImplCodeGeneration());
+
+        createJavaMain(mainClass.getName().getName());
     }
 
     @Override
@@ -213,6 +268,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         Identifier name = methodDeclaration.getName();
         ArrayList<VarDeclaration> args = methodDeclaration.getArgs();
         ArrayList<Statement> body = methodDeclaration.getBody();
+        ArrayList<VarDeclaration> localVars = methodDeclaration.getLocalVars();
 
         String scopeBegin = "begin_" + name.getName();
         String scopeEnd = "end_" + name.getName();
@@ -225,38 +281,6 @@ public class VisitorImplCodeGeneration implements Visitor {
         currentWriter.println(".method public " + name.getName() +
                 "(" + methodArgs + ")" + methodReturnType);
 
-        currentWriter.println(".limit stack 32");
-        currentWriter.println(".limit locals 32");
-
-        // Arguments
-        visitLocalVariables(methodDeclaration.getArgs(), scopeBegin, scopeEnd);
-        // Local Variables
-        visitLocalVariables(methodDeclaration.getLocalVars(), scopeBegin, scopeEnd);
-
-        currentWriter.println(scopeBegin + ":");
-
-        for (int i = 0; i < body.size(); i++)
-            body.get(i).accept(new VisitorImplCodeGeneration());
-
-        returnValue.accept(new VisitorImplCodeGeneration());
-
-        setReturnType(returnType);
-
-        currentWriter.println(scopeEnd + ":");
-        currentWriter.println(".end method");
-    }
-
-    @Override
-    public void visit(MainMethodDeclaration methodDeclaration) {
-        Expression returnValue = methodDeclaration.getReturnValue();
-        Identifier name = methodDeclaration.getName();
-        ArrayList<Statement> body = methodDeclaration.getBody();
-        ArrayList<VarDeclaration> localVars = methodDeclaration.getLocalVars();
-
-        String scopeBegin = "begin_" + name.getName();
-        String scopeEnd = "end_" + name.getName();
-
-        currentWriter.println(".method public static main([Ljava/lang/String;)V");
         currentWriter.println(".limit stack 32");
         currentWriter.println(".limit locals 32");
 
@@ -288,8 +312,8 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         returnValue.accept(new VisitorImplCodeGeneration());
 
-        // currentWriter.println("pop");
-        currentWriter.println("return");
+        setReturnType(returnType);
+
         currentWriter.println(scopeEnd + ":");
         currentWriter.println(".end method");
     }
