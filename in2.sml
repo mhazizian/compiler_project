@@ -1,8 +1,11 @@
 # Defult value for primitives
 # Printing int array as a field failed
+# It doesn't make the .j files when we have array in the assignment
 # Returning array failed
 # String and other classes equality
-# Can not access to parent's field with "this" keyword
+# Can not access to the parent's field with "this" keyword
+# Can not access to the child methods with the Child variable which is assigned to the Parent class
+# Can not assign the variable of child class to its parent class
 # Crashed on inheritance loop
 
 # @TODO: Check string returning
@@ -25,6 +28,8 @@ class Test
                 var methodCallTest : MethodCallTest;
                 
                 var returnedClass : TestReturnedClass;
+
+                var testInheritedClasses : TestInheritedClasses;
 
                 expect = new Expect();
                 
@@ -57,7 +62,12 @@ class Test
                 returnedClass = new TestReturnedClass();
                 tempResult = returnedClass.test();
                 tempResult = tempResult && expect.equalBool(tempResult, true, "Class returning Test :");
-                result = tempResult && result;                
+                result = tempResult && result;
+
+                testInheritedClasses = new TestInheritedClasses();
+                tempResult = testInheritedClasses.test();
+                tempResult = tempResult && expect.equalBool(tempResult, true, "Inherited Classes Test :");
+                result = tempResult && result;
 
                 result = expect.equalBool(result, true, "Test :");
 
@@ -563,8 +573,143 @@ class TestReturnedClass
         }
 }
 
+class Dummy
+{
 
-# class ThirdClass extends SecondClass
-# {
+}
 
-# }
+class TestInheritedClasses
+{
+        var secondClass : SecondClass;
+        var firstClass : FirstClass;
+
+        var expect : Expect;
+
+        def test() : boolean
+        {
+                var result : boolean;
+                var tempBool : boolean;
+
+                var intField : int;
+                var stringField : string;
+                var boolField : boolean;
+                var arrayField : int[];
+                var dummyField : Dummy;
+
+                expect = new Expect();
+                firstClass = new SecondClass();
+
+                writeln("Inherited Classes:");
+
+                tempBool = firstClass.setFirstInt(13);
+                result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
+
+                tempBool = firstClass.setFirstBoolean(true);
+                result = expect.equalBool(firstClass.getFirstBoolean(), true, "\tboolean field:");
+
+                # tempBool = firstClass.setFirstInt(13);
+                # result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
+
+                # tempBool = firstClass.setFirstInt(13);
+                # result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
+
+                # tempBool = firstClass.setFirstInt(13);
+                # result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
+
+                return result;
+        }
+}
+
+class FirstClass
+{
+        var intField : int;
+        var stringField : string;
+        var boolField : boolean;
+        var arrayField : int[];
+        var dummyField : Dummy;
+
+        def setFirstInt(value : int) : boolean
+        {
+                intField = value;
+                return true;
+        }
+
+        def setFirstBoolean(value : boolean) : boolean
+        {
+                boolField = value;
+                return true;
+        }
+
+        def setFirstString(value : string) : boolean
+        {
+                stringField = value;
+                return true;
+        }
+
+        def setFirstArray(value : int[]) : boolean
+        {
+                # arrayField = value;
+                return true;
+        }
+
+        def setFirstDummy(value : Dummy) : boolean
+        {
+                dummyField = value;
+                return true;
+        }
+
+        # @TODO: Delete fallowing methods
+
+                def getFirstInt() : int
+        {
+                return intField;
+        }
+
+        def getFirstBoolean() : boolean
+        {
+                return boolField;
+        }
+
+        def getFirstString() : string
+        {
+                return stringField;
+        }
+
+        def getFirstArray() : int[]
+        {
+                return arrayField;
+        }
+
+        def getFirstDummy() : Dummy
+        {
+                return dummyField;
+        }        
+}
+
+class SecondClass extends FirstClass
+{
+        # def getFirstInt() : int
+        # {
+        #         return intField;
+        # }
+
+        # def getFirstBoolean() : boolean
+        # {
+        #         return boolField;
+        # }
+
+        # def getFirstString() : string
+        # {
+        #         return stringField;
+        # }
+
+        # def getFirstArray() : int[]
+        # {
+        #         return arrayField;
+        # }
+
+        # def getFirstDummy() : Dummy
+        # {
+        #         return dummyField;
+        # }        
+} 
