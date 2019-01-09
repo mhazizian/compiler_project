@@ -118,6 +118,42 @@ public class VisitorImplCodeGeneration implements Visitor {
         print("Ljava/lang/String;");
     }
 
+    void createDefaultConstructor(ClassDeclaration classDeclaration) {
+        String parentName = classDeclaration.getParentName().getName();
+
+        ArrayList<VarDeclaration> vars =
+                ((ArrayList<VarDeclaration>)classDeclaration.getVarDeclarations());
+
+
+        currentWriter.println(".method public <init>()V");
+        currentWriter.println(".limit stack 32");
+        currentWriter.println("\taload_0");
+        currentWriter.println("\tinvokespecial " + parentName + "/<init>()V");
+        for (int i = 0; i < vars.size(); i++) {
+            switch (vars.get(i).getType().getType()) {
+                case intType:
+                case booleanType:
+                    currentWriter.println("\taload_0");
+                    currentWriter.println("\ticonst_0");
+                    currentWriter.println("\tputfield " + vars.get(i).getIdentifier().getClassName() +
+                            "/" + vars.get(i).getIdentifier().getName() + " "
+                            + getJasminType(vars.get(i).getIdentifier().getType()));
+                    break;
+                case stringType:
+                    currentWriter.println("\taload_0");
+                    currentWriter.println("\tldc \"\"");
+                    currentWriter.println("\tputfield " + vars.get(i).getIdentifier().getClassName() +
+                            "/" + vars.get(i).getIdentifier().getName() + " "
+                            + getJasminType(vars.get(i).getIdentifier().getType()));
+
+                default:
+                    break;
+            }
+        }
+        currentWriter.println("\treturn");
+        currentWriter.println(".end method");
+    }
+
 // ##############################################################################
 // ##############################################################################
 // #############################                     ############################
@@ -161,12 +197,8 @@ public class VisitorImplCodeGeneration implements Visitor {
                     vars.get(i).getIdentifier().getName() + " " +
                     getJasminType(vars.get(i).getType()));
         }
-
-        currentWriter.println(".method public <init>()V\n" +
-                "\taload_0\n" + 
-                "\tinvokespecial " + parentName + "/<init>()V\n" + 
-                "\treturn\n" + 
-                ".end method\n");
+        
+        createDefaultConstructor(classDeclaration);
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorImplCodeGeneration());
