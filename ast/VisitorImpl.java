@@ -585,6 +585,9 @@ public class VisitorImpl implements Visitor {
         else if (isLogical(operator))
             checkOperandsValidityLogical(leftType, rightType,
                     binaryExpression, TypeName.booleanType);
+        else if (operator == operator.assign)
+            checkOperandsValidity(leftType, rightType, left.getType().toString(),
+                    binaryExpression, left.getType().getType());
         else
             checkOperandsValidity(leftType, rightType, left.getType().toString(),
                     binaryExpression, TypeName.booleanType);
@@ -774,7 +777,9 @@ public class VisitorImpl implements Visitor {
         if (lValue.getType().getType() == TypeName.arrayType) {
             ((ArrayType)lValue.getType()).setSize(((IntValue)((NewArray)rValue).
                     getExpression()).getConstant());
+
         }
+        // assign.setType(lValue.getType());
     }
 
     @Override
@@ -842,4 +847,7 @@ public class VisitorImpl implements Visitor {
         }
         // Nothing to do in the else statement
     }
+
+    @Override
+    public void visit(NoOperation nop) {}
 }

@@ -37,6 +37,9 @@ public interface Visitor {
     void visit(While loop);
     void visit(Write write);
 
+    // No-operation
+    void visit(NoOperation nop);
+
 
 
 

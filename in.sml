@@ -4,6 +4,8 @@ class Main
         {
                 var i : int;
                 var stringT : string;
+                var string2T : string;
+                var string3T : string;
                 var arrayT : int[];
                 var intT : int;
                 var boolT : boolean;
@@ -17,6 +19,20 @@ class Main
                 writeln(initT_s);
                 writeln(initT_i);
                 writeln(initT_z);
+
+                i = intT = initT_i = 20;
+
+
+                writeln(initT_i);
+                writeln(intT);
+                writeln(i);
+
+                stringT = string2T = string3T = "salam";
+
+                writeln(stringT);
+                writeln(string2T);
+                writeln(string3T);
+                
 
                 intT = 3;
                 writeln(intT);
@@ -117,10 +133,11 @@ class Main
                 writeln(intT);
     
                 writeln("### while  and ArrayCall test");
-                i = 0;
-                arrayT = new int[20];
-                while (i < 20) {
-                        arrayT[i] = 2 * i;
+                i = 1;
+                arrayT = new int[40];
+                while (i < 40) {
+                        arrayT[i] = arrayT[i - 1] = 2 * i;
+                        # arrayT[i] = 2 * i;
                         writeln(arrayT[i]);  
                         i = i + 1;                      
                 }

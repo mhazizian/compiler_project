@@ -234,4 +234,6 @@ public class VisitorImplIter implements Visitor {
         Expression arg = write.getArg();
         arg.accept(new VisitorImplIter());
     }
+    @Override
+    public void visit(NoOperation nop) {}
 }

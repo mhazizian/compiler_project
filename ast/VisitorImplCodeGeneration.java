@@ -364,8 +364,10 @@ public class VisitorImplCodeGeneration implements Visitor {
         Expression left = binaryExpression.getLeft();
         Expression right = binaryExpression.getRight();
 
-        left.accept(new VisitorImplCodeGeneration());
-        right.accept(new VisitorImplCodeGeneration());
+        if (binaryExpression.getBinaryOperator() != BinaryOperator.assign) {
+            left.accept(new VisitorImplCodeGeneration());
+            right.accept(new VisitorImplCodeGeneration());
+        }
 
         switch (binaryExpression.getBinaryOperator()) {
             case add:
@@ -409,7 +411,9 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case assign:
-                // @TODO: Complete assign part
+                Assign tempAssign = new Assign(left, right);
+                tempAssign.accept(new VisitorImplCodeGeneration());
+                left.accept(new VisitorImplCodeGeneration());
                 break;
 
             default:
@@ -666,4 +670,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
         }
     }
+
+    @Override
+    public void visit(NoOperation nop) {}
 }
