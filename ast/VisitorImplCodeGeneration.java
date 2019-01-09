@@ -104,7 +104,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         for (int i = 0; i < arraySize; ++i) {
             currentWriter.println("\taload " + array.getIndex());
             currentWriter.println("\tbipush " + Integer.toString(i));
-            currentWriter.println("iaload");
+            currentWriter.println("\tiaload");
             print("I");
             if (i != (arraySize - 1))
                 currentWriter.println("\tldc \", \"");
@@ -127,6 +127,9 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         currentWriter.println(".method public <init>()V");
         currentWriter.println(".limit stack 32");
+        currentWriter.println("\t;");
+        currentWriter.println("\t; set default value for int, boolean and string fields:");
+        currentWriter.println("\t;");
         currentWriter.println("\taload_0");
         currentWriter.println("\tinvokespecial " + parentName + "/<init>()V");
         for (int i = 0; i < vars.size(); i++) {
@@ -313,21 +316,29 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         currentWriter.println(scopeBegin + ":");
 
+        currentWriter.println("\t;");
+        currentWriter.println("\t; set default value for int, boolean and string localVars:");
+        currentWriter.println("\t;");
+
         for (int i = 0; i < localVars.size(); i++) {
             switch (localVars.get(i).getType().getType()) {
                 case intType:
                 case booleanType:
-                    currentWriter.println("iconst_0");
-                    currentWriter.println("istore " + localVars.get(i).getIdentifier().getIndex());
+                    currentWriter.println("\ticonst_0");
+                    currentWriter.println("\tistore " + localVars.get(i).getIdentifier().getIndex());
                     break;
                 case stringType:
-                    currentWriter.println("ldc \"\"");
-                    currentWriter.println("astore " + localVars.get(i).getIdentifier().getIndex());
+                    currentWriter.println("\tldc \"\"");
+                    currentWriter.println("\tastore " + localVars.get(i).getIdentifier().getIndex());
 
                 default:
                     break;
             }
         }
+
+        currentWriter.println(";");
+        currentWriter.println("; variable initialation end.");
+        currentWriter.println(";");
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorImplCodeGeneration());
