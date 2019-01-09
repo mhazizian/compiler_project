@@ -130,7 +130,7 @@ class main
 {
         def main() : int
         {
-                return new Test().test();       
+                return new Test().test3();       
         }
 }
 
@@ -146,6 +146,28 @@ class Test
 
                 writeln("Test");
 
+                return 0;
+        }
+
+        def test2() : int[]
+        {
+                var a : int[];
+                var b : int;
+
+                b = this.test();
+
+                a = new int[18];
+                a[17] = 17 * 17;
+                writeln("Test2");
+                return a;
+        }
+
+        def test3() : int
+        {
+                var b : int[];
+                b = this.test2();
+                # b = new Test().test2();
+                writeln(b[17]);
                 return 0;
         }
 }

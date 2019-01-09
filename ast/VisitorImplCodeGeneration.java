@@ -239,7 +239,6 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(Program program) {
-       
         ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)program.getClasses());
         ClassDeclaration mainClass = program.getMainClass();
         
@@ -336,9 +335,9 @@ public class VisitorImplCodeGeneration implements Visitor {
             }
         }
 
-        currentWriter.println(";");
-        currentWriter.println("; variable initialation end.");
-        currentWriter.println(";");
+        currentWriter.println("\t;");
+        currentWriter.println("\t; variable initialation end.");
+        currentWriter.println("\t;");
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorImplCodeGeneration());

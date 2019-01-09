@@ -267,7 +267,6 @@ public class VisitorImpl implements Visitor {
                     SymbolTable.isValidAst = false;
                 }
             }
-
             methodCall.setType(methodItem.getReturnType());
 
         } catch (ItemNotFoundException error) {
@@ -775,11 +774,11 @@ public class VisitorImpl implements Visitor {
 
         // @TODO: Shouldn't we handle it in Code Generation? => Get length
         if (lValue.getType().getType() == TypeName.arrayType) {
-            ((ArrayType)lValue.getType()).setSize(((IntValue)((NewArray)rValue).
-                    getExpression()).getConstant());
+            ((ArrayType)lValue.getType()).setSize(((ArrayType)lValue.getType()).getSize());
+            // ((ArrayType)lValue.getType()).setSize(((IntValue)((NewArray)rValue).
+            //         getExpression()).getConstant());
 
         }
-        // assign.setType(lValue.getType());
     }
 
     @Override
