@@ -20,7 +20,7 @@ import ast.Type.NoType.NoType;
 import symbolTable.*;
 public class VisitorImpl implements Visitor {
     private static int ItemDecIndex = 1;
-    public static String objectClassName = "java/lang/Object";
+    public static String objectClassName = "Object";
     public static Type thisObjectType = new NoType();
 
     public static void createNewSymbolTable() {
@@ -522,11 +522,6 @@ public class VisitorImpl implements Visitor {
         }
 
         SymbolTable.pop();
-    }
-
-    @Override
-    public void visit(MainMethodDeclaration methodDeclaration) {
-        methodDeclaration.accept_parent(new VisitorImpl());
     }
 
     @Override
