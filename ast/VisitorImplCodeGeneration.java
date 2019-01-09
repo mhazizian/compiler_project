@@ -383,12 +383,11 @@ public class VisitorImplCodeGeneration implements Visitor {
     @Override
     public void visit(Length length) {
         Expression expression = length.getExpression();
+
+        // Put the arrayRef to the stack
         expression.accept(new VisitorImplCodeGeneration());
 
-        currentWriter.println("\tpop");
-        // @TODO: should pop even more?
-        currentWriter.println("\tbipush " + ((ArrayType)length.
-                getExpression().getType()).getSize());
+        currentWriter.println("arraylength");
     }
 
     @Override

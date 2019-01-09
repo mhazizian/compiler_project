@@ -1,19 +1,20 @@
+# Printing int array as a field failed (Uncomment ArrayTest:test:423)
 # Defult value for primitives
-# Printing int array as a field failed
-# It doesn't make the .j files when we have array in the assignment
+# It doesn't make the .j files when we have array in the assignment (Uncomment Fibo:initializeArray:473)
 # Returning array failed
 # String and other classes equality
-# Can not access to the parent's field with "this" keyword
-# Can not access to the child methods with the Child variable which is assigned to the Parent class
-# Can not access to the class method with the "this" keyword
-# Can not assign the variable of child class to its parent class
-# Crashed on inheritance loop
 
-# @TODO: Check string returning
+class Main
+{
+        def main() : int
+        {
+                return new Test().test();
+        }
+}
 
 class Test
 {
-        def main() : int
+        def test() : int
         {
                 var expect : Expect;
                 var result : boolean;
@@ -65,6 +66,7 @@ class Test
 
                 result = result && expect.equalInt(fibo.normalFibo(6), 8, "Normal Fibo Test:");
                 result = result && expect.equalInt(fibo.recursiveFibo(6), 8, "Recursive Fibo Test:");
+                result = result && expect.equalInt(fibo.dynamicFibo(6), 8, "Dynamic Fibo Test:");
 
                 result = expect.equalBool(result, true, "Test :");
 
@@ -409,6 +411,7 @@ class ArrayTest
 
                 writeln("Printed array:");
                 writeln(localArray);
+                # writeln(classArray);
 
                 return result;
         }
@@ -417,6 +420,7 @@ class ArrayTest
 class Fibo
 {
         var expect : Expect;
+        var dp : int[];
 
         def normalFibo(n : int) : int
         {
@@ -440,16 +444,53 @@ class Fibo
                 return first;
         }
 
-        # def dynamicFibo(n : int) : int
-        # {
-                
-        # }
+        def initializeArray() : int
+        {
+                var index : int;
+                var localArray : int[];
+
+                index = 2;
+                localArray = new int[127];
+                dp = new int[127];
+                dp[0] = 0;
+                dp[1] = 1;
+
+                while(index < 127)
+                {
+                        dp[index] = -1;
+                        index = index + 1;
+                }
+
+                # localArray = dp;
+                return 2;
+        }
+
+        def dynamicFibo(n : int) : int
+        {
+                var index : int;
+                index = 0;
+
+                if (n > 127 || n < 0) then
+                        writeln("Out of range");
+                else
+                {
+                        index = this.initializeArray();
+                        index = 2;
+
+                        while(index < n + 1)
+                        {
+                                dp[index] = dp[index - 1] + dp[index - 2];
+                                index = index + 1;
+                        }
+                }
+
+                return dp[n];
+        }
 
         def recursiveFibo(n : int) : int
         {
                 var result : int;
 
-                # @TODO: Delete fallowing line : Added to handle uninitialized error
                 result = 0;
 
                 if (n < 0) then
@@ -610,11 +651,11 @@ class TestInheritedClasses
                 tempBool = firstClass.setFirstBoolean(true);
                 result = expect.equalBool(firstClass.getFirstBoolean(), true, "\tboolean field:");
 
-                # tempBool = firstClass.setFirstInt(13);
-                # result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
+                # tempBool = firstClass.setFirstString("Salam");
+                # result = expect.equalInt(firstClass.getFirstString().length, 6, "\tstring field");
 
-                # tempBool = firstClass.setFirstInt(13);
-                # result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
+                # tempBool = firstClass.setFirstArray(new int[20]);
+                # result = expect.equalInt(firstClass.getFirstArray().length, 20, "\tint field:");
 
                 # tempBool = firstClass.setFirstInt(13);
                 # result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
