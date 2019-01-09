@@ -42,7 +42,7 @@ class Test
                 result = tempResult && result;
 
                 binaryOperatorTest = new BinaryOperatorTest();
-                tempResult = binaryOperatorTest.test(13, true);
+                tempResult = binaryOperatorTest.test(13, true, "Hello");
                 tempResult = tempResult && expect.equalBool(tempResult, true, "Binary Opeartors Test :");
                 result = tempResult && result;                
 
@@ -68,6 +68,8 @@ class Test
                 result = result && expect.equalInt(fibo.dynamicFibo(6), 8, "Dynamic Fibo Test:");
 
                 result = expect.equalBool(result, true, "Test :");
+
+                
 
                 return 0;
         }
@@ -100,6 +102,31 @@ class Expect
         }
 
         def equalBool(expected : boolean, output : boolean, message : string) : boolean
+        {
+                var result : boolean;
+
+                writeln(message);
+
+                if (expected == output) then
+                {
+                        writeln("\t###### Passed ######");
+                        result = true;
+                }
+                else
+                {
+                        writeln("\t$$$$$$ Failed $$$$$$");
+                        writeln("\n\tOutput:");
+                        writeln(output);
+                        writeln("\n\tExpceted:");
+                        writeln(expected);
+                        result = false;
+                }
+                writeln("");
+                return result;
+        }
+
+
+        def equalString(expected : string, output : string, message : string) : boolean
         {
                 var result : boolean;
 
@@ -188,16 +215,16 @@ class BinaryOperatorTest
         var expect : Expect;
         var resultBool : boolean;
         var resultInt : int;
+        var fieldString : string;
 
-        ## Call it with "tempInt = 13" and "tempBool = true"
-        def test(tempInt : int, tempBool : boolean) : boolean
+        ## Call it with "tempInt = 13" , "tempBool = true" ,and "tempString = "Hello"" 
+        def test(tempInt : int, tempBool : boolean, tempString : string) : boolean
         {
                 var result : boolean;
 
-                expect = new Expect();
+                fieldString = "Salam";
 
-                tempInt = 13;
-                tempBool = true;
+                expect = new Expect();
                 
                 writeln("Binary Operator Test :\n");
 
@@ -268,27 +295,35 @@ class BinaryOperatorTest
                 resultBool = this.orTest(false, !tempBool);
                 result = result && expect.equalBool(resultBool, false, "\torTest : var + const");
 
-                #### EQ ####
+                #### INT EQ ####
 
-                resultBool = this.eqTest(tempBool, true);
+                resultBool = this.eqBoolTest(tempBool, true);
                 result = result && expect.equalBool(resultBool, true, "\teqTest : Constant");
 
-                resultBool = this.eqTest(tempBool, !tempBool);
+                resultBool = this.eqBoolTest(tempBool, !tempBool);
                 result = result && expect.equalBool(resultBool, false, "\teqTest : Variable");
 
-                resultBool = this.eqTest(false, tempBool);
+                resultBool = this.eqBoolTest(false, tempBool);
                 result = result && expect.equalBool(resultBool, false, "\teqTest : var + const");
+
+                #### String EQ ####
+
+                result = result && expect.equalString(tempString, "Hello", "\teqStringTest : Constant");
 
                 #### NEQ ####
 
-                resultBool = this.neqTest(tempBool, true);
+                resultBool = this.neqBoolTest(tempBool, true);
                 result = result && expect.equalBool(resultBool, false, "\tneqTest : Constant");
 
-                resultBool = this.neqTest(tempBool, !tempBool);
+                resultBool = this.neqBoolTest(tempBool, !tempBool);
                 result = result && expect.equalBool(resultBool, true, "\tneqTest : Variable");
 
-                resultBool = this.neqTest(false, tempBool);
+                resultBool = this.neqBoolTest(false, tempBool);
                 result = result && expect.equalBool(resultBool, true, "\tneqTest : var + const");
+
+                #### String NEQ ####
+
+                result = result && expect.equalString(tempString, "Hello", "\tneqStringTest : Constant");
 
                 #### LT ####
 
@@ -345,16 +380,16 @@ class BinaryOperatorTest
                 return firstOp || secondOp;
         }
         
-        def eqTest(firstOp : boolean, secondOp : boolean) : boolean
+        def eqBoolTest(firstOp : boolean, secondOp : boolean) : boolean
         {
                 return firstOp == secondOp;
         }
         
-        def neqTest(firstOp : boolean, secondOp : boolean) : boolean
+        def neqBoolTest(firstOp : boolean, secondOp : boolean) : boolean
         {
                 return firstOp <> secondOp;
         }
-        
+                
         def ltTest(firstOp : int, secondOp : int) : boolean
         {
                 return firstOp < secondOp;
@@ -399,7 +434,7 @@ class ArrayTest
 
                 writeln("Array Test:");
 
-                result = binaryOperatorTest.test(-localArray[1], true);
+                result = binaryOperatorTest.test(-localArray[1], true, "Hello");
                 result = expect.equalBool(result, true, "Array element in binary operators :");
 
                 result = result && expect.equalInt(5, localArray.length + classArray.length, "Array length :");                
