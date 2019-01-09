@@ -5,6 +5,7 @@
 # String and other classes equality
 # Can not access to the parent's field with "this" keyword
 # Can not access to the child methods with the Child variable which is assigned to the Parent class
+# Can not access to the class method with the "this" keyword
 # Can not assign the variable of child class to its parent class
 # Crashed on inheritance loop
 
@@ -17,19 +18,14 @@ class Test
                 var expect : Expect;
                 var result : boolean;
                 var tempResult : boolean;
-
                 var babyTest : BabyTest;
                 var babyTestOut : int;
-
                 var unaryOperatorTest : UnaryOperatorTest; 
                 var binaryOperatorTest : BinaryOperatorTest;
-
                 var arrayTest : ArrayTest; 
-                var methodCallTest : MethodCallTest;
-                
                 var returnedClass : TestReturnedClass;
-
                 var testInheritedClasses : TestInheritedClasses;
+                var fibo : Fibo;
 
                 expect = new Expect();
                 
@@ -55,10 +51,6 @@ class Test
                 tempResult = tempResult && expect.equalBool(tempResult, true, "Array Test :");
                 result = tempResult && result;                
 
-                ## @TODO: Compete the below test
-                methodCallTest = new MethodCallTest();
-                result = result && methodCallTest.test();
-
                 returnedClass = new TestReturnedClass();
                 tempResult = returnedClass.test();
                 tempResult = tempResult && expect.equalBool(tempResult, true, "Class returning Test :");
@@ -68,6 +60,11 @@ class Test
                 tempResult = testInheritedClasses.test();
                 tempResult = tempResult && expect.equalBool(tempResult, true, "Inherited Classes Test :");
                 result = tempResult && result;
+
+                fibo = new Fibo();
+
+                result = result && expect.equalInt(fibo.normalFibo(6), 8, "Normal Fibo Test:");
+                result = result && expect.equalInt(fibo.recursiveFibo(6), 8, "Recursive Fibo Test:");
 
                 result = expect.equalBool(result, true, "Test :");
 
@@ -417,14 +414,57 @@ class ArrayTest
         }
 }
 
-class MethodCallTest
+class Fibo
 {
-        var parent : Parent;
+        var expect : Expect;
 
-        def test() : boolean
+        def normalFibo(n : int) : int
         {
-                parent = new Parent();
-                return parent.fibo();
+                var first : int;
+                var second : int;
+                var index : int;
+                var temp : int;
+
+                index = 0;
+                first = 0;
+                second = 1;
+
+                while(index < n)
+                {
+                        temp = second;
+                        second = first + second;
+                        first = temp;
+                        index = index + 1;
+                }
+
+                return first;
+        }
+
+        # def dynamicFibo(n : int) : int
+        # {
+                
+        # }
+
+        def recursiveFibo(n : int) : int
+        {
+                var result : int;
+
+                # @TODO: Delete fallowing line : Added to handle uninitialized error
+                result = 0;
+
+                if (n < 0) then
+                {
+                        writeln("n < 0 occured in the fibo function!");
+                        result = -1;
+                }
+                else if (n == 0) then
+                        result = 0;
+                else if (n == 1) then
+                        result = 1;
+                else
+                        result = this.recursiveFibo(n - 1) + this.recursiveFibo(n - 2);
+
+                return result;
         }
 }
 
@@ -439,43 +479,6 @@ class Parent
                 parentField = 127;
                 return parentField;
         }
-        
-        def fibo() : boolean
-        {
-                var index : int;
-                var size : int;
-                # @TODO: Make it field
-                var parentField : int[];
-                var result : boolean;
-
-                index = 2;
-                size = 5;
-                parentField = new int[5];
-
-                parentField[0] = 0;
-                parentField[1] = 1;
-
-                while(index < size)
-                {
-                        parentField[index] = parentField[index - 1] + parentField[index - 2]; 
-                        index = index + 1;
-                }
-
-                expect = new Expect();
-                result = expect.equalInt(0, parentField[0], "Element of array:");
-                result = expect.equalInt(1, parentField[1], "Element of array:");
-                result = expect.equalInt(1, parentField[2], "Element of array:");
-                result = expect.equalInt(2, parentField[3], "Element of array:");
-                result = expect.equalInt(3, parentField[4], "Element of array:");
-
-                return result;
-        }
-
-        # def returnArray() : int[]
-        # {
-        #         var arr : int[];
-        #         return arr;
-        # }
 }
 
 class Child extends Parent
@@ -660,7 +663,7 @@ class FirstClass
 
         # @TODO: Delete fallowing methods
 
-                def getFirstInt() : int
+        def getFirstInt() : int
         {
                 return intField;
         }
