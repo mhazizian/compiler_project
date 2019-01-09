@@ -1,5 +1,4 @@
 # Printing int array as a field failed (Uncomment ArrayTest:test:423)
-# Defult value for primitives
 # It doesn't make the .j files when we have array in the assignment (Uncomment Fibo:initializeArray:473)
 # Returning array failed
 # String and other classes equality
@@ -429,7 +428,6 @@ class Fibo
                 var index : int;
                 var temp : int;
 
-                index = 0;
                 first = 0;
                 second = 1;
 
@@ -468,7 +466,6 @@ class Fibo
         def dynamicFibo(n : int) : int
         {
                 var index : int;
-                index = 0;
 
                 if (n > 127 || n < 0) then
                         writeln("Out of range");
@@ -490,8 +487,6 @@ class Fibo
         def recursiveFibo(n : int) : int
         {
                 var result : int;
-
-                result = 0;
 
                 if (n < 0) then
                 {

@@ -93,8 +93,9 @@ public class VisitorImplCodeGeneration implements Visitor {
         currentWriter.println("\tinvokevirtual java/io/PrintStream/print(" + type + ")V");
     }
 
-    void printArray(Identifier array) {        
+    void printArray(Identifier array) {
         int arraySize = ((ArrayType)(array.getType())).getSize();
+        
         currentWriter.println("\tpop");
 
         currentWriter.println("\tldc \"[\"");
