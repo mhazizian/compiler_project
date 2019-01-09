@@ -1,7 +1,3 @@
-# Printing int array as a field failed (Uncomment ArrayTest:test:423)
-# It doesn't make the .j files when we have array in the assignment (Uncomment Fibo:initializeArray:473)
-# Returning array failed
-
 class Main
 {
         def main() : int
@@ -143,6 +139,26 @@ class Expect
         }
 
         def equalUserdefined(expected : Dummy, output : Dummy, message : string) : boolean
+        {
+                var result : boolean;
+
+                writeln(message);
+
+                if (expected == output) then
+                {
+                        writeln("\t###### Passed ######");
+                        result = true;
+                }
+                else
+                {
+                        writeln("\t$$$$$$ Failed $$$$$$");
+                        result = false;
+                }
+                writeln("");
+                return result;
+        }
+
+        def equalIntArray(expected : int[], output : int[], message : string) : boolean
         {
                 var result : boolean;
 
@@ -419,11 +435,6 @@ class BinaryOperatorTest
         {
                 return firstOp > secondOp;
         }
-        
-        # def assign(int rval, int lval)
-        # {
-        #         return firstOp  secondOp;
-        # }
 }
 
 class ArrayTest
@@ -514,7 +525,7 @@ class Fibo
                         index = index + 1;
                 }
 
-                # localArray = dp;
+                localArray = dp;
                 return 2;
         }
 
@@ -701,8 +712,9 @@ class TestInheritedClasses
                 tempBool = firstClass.setFirstBoolean(true);
                 result = result && expect.equalBool(firstClass.getFirstBoolean(), true, "\tboolean field:");
 
-                tempBool = firstClass.setFirstArray(new int[20]);
-                result = result && expect.equalInt(firstClass.getFirstArray().length, 20, "\tarray field:");
+                arrayField = new int[20];
+                tempBool = firstClass.setFirstArray(arrayField);
+                result = result && expect.equalIntArray(firstClass.getFirstArray(), arrayField, "\tarray field:");
 
                 dummyField = new Dummy();
                 tempBool = firstClass.setFirstDummy(dummyField);

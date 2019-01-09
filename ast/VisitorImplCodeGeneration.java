@@ -223,6 +223,10 @@ public class VisitorImplCodeGeneration implements Visitor {
             case userDefinedType:
                 currentWriter.println("\tinvokevirtual java/lang/Object/equals(Ljava/lang/Object;)Z");
                 break;
+
+            case arrayType:
+                currentWriter.println("\tinvokevirtual java/lang/Object/equals(Ljava/lang/Object;)Z");
+                break;
         }
     }
 
@@ -257,6 +261,11 @@ public class VisitorImplCodeGeneration implements Visitor {
             case userDefinedType:
                 currentWriter.println("\tinvokevirtual java/lang/Object/equals(Ljava/lang/Object;)Z");
                 notStatement();                
+                break;
+
+            case arrayType:
+                currentWriter.println("\tinvokevirtual java/lang/Object/equals(Ljava/lang/Object;)Z");
+                notStatement();
                 break;
         }
     }
