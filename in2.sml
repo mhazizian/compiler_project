@@ -125,7 +125,6 @@ class Expect
                 return result;
         }
 
-
         def equalString(expected : string, output : string, message : string) : boolean
         {
                 var result : boolean;
@@ -146,6 +145,26 @@ class Expect
                         writeln(expected);
                         result = false;
                 }
+                writeln("");
+                return result;
+        }
+
+        def equalUserdefined(expected : Dummy, output : Dummy, message : string) : boolean
+        {
+                var result : boolean;
+
+                writeln(message);
+
+                # if (expected == output) then
+                # {
+                #         writeln("\t###### Passed ######");
+                #         result = true;
+                # }
+                # else
+                # {
+                #         writeln("\t$$$$$$ Failed $$$$$$");
+                #         result = false;
+                # }
                 writeln("");
                 return result;
         }
@@ -310,6 +329,10 @@ class BinaryOperatorTest
 
                 result = result && expect.equalString(tempString, "Hello", "\teqStringTest : Constant");
 
+                #### UserDefined EQ ####
+
+                result = result && expect.equalString(tempString, "Hello", "\teqStringTest : Constant");
+
                 #### NEQ ####
 
                 resultBool = this.neqBoolTest(tempBool, true);
@@ -320,10 +343,6 @@ class BinaryOperatorTest
 
                 resultBool = this.neqBoolTest(false, tempBool);
                 result = result && expect.equalBool(resultBool, true, "\tneqTest : var + const");
-
-                #### String NEQ ####
-
-                result = result && expect.equalString(tempString, "Hello", "\tneqStringTest : Constant");
 
                 #### LT ####
 

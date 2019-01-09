@@ -205,15 +205,23 @@ public class VisitorImplCodeGeneration implements Visitor {
         currentWriter.close();
     }
 
-    void checkEquality(String operator, String condition, TypeName type) {
+    void checkEquality(String operator, String condition, Expression value) {
+        TypeName type = value.getType().getType();
+
         switch (type) {
             case booleanType:
             case intType:
                 compareStatements(operator, condition);
                 break;
-                
+
             case stringType:
                 currentWriter.println("invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
+                break;
+
+            case userDefinedType:
+                currentWriter.println("invokevirtual " + ((Identifier)value).getClassName() + "/equals(Ljava/lang/Object;)Z");
+                break;
+
         }
 
     }
@@ -387,11 +395,11 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case eq:
-                checkEquality("eq", "eq", left.getType().getType());
+                checkEquality("eq", "eq", left);
                 break;
 
             case neq:
-                checkEquality("neq", "ne", left.getType().getType());
+                checkEquality("neq", "ne", left);
                 break;
 
             case lt:
