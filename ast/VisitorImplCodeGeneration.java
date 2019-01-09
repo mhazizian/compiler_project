@@ -117,19 +117,25 @@ public class VisitorImplCodeGeneration implements Visitor {
         print("Ljava/lang/String;");
     }
 
+    public void wirteConstructor(String parentName) {
+        currentWriter.println(".method public <init>()V\n" +
+                "\taload_0\n" + 
+                "\tinvokespecial " + parentName + "/<init>()V\n" + 
+                "\treturn\n" + 
+                ".end method\n");
+    }
+
     public void createJavaMain(String mainClassName) {
         try {
             currentWriter = new PrintWriter("JavaMain.j", "UTF-8");
         } catch (IOException e) {}
 
         currentWriter.println(".class public JavaMain\n" + 
-                ".super java/lang/Object\n\n" +
-                ".method public <init>()V\n" +
-	            "\taload_0\n" +
-	            "\tinvokenonvirtual java/lang/Object/<init>()V\n" +
-	            "\treturn\n" +
-                ".end method\n\n" +
-                ".method public static main([Ljava/lang/String;)V\n" +
+                ".super java/lang/Object\n\n");
+                
+        wirteConstructor("java/lang/Object");
+
+        currentWriter.println(".method public static main([Ljava/lang/String;)V\n" +
                 ".limit stack 32\n" +
                 ".limit locals 32\n" + 
                 "new " + mainClassName + "\n" +
@@ -148,18 +154,16 @@ public class VisitorImplCodeGeneration implements Visitor {
         } catch (IOException e) {}
 
         currentWriter.println(".class public Object\n" + 
-                ".super java/lang/Object\n" + 
-                ".method public <init>()V\n" + 
-                "\taload_0\n" + 
-                "\tinvokenonvirtual java/lang/Object/<init>()V\n" + 
-                "\treturn\n" + 
-                ".end method\n" + 
-                ".method public toString()Ljava/lang/String;\n" + 
-                ".limit locals 32\n" + 
-                ".limit stack 32\n" + 
-                "\tldc \"Object\"\n" + 
-                "\tareturn\n" + 
-                ".end method\n");
+                ".super java/lang/Object\n");
+                
+                wirteConstructor("java/lang/Object");
+        
+                currentWriter.println(".method public toString()Ljava/lang/String;\n" + 
+                        ".limit locals 32\n" + 
+                        ".limit stack 32\n" + 
+                        "\tldc \"Object\"\n" + 
+                        "\tareturn\n" + 
+                        ".end method\n");
 
         currentWriter.close();
     }
@@ -213,11 +217,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                     getJasminType(vars.get(i).getType()));
         }
 
-        currentWriter.println(".method public <init>()V\n" +
-                "\taload_0\n" + 
-                "\tinvokespecial " + parentName + "/<init>()V\n" + 
-                "\treturn\n" + 
-                ".end method\n");
+        wirteConstructor(parentName);
 
         for (int i = 0; i < methods.size(); i++)
             methods.get(i).accept(new VisitorImplCodeGeneration());
