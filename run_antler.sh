@@ -23,4 +23,4 @@ fi
 
 ./clean.sh $1
 
-java -jar jasmin.jar *.j
+java -jar jasmin.jar output/*.j

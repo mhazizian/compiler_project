@@ -1,6 +1,8 @@
 package ast;
 
 import java.io.PrintWriter;
+import java.io.File;
+
 import java.util.*;
 import java.io.IOException;
 
@@ -166,7 +168,7 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     public void createJavaMain(String mainClassName) {
         try {
-            currentWriter = new PrintWriter("JavaMain.j", "UTF-8");
+            currentWriter = new PrintWriter("output/" + "JavaMain.j", "UTF-8");
         } catch (IOException e) {}
 
         currentWriter.println(".class public JavaMain\n" + 
@@ -189,7 +191,7 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     public void createObjectClass() {
         try {
-            currentWriter = new PrintWriter("Object.j", "UTF-8");
+            currentWriter = new PrintWriter("output/" + "Object.j", "UTF-8");
         } catch (IOException e) {}
 
         currentWriter.println(".class public Object\n" + 
@@ -282,6 +284,8 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(Program program) {
+        new File("./output").mkdirs();
+
         ArrayList<ClassDeclaration> classes = ((ArrayList<ClassDeclaration>)program.getClasses());
         ClassDeclaration mainClass = program.getMainClass();
         
@@ -301,7 +305,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         String parentName = classDeclaration.getParentName().getName();
 
         try {
-            currentWriter = new PrintWriter(className + ".j", "UTF-8");
+            currentWriter = new PrintWriter("output/" + className + ".j", "UTF-8");
         } catch (IOException e) {}
 
         currentWriter.println(".class public static " + className);
