@@ -65,7 +65,6 @@ public class VisitorImplCodeGeneration implements Visitor {
     {
         for (int i = 0; i < localVars.size(); i++) {
             localVars.get(i).accept(new VisitorImplCodeGeneration());
-            // @TODO: Is it correct to set the identifier index as a variable number
             currentWriter.println(".var " + localVars.get(i).getIdentifier().getIndex() +
                     " is " + localVars.get(i).getIdentifier().getName() + " " +
                     getJasminType(localVars.get(i).getType()) + " from " +
@@ -156,9 +155,8 @@ public class VisitorImplCodeGeneration implements Visitor {
         ArrayList<MethodDeclaration> methods =
             ((ArrayList<MethodDeclaration>)classDeclaration.getMethodDeclarations());
 
-        // visit subItems:
+        // Class Fields
         for (int i = 0; i < vars.size(); i++) {
-            // vars.get(i).accept(new VisitorImplCodeGeneration());
             currentWriter.println(".field public " +
                     vars.get(i).getIdentifier().getName() + " " +
                     getJasminType(vars.get(i).getType()));
@@ -249,9 +247,6 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(VarDeclaration varDeclaration) {
-        // @TODO: Why these are comment?
-        // Identifier identifier = varDeclaration.getIdentifier();
-        // identifier.accept(new VisitorImplCodeGeneration());
     }
 
      @Override
@@ -259,17 +254,22 @@ public class VisitorImplCodeGeneration implements Visitor {
         Expression instance = arrayCall.getInstance();
         Expression index = arrayCall.getIndex();
 
-        instance.accept(new VisitorImplCodeGeneration()); // put arrayRef to stack
-        index.accept(new VisitorImplCodeGeneration()); // put index value to stack
-        currentWriter.println("iaload"); // put requested value to stack
+        // Put the arrayRef to the stack
+        instance.accept(new VisitorImplCodeGeneration());
+        // Put the index value to the stack
+        index.accept(new VisitorImplCodeGeneration());
+        // Put the requested value to the stack
+        currentWriter.println("iaload");
     }
 
     public void visitArrayCallByRefrence(ArrayCall arrayCall) {
         Expression instance = arrayCall.getInstance();
         Expression index = arrayCall.getIndex();
 
-        instance.accept(new VisitorImplCodeGeneration()); // put arrayRef to stack
-        index.accept(new VisitorImplCodeGeneration()); // put index value to stack
+        // Put the arrayRef to the stack
+        instance.accept(new VisitorImplCodeGeneration());
+        // Put the index value to the stack
+        index.accept(new VisitorImplCodeGeneration());
     }
 
     @Override
@@ -333,7 +333,6 @@ public class VisitorImplCodeGeneration implements Visitor {
     @Override
     public void visit(Identifier identifier) {
         if (identifier.isField) {
-            // assumption: all fields are private
             currentWriter.println("\taload_0");
             currentWriter.println("\tgetfield " + identifier.getClassName() +
                     "/" + identifier.getName() + " "
@@ -386,7 +385,6 @@ public class VisitorImplCodeGeneration implements Visitor {
         for (int i = 0; i < args.size(); i++)
             methodArgs += getJasminType(args.get(i).getType());
 
-        // System.out.println(instance.getType().toString());
         currentWriter.println("\tinvokevirtual " + instance.getType().toString() +
                 "/" + methodName.getName() + "(" + methodArgs + ")" +
                 getJasminType(methodCall.getType()));
@@ -443,7 +441,7 @@ public class VisitorImplCodeGeneration implements Visitor {
 
     @Override
     public void visit(BooleanValue value) {
-        // Assume boolean is an integer (getConstant returns integer)
+        // Assume that boolean is an integer (getConstant returns integer)
         currentWriter.println("\ticonst_" + value.getConstant());
     }
 
@@ -462,8 +460,6 @@ public class VisitorImplCodeGeneration implements Visitor {
         Expression lValue = assign.getlValue();
         Expression rValue = assign.getrValue();
 
-        // lValue associated value shoul not be pushed to stack:
-        // lValue.accept(new VisitorImplCodeGeneration());
         if (lValue instanceof ArrayCall) {
 
             visitArrayCallByRefrence((ArrayCall)lValue);
@@ -518,7 +514,6 @@ public class VisitorImplCodeGeneration implements Visitor {
 
         expression.accept(new VisitorImplCodeGeneration());
 
-        // 'ifeq' has been used which means equal to zero is false
         currentWriter.println("\tifeq " + scopeEnd);
 
         currentWriter.println(scopeBegin + ":");
@@ -577,7 +572,6 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
                 
             case arrayType:
-                // @TODO: We should print all the array as Python does
                 printArray((Identifier)arg);
                 
             break;
