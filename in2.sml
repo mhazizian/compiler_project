@@ -66,9 +66,7 @@ class Test
                 result = result && expect.equalInt(fibo.recursiveFibo(6), 8, "Recursive Fibo Test:");
                 result = result && expect.equalInt(fibo.dynamicFibo(6), 8, "Dynamic Fibo Test:");
 
-                result = expect.equalBool(result, true, "Test :");
-
-                
+                result = expect.equalBool(result, true, "Test :"); 
 
                 return 0;
         }
@@ -701,16 +699,14 @@ class TestInheritedClasses
                 result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
 
                 tempBool = firstClass.setFirstBoolean(true);
-                result = expect.equalBool(firstClass.getFirstBoolean(), true, "\tboolean field:");
+                result = result && expect.equalBool(firstClass.getFirstBoolean(), true, "\tboolean field:");
 
-                # tempBool = firstClass.setFirstString("Salam");
-                # result = expect.equalInt(firstClass.getFirstString().length, 6, "\tstring field");
+                tempBool = firstClass.setFirstArray(new int[20]);
+                result = result && expect.equalInt(firstClass.getFirstArray().length, 20, "\tarray field:");
 
-                # tempBool = firstClass.setFirstArray(new int[20]);
-                # result = expect.equalInt(firstClass.getFirstArray().length, 20, "\tint field:");
-
-                # tempBool = firstClass.setFirstInt(13);
-                # result = expect.equalInt(firstClass.getFirstInt(), 13, "\tint field:");
+                dummyField = new Dummy();
+                tempBool = firstClass.setFirstDummy(dummyField);
+                result = result && expect.equalUserdefined(firstClass.getFirstDummy(), dummyField, "\tClass field:");
 
                 return result;
         }
@@ -744,7 +740,7 @@ class FirstClass
 
         def setFirstArray(value : int[]) : boolean
         {
-                # arrayField = value;
+                arrayField = value;
                 return true;
         }
 
