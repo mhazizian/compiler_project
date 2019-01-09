@@ -1,9 +1,12 @@
+
 # class Main
 # {
 #         def main(): int
 #         {
 #                 var i : int;
 #                 var stringT : string;
+#                 var string2T : string;
+#                 var string3T : string;
 #                 var arrayT : int[];
 #                 var intT : int;
 #                 var boolT : boolean;
@@ -17,6 +20,20 @@
 #                 writeln(initT_s);
 #                 writeln(initT_i);
 #                 writeln(initT_z);
+
+#                 i = intT = initT_i = 20;
+
+
+#                 writeln(initT_i);
+#                 writeln(intT);
+#                 writeln(i);
+
+#                 stringT = string2T = string3T = "salam";
+
+#                 writeln(stringT);
+#                 writeln(string2T);
+#                 writeln(string3T);
+                
 
 #                 intT = 3;
 #                 writeln(intT);
@@ -63,44 +80,6 @@
 #                 else
 #                         writeln("else: lttest: gt");
 
-#                 writeln("#### Greater than Test ####");
-
-#                 if(1 > 0) then
-#                         writeln("if: gttest: gt");
-#                 else
-#                         writeln("Nothing!");
-
-#                 if(0 > 1) then
-#                         writeln("Nothing!");
-#                 else
-#                         writeln("else: gttest: lt");
-
-#                 writeln("#### OR Test ####");
-
-#                 if(false || true) then
-#                         writeln("if: ortest: true");
-#                 else
-#                         writeln("Nothing!");
-
-#                 if(false || false) then
-#                         writeln("Nothing!");
-#                 else
-#                         writeln("else: ortest: false");
-
-#                 writeln("#### AND Test ####");
-
-#                 if(false && true) then
-#                         writeln("Nothing!");
-#                 else
-#                         writeln("else: andtest: false");
-
-#                 if(true && true) then
-#                         writeln("if: andtest: true");
-#                 else
-#                         writeln("Nothing!");
-
-#                 #### Indefinite loop Test ####
-
 #                 # while (1 > 0)
 #                 #         writeln("Indefinite Loop!");                        
 
@@ -115,114 +94,29 @@
 
 #                 intT = 2;
 #                 writeln(intT);
-    
-#                 writeln("### while  and ArrayCall test");
-#                 i = 0;
-#                 arrayT = new int[20];
-#                 while (i < 20) {
-#                         arrayT[i] = 2 * i;
-#                         writeln(arrayT[i]);  
-#                         i = i + 1;                      
-#                 }
+                # writeln("### while  and ArrayCall test");
+                # i = 1;
+                # arrayT = new int[40];
+                # while (i < 40) {
+                #         arrayT[i] = arrayT[i - 1] = 2 * i;
+                #         # arrayT[i] = 2 * i;
+                #         writeln(arrayT[i]);  
+                #         i = i + 1;                      
+                # }
 
-#                 writeln("### Write array test");
+                # writeln("### Write array test");
 
-#                 writeln(arrayT);
+                # writeln(arrayT);
 
-#                 writeln("### Method Call Test");
+                # writeln("### Method Call Test");
 
-#                 classT = new SecClass();
-#                 writeln(classT.subClassMethod("1"));
-#                 intT = classT.inc_array_call();
-#                 intT = classT.inc_array_call();
-#                 intT = classT.inc_array_call();
+                # classT = new SecClass();
+                # writeln(classT.subClassMethod("1"));
+                # intT = classT.inc_array_call();
+                # intT = classT.inc_array_call();
+                # intT = classT.inc_array_call();
 
 
-#                 classThird = new ThirdClass();
-#                 intT = classThird.thirdClassMethod();
-
-#                 intT = classThird.inc_int_field();
-#                 intT = classThird.inc_int_field();
-#                 intT = classThird.inc_int_field();
-
-#                 classFourh = new FourthClass();
-#                 intT = classFourh.f1();
-
-#                 return 0;
-#         }
-# }
-
-# class SecClass {
-#         var arrayInc : int[];
-#         var intInc : int;
-
-#         def inc_array_call() : int {
-#                 arrayInc[3] = arrayInc[3] + 1;
-#                 writeln("## inc_array_call function ##");
-#                 writeln(arrayInc[3]);
-#                 return 1;       
-#         }
-
-#         def subClassMethod(a : string): int {
-#                 arrayInc = new int[10];
-#                 arrayInc[3] = 0;
-
-#                 intInc = 17;
-#                 # var methodVar : boolean;
-
-#                 # temp = 17;
-#                 # writeln(temp);
-
-#                 # writeln(a);
-#                 # writeln(b);
-#                 writeln("inside method :D");
-#                 # methodVar = true;
-#                 return 13;
-#         }
-# }
-
-# class ThirdClass extends SecClass{
-
-#         def thirdClassMethod() : int {
-#                 var index : int;
-#                 var size : int;
-
-#                 intInc = 17;
-
-#                 size = 24;
-#                 index = this.subClassMethod("1");
-#                 # index = 20;
-
-#                 writeln("### Inside the thridClassMethod ###");
-
-#                 while (index < size) {
-#                         writeln(index);
-#                         index = index + 1;        
-#                 }
-
-#                 writeln("$$$ End of the thridClassMethod $$$");
-
-#                 return 0;
-#         }
-
-#         def inc_int_field() : int {
-#                 intInc = intInc + 1;
-#                 writeln("## inc_int_field function ##");
-#                 writeln(intInc);
-#                 return 1;       
-#         }
-# }
-
-# class FourthClass  {
-#         def f1() : int {
-#                 var a : int;
-#                 var temp : int;
-#                 a = 1;
-#                 writeln(a);
-#                 temp = this.f2();
-#                 writeln(a);
-#                 return 0;
-#         }
 
 #         def f2() : int {
 #                 var a : int;
@@ -236,7 +130,7 @@ class main
 {
         def main() : int
         {
-                return new Test().test();       
+                return new Test().test3();       
         }
 }
 
@@ -252,6 +146,28 @@ class Test
 
                 writeln("Test");
 
+                return 0;
+        }
+
+        def test2() : int[]
+        {
+                var a : int[];
+                var b : int;
+
+                b = this.test();
+
+                a = new int[18];
+                a[17] = 17 * 17;
+                writeln("Test2");
+                return a;
+        }
+
+        def test3() : int
+        {
+                var b : int[];
+                b = this.test2();
+                # b = new Test().test2();
+                writeln(b[17]);
                 return 0;
         }
 }
