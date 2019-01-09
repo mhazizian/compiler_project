@@ -13,7 +13,7 @@ import ast.node.expression.Value.IntValue;
 import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 import ast.Type.ArrayType.*;
-
+import ast.Type.PrimitiveType.IntType;
 import ast.Type.*;
 import ast.Type.UserDefinedType.UserDefinedType;
 import ast.*;
@@ -219,6 +219,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         Expression returnValue = methodDeclaration.getReturnValue();
         Identifier name = methodDeclaration.getName();
         ArrayList<Statement> body = methodDeclaration.getBody();
+        ArrayList<VarDeclaration> localVars = methodDeclaration.getLocalVars();
 
         String scopeBegin = "begin_" + name.getName();
         String scopeEnd = "end_" + name.getName();
@@ -233,6 +234,22 @@ public class VisitorImplCodeGeneration implements Visitor {
         visitLocalVariables(methodDeclaration.getLocalVars(), scopeBegin, scopeEnd);
 
         currentWriter.println(scopeBegin + ":");
+
+        for (int i = 0; i < localVars.size(); i++) {
+            switch (localVars.get(i).getType().getType()) {
+                case intType:
+                case booleanType:
+                    currentWriter.println("iconst_0");
+                    currentWriter.println("istore " + localVars.get(i).getIdentifier().getIndex());
+                    break;
+                case stringType:
+                    currentWriter.println("ldc \"\"");
+                    currentWriter.println("astore " + localVars.get(i).getIdentifier().getIndex());
+
+                default:
+                    break;
+            }
+        }
 
         for (int i = 0; i < body.size(); i++)
             body.get(i).accept(new VisitorImplCodeGeneration());
