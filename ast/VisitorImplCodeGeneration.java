@@ -12,7 +12,6 @@ import ast.node.expression.Value.IntValue;
 import ast.node.expression.Value.StringValue;
 import ast.node.statement.*;
 import ast.Type.ArrayType.*;
-import ast.Type.PrimitiveType.IntType;
 import ast.Type.*;
 import ast.Type.UserDefinedType.UserDefinedType;
 
@@ -215,16 +214,51 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case stringType:
-                currentWriter.println("invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
+                currentWriter.println("\tinvokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
                 break;
 
             case userDefinedType:
-                currentWriter.println("invokevirtual " + ((Identifier)value).getClassName() + "/equals(Ljava/lang/Object;)Z");
+                currentWriter.println("\tinvokevirtual java/lang/Object/equals(Ljava/lang/Object;)Z");
+                break;
+        }
+    }
+
+    void notStatement() {
+        String scopeEnd = "begin_notUnary_" + Integer.toString(statementCounter);
+        String statementEnd = "end_notUnary_" + Integer.toString(statementCounter++);
+
+        currentWriter.println("\tifeq " + scopeEnd);
+        currentWriter.println("\ticonst_0");
+        currentWriter.println("\tgoto " + statementEnd);
+
+        currentWriter.println(scopeEnd + ":");
+        currentWriter.println("\ticonst_1");
+
+        currentWriter.println(statementEnd + ":");
+    }
+
+    void checkNotEquality(String operator, String condition, Expression value) {
+        TypeName type = value.getType().getType();
+
+        switch (type) {
+            case booleanType:
+            case intType:
+                compareStatements(operator, condition);
                 break;
 
-        }
+            case stringType:
+                currentWriter.println("\tinvokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
+                notStatement();
+                break;
 
+            case userDefinedType:
+                currentWriter.println("\tinvokevirtual java/lang/Object/equals(Ljava/lang/Object;)Z");
+                notStatement();                
+                break;
+        }
     }
+
+
 
 // ##############################################################################
 // ##############################################################################
@@ -397,7 +431,7 @@ public class VisitorImplCodeGeneration implements Visitor {
                 break;
 
             case neq:
-                checkEquality("neq", "ne", left);
+                checkNotEquality("neq", "ne", left);
                 break;
 
             case lt:
@@ -511,17 +545,7 @@ public class VisitorImplCodeGeneration implements Visitor {
         value.accept(new VisitorImplCodeGeneration());
         switch (unaryExpression.getUnaryOperator()) {
             case not:
-                String scopeEnd = "begin_notUnary_" + Integer.toString(statementCounter);
-                String statementEnd = "end_notUnary_" + Integer.toString(statementCounter++);
-    
-                currentWriter.println("\tifeq " + scopeEnd);
-                currentWriter.println("\ticonst_0");
-                currentWriter.println("\tgoto " + statementEnd);
-        
-                currentWriter.println(scopeEnd + ":");
-                currentWriter.println("\ticonst_1");
-
-                currentWriter.println(statementEnd + ":");
+                notStatement();
     
                 // @TODO: find appropriate command for not.
                 // currentWriter.println("\tineg");

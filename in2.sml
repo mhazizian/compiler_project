@@ -1,7 +1,6 @@
 # Printing int array as a field failed (Uncomment ArrayTest:test:423)
 # It doesn't make the .j files when we have array in the assignment (Uncomment Fibo:initializeArray:473)
 # Returning array failed
-# String and other classes equality
 
 class Main
 {
@@ -115,10 +114,6 @@ class Expect
                 else
                 {
                         writeln("\t$$$$$$ Failed $$$$$$");
-                        writeln("\n\tOutput:");
-                        writeln(output);
-                        writeln("\n\tExpceted:");
-                        writeln(expected);
                         result = false;
                 }
                 writeln("");
@@ -155,16 +150,16 @@ class Expect
 
                 writeln(message);
 
-                # if (expected == output) then
-                # {
-                #         writeln("\t###### Passed ######");
-                #         result = true;
-                # }
-                # else
-                # {
-                #         writeln("\t$$$$$$ Failed $$$$$$");
-                #         result = false;
-                # }
+                if (expected == output) then
+                {
+                        writeln("\t###### Passed ######");
+                        result = true;
+                }
+                else
+                {
+                        writeln("\t$$$$$$ Failed $$$$$$");
+                        result = false;
+                }
                 writeln("");
                 return result;
         }
@@ -240,6 +235,8 @@ class BinaryOperatorTest
         def test(tempInt : int, tempBool : boolean, tempString : string) : boolean
         {
                 var result : boolean;
+                var firstDummy : Dummy;
+                var secondDummy : Dummy;
 
                 fieldString = "Salam";
 
@@ -331,7 +328,13 @@ class BinaryOperatorTest
 
                 #### UserDefined EQ ####
 
-                result = result && expect.equalString(tempString, "Hello", "\teqStringTest : Constant");
+                firstDummy = new Dummy();
+                secondDummy = new Dummy();
+
+                result = result && expect.equalUserdefined(firstDummy, firstDummy, "\teqUserDefinedTest");
+
+                resultBool = (firstDummy <> secondDummy);
+                result = result && expect.equalBool(resultBool, true, "eqUserDefinedTest: not equal");
 
                 #### NEQ ####
 
