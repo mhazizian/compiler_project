@@ -2,67 +2,26 @@ class Main
 {
         def main() : int
         {
-                return new Test().test();
-        }
-}
+                new BabyTest().test();
+                new Expect().equalInt(new BabyTest().test(), 0, "BabyTest (new class):");        
+                new UnaryOperatorTest().test();
+                new Expect().equalBool(new UnaryOperatorTest().test(), true, "Unary Opeartors Test :");
 
-class Test
-{
-        def test() : int
-        {
-                var expect : Expect;
-                var result : boolean;
-                var tempResult : boolean;
-                var babyTest : BabyTest;
-                var babyTestOut : int;
-                var unaryOperatorTest : UnaryOperatorTest; 
-                var binaryOperatorTest : BinaryOperatorTest;
-                var arrayTest : ArrayTest; 
-                var returnedClass : TestReturnedClass;
-                var testInheritedClasses : TestInheritedClasses;
-                var fibo : Fibo;
-
-                expect = new Expect();
+                new BinaryOperatorTest().test(13, true, "Hello");
+                new Expect().equalBool(new BinaryOperatorTest().test(13, true, "Hello"), true, "Binary Opeartors Test :");
                 
-                babyTest = new BabyTest();
-                babyTestOut = babyTest.test();
+                new ArrayTest().test();
+                new Expect().equalBool(new ArrayTest().test(), true, "Array Test :");        
 
-                result = expect.equalInt(babyTestOut, 0, "BabyTest (variable):");
+                new TestReturnedClass().test();
+                new Expect().equalBool(new TestReturnedClass().test(), true, "Class returning Test :");
+                
+                new TestInheritedClasses().test();
+                new Expect().equalBool(new TestInheritedClasses().test(), true, "Inherited Classes Test :");
 
-                result = result && expect.equalInt(new BabyTest().test(), 0, "BabyTest (new class):");
-
-                unaryOperatorTest = new UnaryOperatorTest();
-                tempResult = unaryOperatorTest.test();
-                tempResult = tempResult && expect.equalBool(tempResult, true, "Unary Opeartors Test :");
-                result = tempResult && result;
-
-                binaryOperatorTest = new BinaryOperatorTest();
-                tempResult = binaryOperatorTest.test(13, true, "Hello");
-                tempResult = tempResult && expect.equalBool(tempResult, true, "Binary Opeartors Test :");
-                result = tempResult && result;                
-
-                arrayTest = new ArrayTest();
-                tempResult = arrayTest.test();
-                tempResult = tempResult && expect.equalBool(tempResult, true, "Array Test :");
-                result = tempResult && result;                
-
-                returnedClass = new TestReturnedClass();
-                tempResult = returnedClass.test();
-                tempResult = tempResult && expect.equalBool(tempResult, true, "Class returning Test :");
-                result = tempResult && result;
-
-                testInheritedClasses = new TestInheritedClasses();
-                tempResult = testInheritedClasses.test();
-                tempResult = tempResult && expect.equalBool(tempResult, true, "Inherited Classes Test :");
-                result = tempResult && result;
-
-                fibo = new Fibo();
-
-                result = result && expect.equalInt(fibo.normalFibo(6), 8, "Normal Fibo Test:");
-                result = result && expect.equalInt(fibo.recursiveFibo(6), 8, "Recursive Fibo Test:");
-                result = result && expect.equalInt(fibo.dynamicFibo(6), 8, "Dynamic Fibo Test:");
-
-                result = expect.equalBool(result, true, "Test :"); 
+                new Expect().equalInt(new Fibo().normalFibo(6), 8, "Normal Fibo Test:");
+                new Expect().equalInt(new Fibo().recursiveFibo(6), 8, "Recursive Fibo Test:");
+                new Expect().equalInt(new Fibo().dynamicFibo(6), 8, "Dynamic Fibo Test:");
 
                 return 0;
         }

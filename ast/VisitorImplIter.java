@@ -234,6 +234,15 @@ public class VisitorImplIter implements Visitor {
         Expression arg = write.getArg();
         arg.accept(new VisitorImplIter());
     }
+
+    @Override
+    public void visit(MainStatement statement) {
+        System.out.println(statement.toString());
+
+        Expression expression = statement.getValue();
+        expression.accept(new VisitorImplIter());
+    }
+
     @Override
     public void visit(NoOperation nop) {}
 }

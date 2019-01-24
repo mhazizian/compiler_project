@@ -848,5 +848,11 @@ public class VisitorImpl implements Visitor {
     }
 
     @Override
+    public void visit(MainStatement statement) {
+        Expression value = statement.getValue();
+        value.accept(new VisitorImpl());
+    }
+
+    @Override
     public void visit(NoOperation nop) {}
 }

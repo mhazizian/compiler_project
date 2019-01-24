@@ -55,8 +55,10 @@ grammar Smoola;
                 ( varDeclaration { mainMethod.addLocalVar(
                       $varDeclaration.synVariableDeclaration); } )*
 
-                ( statement { mainMethod.addStatement(
-                      $statement.synStatement); } )*
+                (
+                        mainStatement { mainMethod.addStatement($mainStatement.synStatement); }
+                    |   statement { mainMethod.addStatement($statement.synStatement); }
+                )*
                 ret='return' expression
                     {
                         $expression.synFinalResult.setLineNumber($ret.line);
@@ -142,12 +144,17 @@ grammar Smoola;
         '}'
     ;
 
+    mainStatement returns [Statement synStatement]:
+        expressionMethods { $synStatement = new MainStatement($expressionMethods.synFinalResult); } ';'
+    ;
+
     statement returns [Statement synStatement]:
         statementBlock { $synStatement = $statementBlock.synStatement; } |
         statementCondition { $synStatement = $statementCondition.synStatement; } |
         statementLoop { $synStatement = $statementLoop.synStatement; } |
         statementWrite { $synStatement = $statementWrite.synStatement; } |
-        statementAssignment { $synStatement = $statementAssignment.synStatement; }
+        statementAssignment { $synStatement = $statementAssignment.synStatement;
+        }
     ;
 
     statementBlock returns [Statement synStatement]:

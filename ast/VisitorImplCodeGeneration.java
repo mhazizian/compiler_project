@@ -727,5 +727,12 @@ public class VisitorImplCodeGeneration implements Visitor {
     }
 
     @Override
+    public void visit(MainStatement statement) {
+        Expression expression = statement.getValue();
+        expression.accept(new VisitorImplCodeGeneration());
+        currentWriter.println("\tpop");
+    }
+
+    @Override
     public void visit(NoOperation nop) {}
 }
